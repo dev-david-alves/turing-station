@@ -3,8 +3,6 @@ import TemporaryLink from "./classes/temporaryLink";
 import StartLink from "./classes/startLink";
 import SelfLink from "./classes/selfLink";
 import Link from "./classes/link";
-
-import CMumbi from "./fonts/cmunbi.ttf";
 import { createHistory } from "./utils/history";
 import { MT } from "./classes/simulation/mt";
 import TapeBounds from "./assets/tape-bounds.svg";
@@ -16,9 +14,6 @@ export const sketch = (p5) => {
   p5.globalWindowOffset = { x: 0, y: 0 };
   let fs = false;
   let mtCreated = null;
-
-  // Current status
-  let isCanvasMoving = false;
 
   // States
   let states = [];
@@ -40,12 +35,6 @@ export const sketch = (p5) => {
 
   // Context menu
   let contextMenu = null;
-
-  // Preload assets and fonts
-  p5.preload = () => {
-    // Load the font ./fonts/cmumbi.ttf
-    p5.mathFont = p5.loadFont(CMumbi);
-  };
 
   // Creating HTML Elements
   function createMTDoomWrapper() {
@@ -568,6 +557,45 @@ export const sketch = (p5) => {
     createTape();
 
     updateUIWhenSimulating(accepted, end, true);
+  }
+
+  function simulationButtonActivation() {
+    let fastResetButton = p5.select("#fast-reset-button");
+    let backwardSimulationButton = p5.select("#backward-simulation-button");
+    let forwardSimulationButton = p5.select("#forward-simulation-button");
+    let fastSimulationButton = p5.select("#fast-simulation-button");
+
+    let diactivatedClass =
+      "w-[3rem] h-[2.6rem] rounded-[.4rem] text-white bg-[#4B4B4B] flex items-center justify-center";
+    let activatedClass =
+      "w-[3rem] h-[2.6rem] rounded-[.4rem] text-white bg-[--color-primary] flex items-center justify-center active-class";
+
+    fastResetButton.class(diactivatedClass);
+    backwardSimulationButton.class(diactivatedClass);
+    forwardSimulationButton.class(diactivatedClass);
+    fastSimulationButton.class(diactivatedClass);
+
+    if (!mtCreated) {
+      forwardSimulationButton.class(activatedClass);
+      fastSimulationButton.class(activatedClass);
+    } else {
+      if (mtCreated.history.length > 0) {
+        fastResetButton.class(activatedClass);
+        backwardSimulationButton.class(activatedClass);
+      }
+
+      if (!p5.select("#tape-div").hasClass("word-accepted") && !p5.select("#tape-div").hasClass("word-rejected")) {
+        if (
+          !(
+            mtCreated.endStates.has(mtCreated.currentState) &&
+            mtCreated.maxInterectedIndex >= mtCreated.simulatedWord.length
+          )
+        ) {
+          forwardSimulationButton.class(activatedClass);
+          fastSimulationButton.class(activatedClass);
+        }
+      }
+    }
   }
 
   // End MT functions #############################
@@ -1276,6 +1304,7 @@ export const sketch = (p5) => {
     let canvasContainer = p5.select("#canvas-container");
     let canvasWidth = canvasContainer.elt.offsetWidth;
     let canvasHeight = canvasContainer.elt.offsetHeight;
+
     if (fs) {
       p5.resizeCanvas(canvasWidth, canvasHeight);
     } else {
@@ -1308,8 +1337,8 @@ export const sketch = (p5) => {
     reCalculateCanvasPositions();
 
     // Just for testing
-    // states.push(new State(p5, states.length, 150 / globalScaleFactor, 200 / globalScaleFactor, stateRadius));
-    // states.push(new State(p5, states.length, 450 / globalScaleFactor, 200 / globalScaleFactor, stateRadius));
+    states.push(new State(p5, states.length, 150 / p5.globalScaleFactor, 200 / p5.globalScaleFactor, stateRadius));
+    states.push(new State(p5, states.length, 450 / p5.globalScaleFactor, 200 / p5.globalScaleFactor, stateRadius));
 
     // Activate default button when starting
     cnvIsFocused = "canvas";
@@ -1319,18 +1348,42 @@ export const sketch = (p5) => {
     scalingCanvasSlider = p5.select("#scalingCanvasSlider");
     contextMenu = createContextMenu();
 
-    // Test
-    states.push(new State(p5, states.length, 150 / p5.globalScaleFactor, 200 / p5.globalScaleFactor, stateRadius));
-    states.push(new State(p5, states.length, 450 / p5.globalScaleFactor, 200 / p5.globalScaleFactor, stateRadius));
-    setSelectedMenuButton("addLink");
-
     // First save on history
     p5.history.push(p5.createJSONExportObj());
   };
 
   p5.draw = () => {
-    if (!p5.cnv) return;
+    let mtDoomWrapper = p5.select("#mt-doom-wrapper");
+    let playgroundContainer = p5.select("#playground-container");
+    let fullscreenButton = p5.select("#fullscreenButton");
+
+    if (fs) {
+      mtDoomWrapper.addClass("min-w-[100vw]");
+      mtDoomWrapper.addClass("min-h-[100vh]");
+      playgroundContainer.addClass("flex-grow");
+      fullscreenButton.html("<span class='material-symbols-outlined' style='font-size: 1.8rem'>fullscreen_exit</span>");
+      p5.select("#title").hide();
+    } else {
+      mtDoomWrapper.removeClass("min-w-[100vw]");
+      mtDoomWrapper.removeClass("min-h-[100vh]");
+      playgroundContainer.removeClass("flex-grow");
+      fullscreenButton.html("<span class='material-symbols-outlined' style='font-size: 1.8rem'>fullscreen</span>");
+      p5.select("#title").show();
+    }
+
+    // Simulation buttons activation
+    simulationButtonActivation();
+
+    // Set properties
+    reCalculateCanvasPositions();
     p5.background("#181a1e");
+
+    // Check if canvas is focused
+    if (cnvIsFocused === "outside") {
+      mtDoomWrapper.removeClass("canvas-focused");
+    } else {
+      mtDoomWrapper.addClass("canvas-focused");
+    }
 
     // Move canvas
     if (
