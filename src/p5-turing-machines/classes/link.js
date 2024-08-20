@@ -216,7 +216,7 @@ export default class Link {
     } else {
       let boxX = (stuff.startX + stuff.endX) / 2;
       let boxY = (stuff.startY + stuff.endY) / 2;
-      let boxAngle = this.p5.atan2(stuff.endY - stuff.startY, stuff.endX - stuff.startX);
+      let boxAngle = this.p5.atan2(stuff.endX - stuff.startX, stuff.startY - stuff.endY);
       updateBoxPosition(this.p5, this.transitionBox, boxX, boxY, boxAngle);
     }
 

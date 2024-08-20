@@ -1,9 +1,7 @@
-import CMumbi from "../fonts/cmunbi.ttf";
-
 export const calculateTextWidth = (p5, xx = -1000, yy = -1000, substring = [], fontSize = 12) => {
   p5.push();
-  p5.textAlign(p5.CENTER, p5.CENTER);
-  p5.textFont(CMumbi);
+  p5.textAlign(p5.LEFT, p5.CENTER);
+  // p5.textStyle(p5.ITALIC);
   p5.textSize(fontSize);
 
   let startX = xx;
@@ -53,10 +51,10 @@ export const calculateTextWidth = (p5, xx = -1000, yy = -1000, substring = [], f
   return Math.abs(xx - startX);
 };
 
-export const drawText = (p5, xx = -1000, yy = -1000, substring = [], fontSize = 12 * p5.globalScaleFactor) => {
+export const drawText = (p5, xx = -1000, yy = -1000, substring = [], fontSize = 12) => {
   p5.push();
   p5.textAlign(p5.LEFT, p5.CENTER);
-  p5.textFont(CMumbi);
+  // p5.textStyle(p5.ITALIC);
   p5.textSize(fontSize);
 
   for (let i = 0; i < substring.length; i++) {

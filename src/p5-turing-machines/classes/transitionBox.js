@@ -336,7 +336,6 @@ export default class TransitionBox {
 
     let direction = this.directionButtonPressed === "left" ? "E" : this.directionButtonPressed === "right" ? "D" : "P";
     this.labelSpan.html(allReadSubstrings[0] + " → " + allWriteSubstrings[0] + ", " + direction);
-    this.labelSpan.style("font-family", "cmunbi");
 
     return { allReadSubstrings, allWriteSubstrings, direction };
   }

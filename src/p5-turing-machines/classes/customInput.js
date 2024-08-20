@@ -5,10 +5,9 @@ import { texMap } from "../utils/getTexMaps";
 export default class CustomInput {
   constructor(p5, x, y, parent = null) {
     // Start values
-    this.p5 = p5; // Store the p5 instance
-    this.scaleFactor = p5.globalScaleFactor;
-    this.x = x * this.scaleFactor;
-    this.y = y * this.scaleFactor;
+    this.p5 = p5;
+    this.x = x;
+    this.y = y;
 
     // Dimensions
     this.fontSize = 15;
@@ -41,12 +40,6 @@ export default class CustomInput {
   }
 
   update() {
-    if (this.scaleFactor !== this.globalScaleFactor) {
-      this.x = (this.x / this.scaleFactor) * this.globalScaleFactor;
-      this.y = (this.y / this.scaleFactor) * this.globalScaleFactor;
-      this.scaleFactor = this.globalScaleFactor;
-    }
-
     this.textWidth = calculateTextWidth(this.p5, this.x, this.y, this.allSubstrings, this.fontSize);
     this.input.class(
       `absolute px-[1rem] py-1 rounded-[.4rem] focus:outline-none w-[8rem] bg-transparent border-2 border-[--color-primary] text-white`,

@@ -27,7 +27,7 @@ export default class State {
     this.r = r * this.scaleFactor;
 
     // Text input
-    this.input = new CustomInput(p5, -1000, -1000, null);
+    this.input = new CustomInput(p5, -1000, -1000, "#canvas-container");
     this.input.input.value("Q_{" + id + "}");
     this.input.textInput("Q_{" + id + "}");
   }

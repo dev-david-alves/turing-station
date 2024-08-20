@@ -111,6 +111,8 @@ export const sketch = (p5) => {
     fullscreenButton.parent(rightDiv);
     fullscreenButton.mousePressed(() => {
       fs = !fs;
+      closeExportMenu();
+      closeFloatingCanvasMenus();
       cnvIsFocused = "menu";
     });
 
@@ -244,8 +246,9 @@ export const sketch = (p5) => {
     );
     importButton.id("import-button");
     importButton.mousePressed(() => {
-      cnvIsFocused = "menu";
+      closeExportMenu();
       closeFloatingCanvasMenus();
+      cnvIsFocused = "menu";
       inputFile.elt.click();
     });
     importButton.parent(importTooltipWrapper);
@@ -326,8 +329,10 @@ export const sketch = (p5) => {
     );
     zoomInButton.id("zoom-in");
     zoomInButton.mousePressed(() => {
+      closeExportMenu();
+      closeFloatingCanvasMenus();
       cnvIsFocused = "menu";
-      p5.globalScaleFactor = min(2.0, p5.globalScaleFactor + 0.25);
+      p5.globalScaleFactor = p5.min(2.0, p5.globalScaleFactor + 0.25);
     });
     zoomInButton.parent(zoomInTooltipWrapper);
     let zoomInTooltip = p5.createElement("div", "");
@@ -355,8 +360,10 @@ export const sketch = (p5) => {
     );
     zoomOutButton.id("zoom-out");
     zoomOutButton.mousePressed(() => {
+      closeExportMenu();
+      closeFloatingCanvasMenus();
       cnvIsFocused = "menu";
-      p5.globalScaleFactor = max(0.5, p5.globalScaleFactor - 0.25);
+      p5.globalScaleFactor = p5.max(0.5, p5.globalScaleFactor - 0.25);
     });
     zoomOutButton.parent(zoomOutTooltipWrapper);
     let zoomOutTooltip = p5.createElement("div", "");
@@ -1329,18 +1336,27 @@ export const sketch = (p5) => {
     p5.cnv.mouseMoved(mouseDraggedOnCanvas);
     p5.cnv.doubleClicked(doubleClickOnCanvas);
 
-    // Create bottom menu
-    // let bottomDrawer = createBottomDrawer();
-    // bottomDrawer.parent("body");
-
     // Set canvas initial position and size
     reCalculateCanvasPositions();
 
     // Just for testing
     states.push(new State(p5, states.length, 150 / p5.globalScaleFactor, 200 / p5.globalScaleFactor, stateRadius));
     states.push(new State(p5, states.length, 450 / p5.globalScaleFactor, 200 / p5.globalScaleFactor, stateRadius));
+    links.push(
+      new Link(p5, states[0], states[1], [
+        {
+          label: ["☐", " ", "→", " ", "☐", ", ", "E"],
+          width: 54.01171875,
+        },
+        {
+          label: ["☐", " ", "→", " ", "☐", ", ", "D"],
+          width: 54.01171875,
+        },
+      ]),
+    );
 
     // Activate default button when starting
+    closeExportMenu();
     cnvIsFocused = "canvas";
     setSelectedMenuButton("select");
 
@@ -1369,6 +1385,17 @@ export const sketch = (p5) => {
       playgroundContainer.removeClass("flex-grow");
       fullscreenButton.html("<span class='material-symbols-outlined' style='font-size: 1.8rem'>fullscreen</span>");
       p5.select("#title").show();
+    }
+
+    let floatingMenu = p5.select("#floating-export-menu");
+    if (floatingMenu.hasClass("flex")) {
+      // Get all tooltips and hide them
+      let tooltips = p5.selectAll(".tooltip");
+      tooltips.forEach((tooltip) => tooltip.style("display", "none"));
+    } else {
+      // Get all tooltips and show them
+      let tooltips = p5.selectAll(".tooltip");
+      tooltips.forEach((tooltip) => tooltip.style("display", "block"));
     }
 
     // Simulation buttons activation
@@ -1411,19 +1438,19 @@ export const sketch = (p5) => {
 
     // Draw objects in order to create "layers"
     for (let i = 0; i < links.length; i++) {
-      links[i].update(p5.globalScaleFactor);
+      links[i].update();
       links[i].draw();
-      links[i].transitionBox.update(p5.globalScaleFactor);
+      links[i].transitionBox.update();
       links[i].transitionBox.draw();
     }
 
     if (startLink) {
-      startLink.update(p5.globalScaleFactor);
+      startLink.update();
       startLink.draw();
     }
 
     for (let i = 0; i < states.length; i++) {
-      states[i].update(p5.globalScaleFactor);
+      states[i].update();
       states[i].draw();
     }
 
@@ -1611,9 +1638,9 @@ export const sketch = (p5) => {
         if (i == j) continue;
         let distance = p5.dist(states[i].x, states[i].y, states[j].x, states[j].y);
         if (distance < repulseFactor) {
-          let angle = atan2(states[j].y - states[i].y, states[j].x - states[i].x);
-          let pushX = cos(angle) * 5;
-          let pushY = sin(angle) * 5;
+          let angle = p5.atan2(states[j].y - states[i].y, states[j].x - states[i].x);
+          let pushX = p5.cos(angle) * 5;
+          let pushY = p5.sin(angle) * 5;
           states[i].x -= pushX;
           states[i].y -= pushY;
           states[j].x += pushX;
@@ -1671,6 +1698,7 @@ export const sketch = (p5) => {
 
   function mousePressedOnCanvas() {
     closeBottomDrawer();
+    closeFloatingCanvasMenus();
     if (cnvIsFocused === "outside") return;
 
     closeExportMenu();
@@ -1956,10 +1984,10 @@ export const sketch = (p5) => {
     if (cnvIsFocused === "outside") return false;
 
     if (event.delta > 0) {
-      p5.globalScaleFactor = Math.max(p5.globalScaleFactor - 0.25, 0.5);
+      p5.globalScaleFactor = p5.max(p5.globalScaleFactor - 0.25, 0.5);
       // scalingCanvasSlider.value(globalScaleFactor);
     } else {
-      p5.globalScaleFactor = Math.min(p5.globalScaleFactor + 0.25, 2.0);
+      p5.globalScaleFactor = p5.min(p5.globalScaleFactor + 0.25, 2.0);
       // scalingCanvasSlider.value(globalScaleFactor);
     }
 
@@ -1995,7 +2023,7 @@ export const sketch = (p5) => {
 
     // Check ctrl + z
     if (p5.keyIsDown(p5.CONTROL) && (p5.key === "z" || p5.key === "Z")) {
-      let newIndex = Math.max(p5.currentHistoryIndex - 1, 0);
+      let newIndex = p5.max(p5.currentHistoryIndex - 1, 0);
 
       if (newIndex !== p5.currentHistoryIndex) {
         p5.currentHistoryIndex = newIndex;
@@ -2005,7 +2033,7 @@ export const sketch = (p5) => {
 
     // Check ctrl + y
     if (p5.keyIsDown(p5.CONTROL) && (p5.key === "y" || p5.key === "Y")) {
-      let newIndex = Math.min(p5.currentHistoryIndex + 1, p5.history.length - 1);
+      let newIndex = p5.min(p5.currentHistoryIndex + 1, p5.history.length - 1);
 
       if (newIndex !== p5.currentHistoryIndex) {
         p5.currentHistoryIndex = newIndex;
