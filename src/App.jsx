@@ -1,13 +1,12 @@
-import { ReactP5Wrapper } from "@p5-wrapper/react";
-import { sketch } from "./p5-turing-machines";
+import { SimulatorProvider } from "./providers/simulator";
+import SimulatorsContainer from "./components/simulator/SimulatorsContainer";
 
 export default function App() {
   return (
-    <main className="dark-mode-variables flex flex-col items-center justify-center bg-[var(--color-background)] px-[5px]">
-      <h1 id="title" className="mb-[1rem] text-[4rem] font-black text-[--color-primary]">
-        Turing Station
-      </h1>
-      <ReactP5Wrapper sketch={sketch} />
+    <main className="dark-mode-variables flex h-full min-h-screen flex-col items-center justify-center bg-background px-[5px] py-10">
+      <SimulatorProvider>
+        <SimulatorsContainer />
+      </SimulatorProvider>
     </main>
   );
 }
