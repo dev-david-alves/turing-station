@@ -2,11 +2,13 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Input from "../Input";
 import { useState } from "react";
 import { cn } from "../../utils/cn";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip";
 
 const navButtons = [
   {
     id: "test-tab",
     icon: "hugeicons:test-tube-01",
+    tip: "Teste a máquina de turing com uma entrada específica",
   },
 ];
 
@@ -77,18 +79,31 @@ function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
   return (
     <div className="flex w-full items-center justify-center gap-2">
       {navButtons.map((button, index) => (
-        <button
-          key={index}
-          id={`simulation-nav-${button.id}-${id}`}
-          className={cn(
-            "flex h-8 w-8 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
-            selectedNavButton === button.id && "border-primary bg-primary",
-            selectedNavButton === undefined && "h-7 w-7",
-          )}
-          onClick={() => handleSelectNavButton(button.id)}
-        >
-          <Icon icon={button.icon} className={cn("icon h-5 w-5", selectedNavButton === undefined && "h-4 w-4")} />
-        </button>
+        <TooltipProvider key={index}>
+          <Tooltip delayDuration={200} sideOffset={5}>
+            <TooltipTrigger asChild>
+              <button
+                key={index}
+                id={`simulation-nav-${button.id}-${id}`}
+                className={cn(
+                  "flex h-8 w-8 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
+                  selectedNavButton === button.id && "border-primary bg-primary",
+                  selectedNavButton === undefined && "h-7 w-7",
+                )}
+                onClick={() => handleSelectNavButton(button.id)}
+              >
+                <Icon icon={button.icon} className={cn("icon h-5 w-5", selectedNavButton === undefined && "h-4 w-4")} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="shadow-4xl max-w-56 rounded-md bg-main text-white">
+              <div className="w-full px-4 py-2">
+                <p className="text-xs font-bold text-darkGreen">Dica!</p>
+                <hr className="my-1 border-infoDark opacity-20" />
+                <p>{button.tip}</p>
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ))}
     </div>
   );
