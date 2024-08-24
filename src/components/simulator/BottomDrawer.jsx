@@ -41,7 +41,7 @@ function TestTab({ id }) {
           <button
             id={`simulation-${button.id}-${id}`}
             key={index}
-            className="disabled:bg-disabledButton flex h-[2rem] w-14 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed"
+            className="flex h-[2rem] w-14 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton"
             disabled={button.id === "fast-reset"}
           >
             <Icon icon={button.icon} className="icon h-5 w-5" />
@@ -65,9 +65,7 @@ function TestTab({ id }) {
   );
 }
 
-function BottomDrawer({ id }) {
-  const [selectedNavButton, setSelectedNavButton] = useState(undefined);
-
+function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
   const handleSelectNavButton = (index) => {
     if (selectedNavButton === index) {
       setSelectedNavButton(undefined);
@@ -77,27 +75,36 @@ function BottomDrawer({ id }) {
   };
 
   return (
+    <div className="flex w-full items-center justify-center gap-2">
+      {navButtons.map((button, index) => (
+        <button
+          key={index}
+          id={`simulation-nav-${button.id}-${id}`}
+          className={cn(
+            "flex h-8 w-8 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
+            selectedNavButton === button.id && "border-primary bg-primary",
+            selectedNavButton === undefined && "h-7 w-7",
+          )}
+          onClick={() => handleSelectNavButton(button.id)}
+        >
+          <Icon icon={button.icon} className={cn("icon h-5 w-5", selectedNavButton === undefined && "h-4 w-4")} />
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function BottomDrawer({ id }) {
+  const [selectedNavButton, setSelectedNavButton] = useState(undefined);
+
+  return (
     <div
       className={cn(
         "flex w-full flex-col items-center gap-2 rounded-t-md bg-main px-4 pt-2 transition-all duration-200",
         selectedNavButton !== undefined && "pb-2",
       )}
     >
-      <div className="flex w-full items-center justify-center gap-2">
-        {navButtons.map((button, index) => (
-          <button
-            key={index}
-            className={cn(
-              "flex h-8 w-8 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
-              selectedNavButton === button.id && "border-primary bg-primary",
-              selectedNavButton === undefined && "h-7 w-7",
-            )}
-            onClick={() => handleSelectNavButton(button.id)}
-          >
-            <Icon icon={button.icon} className={cn("icon h-5 w-5", selectedNavButton === undefined && "h-4 w-4")} />
-          </button>
-        ))}
-      </div>
+      <Navgation id={id} selectedNavButton={selectedNavButton} setSelectedNavButton={setSelectedNavButton} />
       {selectedNavButton === "test-tab" && <TestTab id={id} />}
     </div>
   );
