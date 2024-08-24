@@ -102,48 +102,9 @@ input::-webkit-autocomplete-item:hover {
   background-color: var(--color-background); /* Tailwind bg-gray-300 */
 }
 
-/* Tooltip */
-
-.tooltip-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.tooltip-wrapper > .tooltip {
-  visibility: hidden;
-  opacity: 0;
-  transition:
-    visibility 0s,
-    opacity 0.8s ease-in;
-}
-
-.tooltip-wrapper:hover > .tooltip {
-  visibility: visible;
-  opacity: 1;
-}
-
-.tooltip {
-  width: max-content;
-  max-width: 20rem;
-  position: absolute;
-  box-shadow: var(--box-shadow-8);
-  padding: 1rem 0.8rem;
-}
+/* Tooltips */
 
 /* TOP */
-
-.tooltip.top {
-  position: absolute;
-  top: 4.7rem;
-  left: 50%;
-  transform: translate(-50%);
-  background-color: var(--color-white);
-  color: var(--color-white);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  z-index: 1;
-}
-
 .tooltip.top::after {
   content: "";
   position: absolute;
@@ -158,19 +119,6 @@ input::-webkit-autocomplete-item:hover {
 }
 
 /* BOTTOM */
-
-.tooltip.bottom {
-  position: absolute;
-  bottom: 4.7rem;
-  left: 50%;
-  transform: translate(-50%);
-  background-color: var(--color-white);
-  color: var(--color-white);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  z-index: 1;
-}
-
 .tooltip.bottom::after {
   content: "";
   position: absolute;
@@ -185,19 +133,6 @@ input::-webkit-autocomplete-item:hover {
 }
 
 /* LEFT */
-
-.tooltip.left {
-  position: absolute;
-  top: 50%;
-  left: 6.5rem;
-  transform: translateY(-50%);
-  background-color: var(--color-white);
-  color: var(--color-white);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  z-index: 1;
-}
-
 .tooltip.left::after {
   content: "";
   position: absolute;
@@ -210,21 +145,7 @@ input::-webkit-autocomplete-item:hover {
   border-bottom: 1.3rem solid transparent;
   border-right: 1.3rem solid var(--color-white);
 }
-
 /* RIGHT */
-
-.tooltip.right {
-  position: absolute;
-  top: 50%;
-  right: 4.7rem;
-  transform: translateY(-50%);
-  background-color: var(--color-white);
-  color: var(--color-white);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  z-index: 1;
-}
-
 .tooltip.right::after {
   content: "";
   position: absolute;
@@ -236,20 +157,6 @@ input::-webkit-autocomplete-item:hover {
   border-top: 1.3rem solid transparent;
   border-bottom: 1.3rem solid transparent;
   border-left: 1.3rem solid var(--color-white);
-}
-
-.tooltip .title {
-  font-size: 1rem;
-  font-weight: 900;
-  color: var(--color-dark-green);
-  border-bottom: 0.01rem solid rgba(87, 87, 87, 0.4);
-}
-
-.tooltip .description {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: var(--color-dark);
-  margin-top: 0.5rem;
 }
 
 /* Menu export */

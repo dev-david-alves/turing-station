@@ -24,6 +24,7 @@ export default {
     extend: {
       boxShadow: {
         default: "0 0 1.6rem var(--color-background)",
+        "4xl": "0 0 2.4rem 0 rgba(0, 0, 0, 0.5)",
         high: "0 0 4.2rem 0 var(--shadow-low), 0 0 2.1rem 0 var(--shadow-high)",
       },
     },
