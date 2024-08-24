@@ -4,6 +4,7 @@ import LeftSideBar from "./LeftSideBar";
 import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
 import useClickDetection from "../../hooks/useClickOutside";
+import BottomDrawer from "./BottomDrawer";
 
 const Simulator = ({ id, children }) => {
   if (!id) throw new Error("Simulator component must have an id prop");
@@ -40,9 +41,13 @@ const Simulator = ({ id, children }) => {
         <LeftSideBar id={id} />
         <div
           id={`playground-${id}`}
-          className="h-full w-full rounded-br-xl border-b-[.4rem] border-r-[.4rem] border-main bg-danger"
+          className="relative h-full w-full rounded-br-xl border-b-[.4rem] border-r-[.4rem] border-main bg-danger"
         >
           {children}
+
+          <div className="absolute bottom-0 z-[2000] w-full px-1">
+            <BottomDrawer id={id} />
+          </div>
         </div>
       </div>
     </div>

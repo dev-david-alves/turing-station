@@ -18,6 +18,8 @@ export default {
       background: "var(--background)",
       darkGreen: "var(--dark-green)",
       white: "var(--white)",
+      disabledButton: "var(--disabled-button)",
+      transparent: "rgba(0, 0, 0, 0)",
     },
     extend: {
       boxShadow: {
