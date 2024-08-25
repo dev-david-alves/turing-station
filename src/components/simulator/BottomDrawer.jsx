@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
-import Input from "../Input";
+import { Input } from "../Input";
 import { useState } from "react";
 import { cn } from "../../utils/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip";
@@ -32,13 +32,11 @@ const simulationButtons = [
 ];
 
 function TestTab({ id }) {
-  const [value, setValue] = useState("");
-
   return (
     <>
       <div className="flex w-full max-w-full items-center gap-2">
         <p className="font-semibold text-white">Entrada</p>
-        <Input type="text" placeholder="0101..." value={value} setValue={setValue} id={`simulation-input-${id}`} />
+        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} />
         {simulationButtons.map((button, index) => (
           <button
             id={`simulation-${button.id}-${id}`}
@@ -95,7 +93,7 @@ function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
                 <Icon icon={button.icon} className={cn("icon h-5 w-5", selectedNavButton === undefined && "h-4 w-4")} />
               </button>
             </TooltipTrigger>
-            <TooltipContent side="top" className="shadow-4xl max-w-56 rounded-md bg-main text-white">
+            <TooltipContent side="top" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
               <div className="w-full px-4 py-2">
                 <p className="text-xs font-bold text-darkGreen">Dica!</p>
                 <hr className="my-1 border-infoDark opacity-20" />
