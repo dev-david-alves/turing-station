@@ -2,8 +2,10 @@ import React from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
+import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
+import EditModal from "../EditSimulatorModal";
 
-function TopBar({ id }) {
+function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
   const { data, setData } = useSimulator();
 
   const handleOpen = () => {
@@ -38,15 +40,25 @@ function TopBar({ id }) {
       </div>
 
       <div className="flex items-center gap-2">
+        <Popover open={isEditPopoverOpen} onOpenChange={setIsEditPopoverOpen}>
+          <PopoverTrigger asChild>
+            <button className="border-none bg-none p-2 text-white">
+              <Icon icon="ic:round-settings" className="icon h-4 w-4" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            className={cn("dark-mode-variables z-[200] max-w-80 bg-main px-0 shadow-4xl", isFullScreen && "mr-5")}
+          >
+            <EditModal />
+          </PopoverContent>
+        </Popover>
+
         <button className="border-none bg-none p-2 text-white" onClick={handleResize}>
           {isFullScreen ? (
             <Icon icon="mage:minimize" className="icon h-4 w-4" />
           ) : (
             <Icon icon="prime:expand" className="icon h-4 w-4" />
           )}
-        </button>
-        <button className="border-none bg-none p-2 text-white" onClick={() => handleDeleteSimulator()}>
-          <Icon icon="mdi:trash" className="icon h-4 w-4" />
         </button>
       </div>
     </div>

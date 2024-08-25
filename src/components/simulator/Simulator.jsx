@@ -5,18 +5,22 @@ import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
 import useClickDetection from "../../hooks/useClickOutside";
 import BottomDrawer from "./BottomDrawer";
+import { useState } from "react";
 
 const Simulator = ({ id, children }) => {
   if (!id) throw new Error("Simulator component must have an id prop");
 
   const { data, handleFocus } = useSimulator();
+  const [isEditPopoverOpen, setIsEditPopoverOpen] = useState(false);
 
   const isOpen = data.find((item) => item.id === id).open;
   const isFullScreen = data.find((item) => item.id === id).fullScreen;
   const isFocused = data.find((item) => item.id === id).focused;
 
   const simulatorRef = useRef(null);
-  useClickDetection(simulatorRef, () => handleFocus(false, id));
+  useClickDetection(simulatorRef, () => {
+    if (!isEditPopoverOpen) handleFocus(false, id);
+  });
 
   return (
     <div
@@ -30,7 +34,7 @@ const Simulator = ({ id, children }) => {
         isFocused && "shadow-high",
       )}
     >
-      <TopBar id={id} />
+      <TopBar id={id} isEditPopoverOpen={isEditPopoverOpen} setIsEditPopoverOpen={setIsEditPopoverOpen} />
       <div
         className={cn(
           "flex h-[28.5rem] max-h-[40rem] w-full items-center transition-all duration-300",
