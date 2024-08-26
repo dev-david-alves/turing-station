@@ -1,9 +1,9 @@
-import { useEffect, useRef } from "react";
-import { Input } from "./Input";
-import { Button, buttonVariants } from "./Button";
+import { useRef } from "react";
+import { Input } from "../Input";
+import { Button } from "../Button";
 import { Icon } from "@iconify/react/dist/iconify.js";
-import { Checkbox } from "./Checkbox";
-import { useSimulator } from "../providers/simulator";
+import { Checkbox } from "../Checkbox";
+import { useSimulator } from "../../providers/simulator";
 import { useState } from "react";
 
 function EditSimulatorModal({ id }) {

@@ -3,7 +3,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
 import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
-import EditSimulatorModal from "../EditSimulatorModal";
+import EditSimulatorModal from "./EditSimulatorModal";
 
 function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
   const { setData, getOne } = useSimulator();
