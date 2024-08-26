@@ -100,7 +100,7 @@ function EditSimulatorModal({ id }) {
         </form>
       </div>
 
-      <hr className="border-background border-opacity-5" />
+      <hr className="border-darkenBlue border-opacity-10" />
 
       <div className="mx-4 flex w-full items-center gap-2">
         <Checkbox id="hide-toolbar" checked={showLeftToolbar} onClick={handleToggleLeftToolbar} />
@@ -116,13 +116,13 @@ function EditSimulatorModal({ id }) {
         </label>
       </div>
 
-      <hr className="border-background border-opacity-5" />
+      <hr className="border-darkenBlue border-opacity-10" />
 
       <Button variant="popoverMenu" size="sm" className="text-sm">
         <Icon icon="bxs:file-import" className="icon h-4 w-4" /> Importar MT
       </Button>
 
-      <hr className="border-background border-opacity-5" />
+      <hr className="border-darkenBlue border-opacity-10" />
 
       <div className="flex w-full flex-col gap-0">
         <Button variant="popoverMenu" size="sm" className="text-sm">
@@ -133,7 +133,7 @@ function EditSimulatorModal({ id }) {
         </Button>
       </div>
 
-      <hr className="border-background border-opacity-5" />
+      <hr className="border-darkenBlue border-opacity-10" />
 
       <Button
         variant="popoverMenu"
