@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip";
+import { useSimulator } from "../../providers/simulator";
 
 const topButtons = [
   {
@@ -77,61 +78,91 @@ const bottomButtons = [
 
 function LeftSideBar({ id }) {
   const [selectedButton, setSelectedButton] = useState(undefined);
+  const { getOne } = useSimulator();
+
+  const simulator = getOne(id);
+
+  if (!simulator) return null;
+
+  const { showLeftToolbar, showTooltips } = simulator;
+
+  if (!showLeftToolbar) return null;
 
   return (
     <div className="flex h-full max-h-full flex-col items-center justify-between bg-main shadow-default">
-      <div className="flex h-fit flex-col items-center">
-        {topButtons.map((button, index) => (
-          <TooltipProvider key={index}>
-            <Tooltip delayDuration={200} sideOffset={5}>
-              <TooltipTrigger asChild>
-                <Button
-                  id={`${button.id}-${id}`}
-                  variant="simulatorMenu"
-                  className={cn(
-                    selectedButton === index && "selected bg-primary text-white hover:bg-primaryHover hover:text-white",
-                  )}
-                  onClick={() => {
-                    setSelectedButton(index);
-                  }}
-                >
-                  <Icon icon={button.icon} className={`${button.className} icon`} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="shadow-4xl max-w-56 rounded-md bg-main px-4 py-2 text-white">
-                <p className="text-xs font-bold text-darkGreen">Dica!</p>
-                <hr className="my-1 border-infoDark opacity-20" />
-                <p>{button.tip}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ))}
-      </div>
-      <div className="flex h-fit flex-col items-center">
-        {bottomButtons.map((button, index) => (
-          <TooltipProvider key={index}>
-            <Tooltip delayDuration={200} sideOffset={5}>
-              <TooltipTrigger asChild>
-                <Button
-                  key={index}
-                  id={`${button.id}-${id}`}
-                  variant="simulatorMenu"
-                  className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200 hover:bg-darkVariant hover:text-main"
-                >
-                  <Icon icon={button.icon} className={`${button.className} icon`} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="shadow-4xl max-w-56 rounded-md bg-main text-white">
-                <div className="w-full px-4 py-2">
+      {topButtons.map((button, index) => (
+        <div className="flex h-fit flex-col items-center" key={index}>
+          {showTooltips ? (
+            <TooltipProvider>
+              <Tooltip delayDuration={200} sideOffset={5}>
+                <TooltipTrigger asChild>
+                  <Button
+                    id={`${button.id}-${id}`}
+                    variant="simulatorMenu"
+                    className={cn(selectedButton === index && "selected bg-primary text-white")}
+                    onClick={() => {
+                      setSelectedButton(index);
+                    }}
+                  >
+                    <Icon icon={button.icon} className={`${button.className} icon`} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-56 rounded-md bg-main px-4 py-2 text-white shadow-4xl">
                   <p className="text-xs font-bold text-darkGreen">Dica!</p>
                   <hr className="my-1 border-infoDark opacity-20" />
                   <p>{button.tip}</p>
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        ))}
-      </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button
+              id={`${button.id}-${id}`}
+              variant="simulatorMenu"
+              className={cn(selectedButton === index && "selected bg-primary text-white")}
+              onClick={() => {
+                setSelectedButton(index);
+              }}
+            >
+              <Icon icon={button.icon} className={`${button.className} icon`} />
+            </Button>
+          )}
+        </div>
+      ))}
+
+      {bottomButtons.map((button, index) => (
+        <div className="flex h-fit flex-col items-center" key={index}>
+          {showTooltips ? (
+            <TooltipProvider>
+              <Tooltip delayDuration={200} sideOffset={5}>
+                <TooltipTrigger asChild>
+                  <Button
+                    id={`${button.id}-${id}`}
+                    variant="simulatorMenu"
+                    className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200"
+                  >
+                    <Icon icon={button.icon} className={`${button.className} icon`} />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
+                  <div className="w-full px-4 py-2">
+                    <p className="text-xs font-bold text-darkGreen">Dica!</p>
+                    <hr className="my-1 border-infoDark opacity-20" />
+                    <p>{button.tip}</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            <Button
+              id={`${button.id}-${id}`}
+              variant="simulatorMenu"
+              className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200"
+            >
+              <Icon icon={button.icon} className={`${button.className} icon`} />
+            </Button>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
