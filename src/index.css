@@ -29,6 +29,7 @@
   --dark-green: #009121;
   --white: #ffffff;
   --disabled-button: #4b4b4b;
+  --darken-blue: #36404e;
 }
 
 .dark-mode-variables {
@@ -70,13 +71,6 @@ span,
 .icon {
   pointer-events: none;
 }
-
-.canvas-focused {
-  box-shadow:
-    0 0 4.2rem 0 var(--color-shadow-low),
-    0 0 2.1rem 0 var(--color-shadow-high);
-}
-
 /* Custom styles for the autocomplete suggestions */
 input::-webkit-autocomplete,
 input::-webkit-autocomplete-popup {
@@ -100,101 +94,4 @@ input::-webkit-autocomplete-item {
 /* Style for the hovered suggestion */
 input::-webkit-autocomplete-item:hover {
   background-color: var(--color-background); /* Tailwind bg-gray-300 */
-}
-
-/* Tooltips */
-
-/* TOP */
-.tooltip.top::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  top: -1.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 1.3rem solid transparent;
-  border-right: 1.3rem solid transparent;
-  border-bottom: 1.3rem solid var(--color-white);
-}
-
-/* BOTTOM */
-.tooltip.bottom::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  bottom: -1.2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  border-left: 1.3rem solid transparent;
-  border-right: 1.3rem solid transparent;
-  border-top: 1.3rem solid var(--color-white);
-}
-
-/* LEFT */
-.tooltip.left::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: -1.2rem;
-  transform: translateY(-50%);
-  border-top: 1.3rem solid transparent;
-  border-bottom: 1.3rem solid transparent;
-  border-right: 1.3rem solid var(--color-white);
-}
-/* RIGHT */
-.tooltip.right::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  top: 50%;
-  right: -1.2rem;
-  transform: translateY(-50%);
-  border-top: 1.3rem solid transparent;
-  border-bottom: 1.3rem solid transparent;
-  border-left: 1.3rem solid var(--color-white);
-}
-
-/* Menu export */
-
-.export-tooltip {
-  width: 20rem;
-  min-width: 20rem;
-  max-width: 20rem;
-  position: absolute;
-  box-shadow: var(--box-shadow-8);
-  padding: 1rem 0.8rem;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Only LEFT */
-
-.export-tooltip.left {
-  position: absolute;
-  top: 50%;
-  left: 6.5rem;
-  transform: translateY(-50%);
-  background-color: var(--color-white);
-  color: var(--color-white);
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  z-index: 1;
-}
-
-.export-tooltip.left::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  top: 50%;
-  left: -1.2rem;
-  transform: translateY(-50%);
-  border-top: 1.3rem solid transparent;
-  border-bottom: 1.3rem solid transparent;
-  border-right: 1.3rem solid var(--color-white);
 }

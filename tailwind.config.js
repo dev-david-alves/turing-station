@@ -20,6 +20,7 @@ export default {
       white: "var(--white)",
       disabledButton: "var(--disabled-button)",
       transparent: "rgba(0, 0, 0, 0)",
+      darkenBlue: "var(--darken-blue)",
     },
     extend: {
       boxShadow: {

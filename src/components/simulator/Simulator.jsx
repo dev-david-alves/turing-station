@@ -6,6 +6,10 @@ import { cn } from "../../utils/cn";
 import useClickDetection from "../../hooks/useClickOutside";
 import BottomDrawer from "./BottomDrawer";
 import { useState } from "react";
+import CreateTransition from "./context-menu/CreateTransition";
+import StateModal from "./context-menu/StateModal";
+import LinkModal from "./context-menu/LinkModal";
+import CanvasModal from "./context-menu/CanvasModal";
 
 const Simulator = ({ id, children }) => {
   if (!id) throw new Error("Simulator component must have an id prop");
@@ -52,6 +56,11 @@ const Simulator = ({ id, children }) => {
           className="relative h-full w-full rounded-br-xl border-b-[.4rem] border-r-[.4rem] border-main bg-danger"
         >
           {children}
+
+          <CreateTransition id={id} className="left-1/2 top-1/2 hidden" />
+          <StateModal id={id} className="left-1/2 top-1/2 hidden" />
+          <LinkModal id={id} className="left-1/2 top-1/2 hidden" />
+          <CanvasModal id={id} className="left-1/2 top-1/2 hidden" />
 
           <div className="absolute bottom-0 z-[2000] w-full px-1">
             <BottomDrawer id={id} />
