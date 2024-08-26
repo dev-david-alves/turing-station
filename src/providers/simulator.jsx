@@ -12,6 +12,8 @@ const SimulatorProvider = ({ children }) => {
       open: true,
       fullScreen: false,
       focused: true,
+      showLeftToolbar: true,
+      showTooltips: true,
       data: undefined,
     },
     {
@@ -20,6 +22,8 @@ const SimulatorProvider = ({ children }) => {
       open: false,
       fullScreen: false,
       focused: false,
+      showLeftToolbar: true,
+      showTooltips: true,
       data: undefined,
     },
 
@@ -29,9 +33,13 @@ const SimulatorProvider = ({ children }) => {
       open: false,
       fullScreen: false,
       focused: false,
+      showLeftToolbar: true,
+      showTooltips: true,
       data: undefined,
     },
   ]);
+
+  const getOne = (id) => data.find((item) => item.id === id);
 
   const handleFocus = (focused, id) => {
     setData((prev) =>
@@ -43,7 +51,9 @@ const SimulatorProvider = ({ children }) => {
   //   console.log(data);
   // }, [data]);
 
-  return <SimulatorContext.Provider value={{ data, setData, handleFocus }}>{children}</SimulatorContext.Provider>;
+  return (
+    <SimulatorContext.Provider value={{ data, setData, getOne, handleFocus }}>{children}</SimulatorContext.Provider>
+  );
 };
 
 const useSimulator = () => {
