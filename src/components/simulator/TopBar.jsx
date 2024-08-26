@@ -3,10 +3,10 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
 import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
-import EditModal from "../EditSimulatorModal";
+import EditSimulatorModal from "../EditSimulatorModal";
 
 function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
-  const { data, setData } = useSimulator();
+  const { setData, getOne } = useSimulator();
 
   const handleOpen = () => {
     setData((prev) => prev.map((item) => (item.id === id ? { ...item, open: !item.open } : { ...item, open: false })));
@@ -16,12 +16,12 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
     setData((prev) => prev.map((item) => (item.id === id ? { ...item, fullScreen: !item.fullScreen } : item)));
   };
 
-  const handleDeleteSimulator = () => {
-    setData((prev) => prev.filter((item) => item.id !== id));
-  };
+  const simulator = getOne(id);
 
-  const isOpen = data.find((item) => item.id === id).open;
-  const isFullScreen = data.find((item) => item.id === id).fullScreen;
+  if (!simulator) return null;
+
+  const isOpen = simulator.open;
+  const isFullScreen = simulator.fullScreen;
 
   return (
     <div className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3")}>
@@ -35,7 +35,7 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
           </button>
         )}
         <button className="border-none bg-none text-sm font-semibold text-white">
-          <p className="px-2 py-[.4rem] uppercase text-white">Custom MT 01</p>
+          <p className="px-2 py-[.4rem] uppercase text-white">{simulator.name}</p>
         </button>
       </div>
 
@@ -49,7 +49,7 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
           <PopoverContent
             className={cn("dark-mode-variables z-[200] max-w-80 bg-main px-0 shadow-4xl", isFullScreen && "mr-5")}
           >
-            <EditModal />
+            <EditSimulatorModal id={id} />
           </PopoverContent>
         </Popover>
 

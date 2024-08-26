@@ -10,12 +10,16 @@ import { useState } from "react";
 const Simulator = ({ id, children }) => {
   if (!id) throw new Error("Simulator component must have an id prop");
 
-  const { data, handleFocus } = useSimulator();
+  const { getOne, handleFocus } = useSimulator();
   const [isEditPopoverOpen, setIsEditPopoverOpen] = useState(false);
 
-  const isOpen = data.find((item) => item.id === id).open;
-  const isFullScreen = data.find((item) => item.id === id).fullScreen;
-  const isFocused = data.find((item) => item.id === id).focused;
+  const simulator = getOne(id);
+
+  if (!simulator) return null;
+
+  const isOpen = simulator.open;
+  const isFullScreen = simulator.fullScreen;
+  const isFocused = simulator.focused;
 
   const simulatorRef = useRef(null);
   useClickDetection(simulatorRef, () => {
