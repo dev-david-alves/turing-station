@@ -10,7 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         simulatorMenu:
-          "rounded-none flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200 hover:bg-darkVariant hover:text-main",
+          "rounded-none flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200 hover:bg-primaryHover",
         popoverMenu:
           "rounded-none gap-2 flex px-4 items-center w-full justify-start border-none bg-none text-white transition-colors duration-200 hover:bg-background",
         default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
