@@ -8,7 +8,7 @@ import { useState } from "react";
 
 function EditSimulatorModal({ id }) {
   const renameRef = useRef(null);
-  const { getOne, setData } = useSimulator();
+  const { getOne, setSimulatorInfo } = useSimulator();
   const [isRenaming, setIsRenaming] = useState(false);
 
   const simulator = getOne(id);
@@ -26,7 +26,7 @@ function EditSimulatorModal({ id }) {
       return;
     }
 
-    setData((prev) => prev.map((item) => (item.id === id ? { ...item, name: newName } : item)));
+    setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, name: newName } : item)));
     setIsRenaming(false);
   };
 
@@ -36,20 +36,22 @@ function EditSimulatorModal({ id }) {
   };
 
   const handleToggleLeftToolbar = () => {
-    setData((prev) =>
+    setSimulatorInfo((prev) =>
       prev.map((item) => (item.id === id ? { ...item, showLeftToolbar: !item.showLeftToolbar } : item)),
     );
   };
 
   const handleToggleTooltips = () => {
-    setData((prev) => prev.map((item) => (item.id === id ? { ...item, showTooltips: !item.showTooltips } : item)));
+    setSimulatorInfo((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, showTooltips: !item.showTooltips } : item)),
+    );
   };
 
   const handleDeleteSimulator = () => {
     let confirmDelete = window.confirm("Tem certeza que deseja deletar este simulador?");
 
     if (!confirmDelete) return;
-    setData((prev) => prev.filter((item) => item.id !== id));
+    setSimulatorInfo((prev) => prev.filter((item) => item.id !== id));
   };
 
   return (

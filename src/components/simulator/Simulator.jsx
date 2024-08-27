@@ -3,7 +3,6 @@ import TopBar from "./TopBar";
 import LeftSideBar from "./LeftSideBar";
 import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
-import useClickDetection from "../../hooks/useClickOutside";
 import BottomDrawer from "./BottomDrawer";
 import { useState } from "react";
 import CreateTransition from "./context-menu/CreateTransition";
@@ -25,14 +24,8 @@ const Simulator = ({ id, children }) => {
   const isFullScreen = simulator.fullScreen;
   const isFocused = simulator.focused;
 
-  const simulatorRef = useRef(null);
-  useClickDetection(simulatorRef, () => {
-    if (!isEditPopoverOpen) handleFocus(false, id);
-  });
-
   return (
     <div
-      ref={simulatorRef}
       id={`simulator-${id}`}
       onClick={() => handleFocus(true, id)}
       className={cn(

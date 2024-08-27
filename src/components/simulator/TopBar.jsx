@@ -6,14 +6,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
 import EditSimulatorModal from "./EditSimulatorModal";
 
 function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
-  const { setData, getOne } = useSimulator();
+  const { setSimulatorInfo, getOne } = useSimulator();
 
   const handleOpen = () => {
-    setData((prev) => prev.map((item) => (item.id === id ? { ...item, open: !item.open } : { ...item, open: false })));
+    setSimulatorInfo((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, open: !item.open } : { ...item, open: false })),
+    );
   };
 
   const handleResize = () => {
-    setData((prev) => prev.map((item) => (item.id === id ? { ...item, fullScreen: !item.fullScreen } : item)));
+    setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, fullScreen: !item.fullScreen } : item)));
   };
 
   const simulator = getOne(id);
