@@ -4,14 +4,13 @@ import { createHistory } from "../utils/history";
 import { convertSubstringsToString, transformInputText } from "../utils/transformInputText";
 
 export default class TransitionBox {
-  constructor(p5, x, y, parent = null, rules = []) {
+  constructor(p5, x, y, rules = []) {
     this.p5 = p5;
-    this.parent = parent;
-    this.scaleFactor = p5.globalScaleFactor;
+    this.previusScale = p5.canvasScale;
 
     // Position
-    this.x = x * this.scaleFactor;
-    this.y = y * this.scaleFactor;
+    this.x = x * this.previusScale;
+    this.y = y * this.previusScale;
 
     // Dimensions
     this.w = 0;
@@ -25,31 +24,34 @@ export default class TransitionBox {
 
     // Constants
     this.offsetBoxYConstant = 18;
-    this.offsetBoxY = this.offsetBoxYConstant * this.scaleFactor;
+    this.offsetBoxY = this.offsetBoxYConstant * this.previusScale;
     this.ruleFontSizeConstant = 12;
-    this.ruleFontSize = this.ruleFontSizeConstant * this.scaleFactor;
+    this.ruleFontSize = this.ruleFontSizeConstant * this.previusScale;
 
     // Transition box elements
     this.directionButtonPressed = "left";
 
-    this.mainDiv = null;
-    this.boxDiv = null;
-    this.inputDiv = null;
-    this.buttonDiv = null;
-    this.directionButtonDiv = null;
-    this.leftButton = null;
-    this.rightButton = null;
-    this.confirmButton = null;
-    this.labelDiv = null;
-    this.labelSpan = null;
-
-    this.createBox();
-    if (this.leftButton && this.rightButton) this.switchButtons("left");
+    this.mainDiv = p5.select(`#transition-box-${p5.canvasID}`);
+    this.readInput = p5.select(`#transition-read-${p5.canvasID}`);
+    this.writeInput = p5.select(`#transition-write-${p5.canvasID}`);
+    this.leftButton = p5.select(`#transition-direction-left-${p5.canvasID}`);
+    this.rightButton = p5.select(`#transition-direction-right-${p5.canvasID}`);
+    this.stayButton = p5.select(`#transition-direction-stay-${p5.canvasID}`);
+    this.confirmButton = p5.select(`#transition-create-${p5.canvasID}`);
+    this.labelSpan = p5.select(`#transition-result-${p5.canvasID}`);
 
     if (this.readInput && this.writeInput) {
       this.readInput.input(() => this.changeResultText());
       this.writeInput.input(() => this.changeResultText());
     }
+
+    if (this.leftButton && this.rightButton && this.stayButton) {
+      this.leftButton.mousePressed(() => this.switchButtons("left"));
+      this.rightButton.mousePressed(() => this.switchButtons("right"));
+      this.stayButton.mousePressed(() => this.switchButtons("stay"));
+    }
+
+    if (this.confirmButton) this.confirmButton.mousePressed(() => this.confirmRule());
 
     // Rules information
     this.rules = rules;
@@ -68,94 +70,22 @@ export default class TransitionBox {
   switchButtons(direction) {
     if (direction === "left") {
       this.directionButtonPressed = "left";
-      this.leftButton.style("background-color", "#1762a3");
+      this.leftButton.style("background-color", "var(--primary)");
       this.rightButton.style("background-color", "transparent");
       this.stayButton.style("background-color", "transparent");
     } else if (direction === "right") {
       this.directionButtonPressed = "right";
-      this.rightButton.style("background-color", "#1762a3");
+      this.rightButton.style("background-color", "var(--primary)");
       this.leftButton.style("background-color", "transparent");
       this.stayButton.style("background-color", "transparent");
     } else {
       this.directionButtonPressed = "stay";
-      this.stayButton.style("background-color", "#1762a3");
+      this.stayButton.style("background-color", "var(--primary)");
       this.leftButton.style("background-color", "transparent");
       this.rightButton.style("background-color", "transparent");
     }
 
     this.changeResultText();
-  }
-
-  createBox() {
-    this.mainDiv = this.p5.createDiv();
-    this.mainDiv.parent(this.parent);
-    this.mainDiv.position(this.x + this.p5.globalWindowOffset.x, this.y + this.p5.globalWindowOffset.y);
-    this.mainDiv.class("flex flex-col gap-[.2rem] items-center justify-center absolute z-[100]");
-    this.boxDiv = this.p5.createDiv();
-    this.boxDiv.parent(this.mainDiv);
-    this.boxDiv.class("bg-[#222831] p-[1rem] rounded-[.5rem] flex flex-col gap-[.5rem] drop-shadow-md");
-
-    // Inputs
-    this.inputDiv = this.p5.createDiv();
-    this.inputDiv.parent(this.boxDiv);
-    this.inputDiv.class("flex items-center justify-center gap-[.5rem]");
-    this.readInput = this.p5.createInput();
-    this.readInput.parent(this.inputDiv);
-    this.readInput.class(
-      "px-[1rem] py-1 rounded-[.4rem] focus:outline-none w-[8rem] bg-transparent border-2 border-[--color-primary] text-white",
-    );
-    this.readInput.attribute("placeholder", "Lê");
-    this.writeInput = this.p5.createInput();
-    this.writeInput.parent(this.inputDiv);
-    this.writeInput.class(
-      "px-[1rem] py-1 rounded-[.4rem] focus:outline-none w-[8rem] bg-transparent border-2 border-[--color-primary] text-white",
-    );
-    this.writeInput.attribute("placeholder", "Escreve");
-
-    // Buttons
-    this.buttonDiv = this.p5.createDiv();
-    this.buttonDiv.parent(this.boxDiv);
-    this.buttonDiv.class("flex items-center justify-between");
-    this.directionButtonDiv = this.p5.createDiv();
-    this.directionButtonDiv.parent(this.buttonDiv);
-    this.directionButtonDiv.class("flex items-center gap-[.4rem]");
-
-    this.leftButton = this.p5.createButton("E");
-    this.leftButton.parent(this.directionButtonDiv);
-    this.leftButton.class(
-      "w-[3rem] h-[3rem] text-[1.2rem] text-white font-semibold border-[.1rem] border-[--color-primary] rounded-[.4rem] bg-transparent transition-colors",
-    );
-    this.leftButton.id("leftButton");
-    this.leftButton.mousePressed(() => this.switchButtons("left"));
-
-    this.rightButton = this.p5.createButton("D");
-    this.rightButton.parent(this.directionButtonDiv);
-    this.rightButton.class(
-      "w-[3rem] h-[3rem] text-[1.2rem] text-white font-semibold border-[.1rem] border-[--color-primary] rounded-[5px] bg-transparent transition-colors",
-    );
-    this.rightButton.id("rightButton");
-    this.rightButton.mousePressed(() => this.switchButtons("right"));
-
-    this.stayButton = this.p5.createButton("P");
-    this.stayButton.parent(this.directionButtonDiv);
-    this.stayButton.class(
-      "w-[3rem] h-[3rem] text-[1.2rem] text-white font-semibold border-[.1rem] border-[--color-primary] rounded-[5px] bg-transparent transition-colors",
-    );
-    this.stayButton.id("stayButton");
-    this.stayButton.mousePressed(() => this.switchButtons("stay"));
-
-    this.confirmButton = this.p5.createButton("<span class='material-symbols-outlined'>check</span>");
-    this.confirmButton.parent(this.buttonDiv);
-    this.confirmButton.class("text-center w-[40px] h-[40px] outline-none text-white");
-    this.confirmButton.mousePressed(() => this.confirmRule());
-
-    // Label
-    this.labelDiv = this.p5.createDiv();
-    this.labelDiv.parent(this.mainDiv);
-    this.labelDiv.class("bg-[#222831] px-[1rem] py-[.2rem] rounded-[5px] flex flex-col gap-1 drop-shadow-md");
-    this.labelSpan = this.p5.createSpan("aasad -> b, D");
-    this.labelSpan.parent(this.labelDiv);
-    this.labelSpan.class("font-semibold text-white");
   }
 
   containsPoint(x = this.p5.mouseX, y = this.p5.mouseY) {
@@ -224,7 +154,7 @@ export default class TransitionBox {
     this.selectedRuleIndex = -1;
     this.selected = false;
 
-    createHistory(this.p5);
+    // createHistory(this.p5);
   }
 
   // Remove all elements
@@ -237,7 +167,7 @@ export default class TransitionBox {
       this.rules.splice(this.selectedRuleIndex, 1);
       this.selectedRuleIndex = -1;
 
-      createHistory(this.p5);
+      // createHistory(this.p5);
     }
   }
 
@@ -277,13 +207,13 @@ export default class TransitionBox {
   mousePressed() {
     this.selectedRuleIndex = this.ruleContainsPoint();
 
-    if (this.selectedRuleIndex !== -1 && this.p5.selectedLeftSidebarButton === "delete") {
+    if (this.selectedRuleIndex !== -1 && this.p5.selectedLeftToolbarButton === "deleteObject") {
       this.removeRule();
     }
   }
 
   doubleClick() {
-    if (this.p5.selectedLeftSidebarButton !== "select" && this.p5.selectedLeftSidebarButton !== "addLink") return;
+    if (this.p5.selectedLeftToolbarButton !== "selectObject" && this.p5.selectedLeftToolbarButton !== "addLink") return;
     this.selectedRuleIndex = this.ruleContainsPoint();
     this.selected = this.selectedRuleIndex !== -1;
     this.getRule();
@@ -343,12 +273,12 @@ export default class TransitionBox {
   update() {
     if (!this.mainDiv) return;
 
-    if (this.scaleFactor != this.p5.globalScaleFactor) {
-      this.x = (this.x / this.scaleFactor) * this.p5.globalScaleFactor;
-      this.y = (this.y / this.scaleFactor) * this.p5.globalScaleFactor;
-      this.offsetBoxY = this.offsetBoxYConstant * this.p5.globalScaleFactor;
-      this.ruleFontSize = this.ruleFontSizeConstant * this.p5.globalScaleFactor;
-      this.scaleFactor = this.p5.globalScaleFactor;
+    if (this.previusScale != this.p5.canvasScale) {
+      this.x = (this.x / this.previusScale) * this.p5.canvasScale;
+      this.y = (this.y / this.previusScale) * this.p5.canvasScale;
+      this.offsetBoxY = this.offsetBoxYConstant * this.p5.canvasScale;
+      this.ruleFontSize = this.ruleFontSizeConstant * this.p5.canvasScale;
+      this.previusScale = this.p5.canvasScale;
     }
 
     for (let i = 0; i < this.rules.length; i++) {
@@ -369,9 +299,9 @@ export default class TransitionBox {
       this.switchButtons("left");
     }
 
-    this.mainDiv.position(this.x + this.p5.globalWindowOffset.x, this.y + this.p5.globalWindowOffset.y);
     this.w = this.mainDiv.elt.offsetWidth;
     this.h = this.mainDiv.elt.offsetHeight;
+    this.mainDiv.position(this.x + this.w / 2 + this.p5.canvasOffset.x, this.y + this.h / 2 + this.p5.canvasOffset.y);
   }
 
   draw() {

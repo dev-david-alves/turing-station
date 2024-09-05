@@ -11,9 +11,9 @@ const SimulatorProvider = ({ children }) => {
       name: "Custom MT 01",
       open: true,
       fullScreen: false,
-      focused: false,
+      focused: true,
       showLeftToolbar: true,
-      showTooltips: true,
+      showTooltips: false,
       data: undefined,
     },
     // {
