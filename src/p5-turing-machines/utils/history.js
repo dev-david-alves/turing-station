@@ -1,3 +1,5 @@
+import { createJSONExportObj, compareJSONObjects } from "./objectFunctions";
+
 export const createHistory = (p5) => {
   let { isEqual, currentState } = compareStatesOfHistory(p5);
 
@@ -18,11 +20,11 @@ export const createHistory = (p5) => {
 
 export const compareStatesOfHistory = (p5, index = -1) => {
   let realIndex = index === -1 ? p5.currentHistoryIndex : index;
-  let currentState = structuredClone(p5.createJSONExportObj());
+  let currentState = structuredClone(createJSONExportObj(p5));
   let stateOnIndex = structuredClone(p5.history[realIndex]);
 
   return {
-    isEqual: p5.compareJSONObjects(currentState, stateOnIndex),
+    isEqual: compareJSONObjects(currentState, stateOnIndex),
     currentState: currentState,
   };
 };
