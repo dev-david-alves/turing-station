@@ -111,8 +111,6 @@ export const createJSONExportObj = (p5) => {
 
   for (let i = 0; i < p5.links.length; i++) {
     if (p5.links[i] instanceof Link) {
-      let stuff = p5.links[i].getEndPointsAndCircle();
-
       dmt.links.push({
         isSelfLink: false,
         stateA: p5.links[i].stateA.id,
@@ -121,16 +119,6 @@ export const createJSONExportObj = (p5) => {
         parallelPart: p5.links[i].parallelPart,
         perpendicularPart: p5.links[i].perpendicularPart,
         lineAngleAdjust: p5.links[i].lineAngleAdjust,
-        hasCircle: stuff.hasCircle,
-        startX: stuff.startX / p5.canvasScale,
-        startY: stuff.startY / p5.canvasScale,
-        endX: stuff.endX / p5.canvasScale,
-        endY: stuff.endY / p5.canvasScale,
-        circleX: stuff.circleX / p5.canvasScale,
-        circleY: stuff.circleY / p5.canvasScale,
-        circleR: stuff.circleR / p5.canvasScale,
-        startAngle: stuff.startAngle,
-        endAngle: stuff.endAngle,
       });
     } else if (p5.links[i] instanceof SelfLink) {
       dmt.links.push({
@@ -153,34 +141,39 @@ export const createJSONExportObj = (p5) => {
   return dmt;
 };
 
-export const createCanvasStatesFromOBJ = (p5, obj) => {
+export const createCanvasFromOBJ = (p5, obj) => {
   p5.canvasScale = obj.canvasScale;
   p5.states = [];
   p5.links = [];
   p5.startLink = null;
 
-  for (let i = 0; i < obj.states.length; i++) {
-    let state = obj.states[i];
-    p5.states.push(new State(p5, state.id, state.x, state.y));
-    p5.states[p5.states.length - 1].isStartState = state.isStartState;
-    p5.states[p5.states.length - 1].isEndState = state.isEndState;
-    // p5.states[p5.states.length - 1].input.input.value(state.label);
-    // p5.states[p5.states.length - 1].input.textInput(state.label);
-  }
+  obj.states.forEach((state) => {
+    let newState = new State(p5, state.id, state.x, state.y);
+    newState.isStartState = state.isStartState;
+    newState.isEndState = state.isEndState;
+    // state.input.input.value(state.label);
+    // state.input.textInput(state.label);
+    p5.states.push(newState);
+  });
 
-  for (let i = 0; i < obj.links.length; i++) {
-    let link = obj.links[i];
-    if (Number.isInteger(link.stateA) && Number.isInteger(link.stateB)) {
+  obj.links.forEach((link) => {
+    if (link.isSelfLink) {
+      if (!link.hasOwnProperty("state")) return false;
+      if (!Number.isInteger(link.state)) return false;
+
+      let state = p5.states.find((state) => state.id === link.state);
+      p5.links.push(new SelfLink(p5, state, true, link.rules, link.anchorAngle));
+    } else {
+      if (!link.hasOwnProperty("stateA") || !link.hasOwnProperty("stateB")) return false;
+      if (!Number.isInteger(link.stateA) || !Number.isInteger(link.stateB)) return false;
+
       let stateA = p5.states.find((state) => state.id === link.stateA);
       let stateB = p5.states.find((state) => state.id === link.stateB);
       p5.links.push(
         new Link(p5, stateA, stateB, link.rules, link.parallelPart, link.perpendicularPart, link.lineAngleAdjust),
       );
-    } else if (Number.isInteger(link.state)) {
-      let state = p5.states.find((state) => state.id === link.state);
-      p5.links.push(new SelfLink(p5, state, true, link.rules, link.anchorAngle));
     }
-  }
+  });
 
   if (obj.initialStateLink) {
     p5.setInitialState(obj.initialStateLink.state, {

@@ -290,10 +290,13 @@ export default class TransitionBox {
 
     this.hovering = this.containsPoint(this.p5.mouseX, this.p5.mouseY);
 
-    if (this.selected) this.mainDiv.elt.style.visibility = "visible";
-    else this.mainDiv.elt.style.visibility = "hidden";
+    if (this.selected) {
+      this.mainDiv.position(this.x + this.w / 2 + this.p5.canvasOffset.x, this.y + this.h / 2 + this.p5.canvasOffset.y);
+      this.mainDiv.elt.style.visibility = "visible";
+    } else {
+      this.mainDiv.position(-10000, -10000);
+      this.mainDiv.elt.style.visibility = "hidden";
 
-    if (!this.selected) {
       this.readInput.value("");
       this.writeInput.value("");
       this.switchButtons("left");
@@ -301,7 +304,6 @@ export default class TransitionBox {
 
     this.w = this.mainDiv.elt.offsetWidth;
     this.h = this.mainDiv.elt.offsetHeight;
-    this.mainDiv.position(this.x + this.w / 2 + this.p5.canvasOffset.x, this.y + this.h / 2 + this.p5.canvasOffset.y);
   }
 
   draw() {

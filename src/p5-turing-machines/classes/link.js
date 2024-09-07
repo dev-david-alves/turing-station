@@ -101,9 +101,11 @@ export default class Link {
     let isReversed = this.perpendicularPart > 0;
     let reverseScale = isReversed ? 1 : -1;
     let startAngle =
-      this.p5.atan2(this.stateA.y - circle.y, this.stateA.x - circle.x) - (reverseScale * this.stateA.r) / circle.r;
+      this.p5.atan2(this.stateA.y - circle.y, this.stateA.x - circle.x) -
+      (reverseScale * this.stateA.radius) / circle.r;
     let endAngle =
-      this.p5.atan2(this.stateB.y - circle.y, this.stateB.x - circle.x) + (reverseScale * this.stateA.r) / circle.r;
+      this.p5.atan2(this.stateB.y - circle.y, this.stateB.x - circle.x) +
+      (reverseScale * this.stateA.radius) / circle.r;
 
     let startX = circle.x + circle.r * this.p5.cos(startAngle);
     let startY = circle.y + circle.r * this.p5.sin(startAngle);

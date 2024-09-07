@@ -8,7 +8,8 @@ import { createHistory } from "./utils/history";
 import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useMemo } from "react";
 import { useSimulator } from "../providers/simulator";
-import { createCanvasStatesFromOBJ, createJSONExportObj } from "./utils/objectFunctions";
+import { createCanvasFromOBJ, createJSONExportObj } from "./utils/objectFunctions";
+import { exportAsJSON, exportAsPNG, handleInputFile } from "./utils/importAndExport";
 
 export const TMSimulator = ({ id }) => {
   const { getOne } = useSimulator();
@@ -38,22 +39,6 @@ export const TMSimulator = ({ id }) => {
       p5.currentLink = null;
       p5.startLink = null;
       p5.links = [];
-
-      p5.handleInputFile = (file) => {
-        if (file.type === "application" && file.subtype === "json") {
-          let reader = new FileReader();
-          reader.onload = (event) => {
-            let result = JSON.parse(event.target.result);
-
-            if (createCanvasStatesFromOBJ(p5, result)) {
-              createHistory(p5);
-            }
-          };
-          reader.readAsText(file.file);
-        }
-
-        // p5.inputFile.value("");
-      };
 
       // Other functions
       p5.reCalculateCanvasSize = () => {
@@ -90,7 +75,7 @@ export const TMSimulator = ({ id }) => {
           p5.lastSelectedState = null;
           p5.selectedObject = null;
           p5.mtCreated = null;
-          createHistory();
+          createHistory(p5);
         }
       };
 
@@ -144,6 +129,11 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#menu-redo-${id}`).mousePressed(() => redo());
         p5.select(`#menu-zoomIn-${id}`).mousePressed(() => p5.setZoom(0.25));
         p5.select(`#menu-zoomOut-${id}`).mousePressed(() => p5.setZoom(-0.25));
+        p5.select(`#import-mt-input-${id}`).changed(() =>
+          handleInputFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0]),
+        );
+        p5.select(`#export-mt-png-${id}`).mousePressed(() => exportAsPNG(p5));
+        p5.select(`#export-mt-json-${id}`).mousePressed(() => exportAsJSON(p5));
 
         // First save on history
         p5.history.push(createJSONExportObj(p5));
@@ -669,7 +659,7 @@ export const TMSimulator = ({ id }) => {
 
         if (newIndex !== p5.currentHistoryIndex) {
           p5.currentHistoryIndex = newIndex;
-          createCanvasStatesFromOBJ(p5, p5.history[newIndex]);
+          createCanvasFromOBJ(p5, p5.history[newIndex]);
         }
       };
 
@@ -678,7 +668,7 @@ export const TMSimulator = ({ id }) => {
 
         if (newIndex !== p5.currentHistoryIndex) {
           p5.currentHistoryIndex = newIndex;
-          createCanvasStatesFromOBJ(p5, p5.history[newIndex]);
+          createCanvasFromOBJ(p5, p5.history[newIndex]);
         }
       };
 

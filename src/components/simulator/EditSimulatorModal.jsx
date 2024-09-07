@@ -1,10 +1,11 @@
 import { useRef } from "react";
 import { Input } from "../Input";
-import { Button } from "../Button";
+import { Button, buttonVariants } from "../Button";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Checkbox } from "../Checkbox";
 import { useSimulator } from "../../providers/simulator";
 import { useState } from "react";
+import { cn } from "../../utils/cn";
 
 function EditSimulatorModal({ id }) {
   const renameRef = useRef(null);
@@ -55,13 +56,13 @@ function EditSimulatorModal({ id }) {
   };
 
   return (
-    <div className="flex w-full flex-col justify-center gap-2 text-white">
+    <div className="flex w-full max-w-80 flex-col justify-center gap-2 rounded-md bg-main p-4 px-0 text-white shadow-4xl">
       <p className="text-center">Informações do simulador</p>
       <div className="flex w-full flex-col gap-2 px-4">
-        <label htmlFor="hide-toolbar" className="text-sm font-medium">
+        <label htmlFor="rename" className="text-sm font-medium">
           Renomear simulador
         </label>
-        <form onSubmit={handleRename} className="flex w-full items-center gap-2">
+        <form onSubmit={handleRename} className="flex w-full items-center gap-1">
           <Input
             ref={renameRef}
             type="text"
@@ -106,31 +107,35 @@ function EditSimulatorModal({ id }) {
 
       <div className="mx-4 flex w-full items-center gap-2">
         <Checkbox id="hide-toolbar" checked={showLeftToolbar} onClick={handleToggleLeftToolbar} />
-        <label htmlFor="hide-toolbar" className="text-sm font-medium">
-          Esconder barra de ferramentas
+        <label htmlFor="hide-toolbar" className="cursor-pointer text-sm font-medium">
+          Mostrar barra de ferramentas
         </label>
       </div>
 
       <div className="mx-4 flex w-full items-center gap-2">
         <Checkbox id="disable-tooltips" checked={showTooltips} onClick={handleToggleTooltips} />
-        <label htmlFor="disable-tooltips" className="text-sm font-medium">
-          Desabilitar dicas
+        <label htmlFor="disable-tooltips" className="cursor-pointer text-sm font-medium">
+          Mostrar dicas
         </label>
       </div>
 
       <hr className="border-darkenBlue border-opacity-10" />
 
-      <Button variant="popoverMenu" size="sm" className="text-sm">
+      <label
+        htmlFor={`import-mt-input-${id}`}
+        className={cn(buttonVariants({ variant: "popoverMenu", size: "sm" }), "cursor-pointer justify-start")}
+      >
         <Icon icon="bxs:file-import" className="icon h-4 w-4" /> Importar MT
-      </Button>
+      </label>
+      <input type="file" id={`import-mt-input-${id}`} className="hidden" />
 
       <hr className="border-darkenBlue border-opacity-10" />
 
       <div className="flex w-full flex-col gap-0">
-        <Button variant="popoverMenu" size="sm" className="text-sm">
+        <Button variant="popoverMenu" size="sm" className="text-sm" id={`export-mt-png-${id}`}>
           <Icon icon="material-symbols-light:image" className="icon h-4 w-4" /> Exportar como imagem PNG
         </Button>
-        <Button variant="popoverMenu" size="sm" className="text-sm">
+        <Button variant="popoverMenu" size="sm" className="text-sm" id={`export-mt-json-${id}`}>
           <Icon icon="carbon:machine-learning" className="icon h-4 w-4" /> Exportar arquivo Turing Station
         </Button>
       </div>

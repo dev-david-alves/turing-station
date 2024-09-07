@@ -42,18 +42,18 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <Popover open={isEditPopoverOpen} onOpenChange={setIsEditPopoverOpen}>
-          <PopoverTrigger asChild>
-            <button className="border-none bg-none p-2 text-white">
-              <Icon icon="ic:round-settings" className="icon h-4 w-4" />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent
-            className={cn("dark-mode-variables z-[200] max-w-80 bg-main px-0 shadow-4xl", isFullScreen && "mr-5")}
+        <div className="relative">
+          <button
+            className="border-none bg-none p-2 text-white"
+            onClick={() => setIsEditPopoverOpen(!isEditPopoverOpen)}
           >
+            <Icon icon="ic:round-settings" className="icon h-4 w-4" />
+          </button>
+
+          <div className={cn("absolute -right-5 z-[2000] mt-1", !isEditPopoverOpen && "invisible absolute -z-50")}>
             <EditSimulatorModal id={id} />
-          </PopoverContent>
-        </Popover>
+          </div>
+        </div>
 
         <button className="border-none bg-none p-2 text-white" onClick={handleResize}>
           {isFullScreen ? (
