@@ -5,7 +5,6 @@ import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
 import BottomDrawer from "./BottomDrawer";
 import { useState } from "react";
-import CreateTransition from "./context-menu/CreateTransition";
 import StateModal from "./context-menu/StateModal";
 import LinkModal from "./context-menu/LinkModal";
 import CanvasModal from "./context-menu/CanvasModal";
@@ -49,10 +48,9 @@ const Simulator = ({ id, children }) => {
         <div id={`playground-${id}`} className="relative h-full w-full rounded-br-xl bg-danger">
           {children}
 
-          <CreateTransition id={id} className="invisible left-1/2 top-1/2" />
-          <StateModal id={id} className="left-1/2 top-1/2 hidden" />
-          <LinkModal id={id} className="left-1/2 top-1/2 hidden" />
-          <CanvasModal id={id} className="left-1/2 top-1/2 hidden" />
+          <StateModal id={id} className="hidden" />
+          {/* <LinkModal id={id} className="hidden" /> */}
+          {/* <CanvasModal id={id} className="hidden" />  */}
 
           <div className="absolute bottom-0 z-[2000] w-full px-1">
             <BottomDrawer id={id} />
