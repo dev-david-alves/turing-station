@@ -183,7 +183,7 @@ export default class Link {
   mouseReleased() {
     if (this.dragging) {
       this.dragging = false;
-      // createHistory(this.p5);
+      createHistory(this.p5);
     }
   }
 

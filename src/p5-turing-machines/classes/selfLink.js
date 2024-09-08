@@ -79,7 +79,7 @@ export default class SelfLink {
   mouseReleased() {
     if (this.dragging) {
       this.dragging = false;
-      // createHistory(this.p5);
+      createHistory(this.p5);
     }
   }
 

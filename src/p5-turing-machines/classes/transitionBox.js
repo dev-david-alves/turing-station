@@ -1,12 +1,14 @@
+import { inputVariants } from "../../components/Input";
+import { cn } from "../../utils/cn";
 import { calculateTextWidth, drawText } from "../utils/calculateAndDrawText";
 import { texMap } from "../utils/getTexMaps";
 import { createHistory } from "../utils/history";
-import { convertSubstringsToString, transformInputText } from "../utils/transformInputText";
+import { transformInputText } from "../utils/transformInputText";
 
 export default class TransitionBox {
   constructor(p5, x, y, rules = []) {
     this.p5 = p5;
-    this.previusScale = p5.canvasScale;
+    this.previusScale = this.p5.canvasScale;
 
     // Position
     this.x = x * this.previusScale;
@@ -31,27 +33,52 @@ export default class TransitionBox {
     // Transition box elements
     this.directionButtonPressed = "left";
 
-    this.mainDiv = p5.select(`#transition-box-${p5.canvasID}`);
-    this.readInput = p5.select(`#transition-read-${p5.canvasID}`);
-    this.writeInput = p5.select(`#transition-write-${p5.canvasID}`);
-    this.leftButton = p5.select(`#transition-direction-left-${p5.canvasID}`);
-    this.rightButton = p5.select(`#transition-direction-right-${p5.canvasID}`);
-    this.stayButton = p5.select(`#transition-direction-stay-${p5.canvasID}`);
-    this.confirmButton = p5.select(`#transition-create-${p5.canvasID}`);
-    this.labelSpan = p5.select(`#transition-result-${p5.canvasID}`);
+    this.mainDiv = null;
+    this.boxDiv = null;
+    this.inputDiv = null;
+    this.buttonDiv = null;
+    this.directionButtonDiv = null;
+    this.leftButton = null;
+    this.rightButton = null;
+    this.confirmButton = null;
+    this.labelDiv = null;
+    this.labelSpan = null;
+    this.options = null;
+
+    this.createBox();
+    if (this.leftButton && this.rightButton) this.switchButtons("left");
 
     if (this.readInput && this.writeInput) {
-      this.readInput.input(() => this.changeResultText());
-      this.writeInput.input(() => this.changeResultText());
-    }
+      this.readInput.input(() => {
+        const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
+          key.toLowerCase().includes(this.readInput.value().toLowerCase()),
+        );
 
-    if (this.leftButton && this.rightButton && this.stayButton) {
-      this.leftButton.mousePressed(() => this.switchButtons("left"));
-      this.rightButton.mousePressed(() => this.switchButtons("right"));
-      this.stayButton.mousePressed(() => this.switchButtons("stay"));
-    }
+        if (this.options) this.options.remove();
 
-    if (this.confirmButton) this.confirmButton.mousePressed(() => this.confirmRule());
+        if (this.readInput.value().length <= 1 || this.readInput.value() === "\\" || texMapKeys.length === 0) return;
+        this.customDataList(texMapKeys, this.readInput, "left-0");
+
+        this.changeResultText();
+      });
+
+      this.readInput.elt.addEventListener("blur", () => this.options?.remove());
+
+      this.writeInput.input(() => {
+        const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
+          key.toLowerCase().includes(this.writeInput.value().toLowerCase()),
+        );
+
+        if (this.options) this.options.remove();
+
+        if (this.writeInput.value().length <= 1 || this.writeInput.value() === "\\" || texMapKeys.length === 0) return;
+        this.customDataList(texMapKeys, this.writeInput, "right-0");
+
+        this.changeResultText();
+      });
+
+      this.writeInput.elt.addEventListener("blur", () => this.options?.remove());
+    }
 
     // Rules information
     this.rules = rules;
@@ -70,22 +97,127 @@ export default class TransitionBox {
   switchButtons(direction) {
     if (direction === "left") {
       this.directionButtonPressed = "left";
-      this.leftButton.style("background-color", "var(--primary)");
+      this.leftButton.style("background-color", "#1762a3");
       this.rightButton.style("background-color", "transparent");
       this.stayButton.style("background-color", "transparent");
     } else if (direction === "right") {
       this.directionButtonPressed = "right";
-      this.rightButton.style("background-color", "var(--primary)");
+      this.rightButton.style("background-color", "#1762a3");
       this.leftButton.style("background-color", "transparent");
       this.stayButton.style("background-color", "transparent");
     } else {
       this.directionButtonPressed = "stay";
-      this.stayButton.style("background-color", "var(--primary)");
+      this.stayButton.style("background-color", "#1762a3");
       this.leftButton.style("background-color", "transparent");
       this.rightButton.style("background-color", "transparent");
     }
 
     this.changeResultText();
+  }
+
+  customDataList(dataFiltered, inputField, className) {
+    if (!this.mainDiv || !inputField) return;
+
+    this.options = this.p5.createDiv();
+    this.options.parent(this.mainDiv);
+    this.options.class(
+      cn(
+        "flex flex-col overflow-hidden rounded-md border-[1px] border-white bg-main text-white shadow-lg  absolute top-0 transform -translate-y-full mx-3 w-[calc(50%-1rem)]",
+        className,
+      ),
+    );
+
+    for (let i = 0; i < dataFiltered.length; i++) {
+      let option = this.p5.createDiv();
+      option.parent(this.options);
+      option.class(
+        cn(
+          "flex items-center justify-between px-2 py-2 text-xs transition-colors duration-150 hover:bg-background",
+          i > 0 && "border-t border-gray-700",
+        ),
+      );
+      option.mousePressed(() => {
+        inputField.value(dataFiltered[i][0]);
+        this.changeResultText();
+        this.options.remove();
+      });
+
+      let span1 = this.p5.createSpan(dataFiltered[i][0]);
+      span1.parent(option);
+      span1.class("font-semibold");
+
+      let span2 = this.p5.createSpan(dataFiltered[i][1]);
+      span2.parent(option);
+      span2.class("text-gray-300");
+    }
+  }
+
+  createBox() {
+    this.mainDiv = this.p5.createDiv();
+    this.mainDiv.parent(this.parent);
+    this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
+    this.mainDiv.class("relative z-[200] flex flex-col items-center justify-center gap-2");
+    this.boxDiv = this.p5.createDiv();
+    this.boxDiv.parent(this.mainDiv);
+    this.boxDiv.class("flex w-[220px] max-w-[220px] flex-col gap-2 rounded-md bg-main p-3 shadow-lg");
+
+    // Inputs
+    this.inputDiv = this.p5.createDiv();
+    this.inputDiv.parent(this.boxDiv);
+    this.inputDiv.class("flex items-center justify-center gap-[.5rem]");
+
+    this.readInput = this.p5.createInput();
+    this.readInput.parent(this.inputDiv);
+    this.readInput.class(cn(inputVariants({ variant: "default", size: "sm" }), "text-md py-1"));
+    this.readInput.attribute("placeholder", "Lê");
+    this.writeInput = this.p5.createInput();
+    this.writeInput.parent(this.inputDiv);
+    this.writeInput.class(cn(inputVariants({ variant: "default", size: "sm" }), "text-md py-1"));
+    this.writeInput.attribute("placeholder", "Escreve");
+
+    // Buttons
+    this.buttonDiv = this.p5.createDiv();
+    this.buttonDiv.parent(this.boxDiv);
+    this.buttonDiv.class("flex items-center justify-between");
+    this.directionButtonDiv = this.p5.createDiv();
+    this.directionButtonDiv.parent(this.buttonDiv);
+    this.directionButtonDiv.class("flex items-center gap-[.4rem]");
+
+    const buttonClass =
+      "flex h-9 w-9 items-center justify-center rounded-md border-2 border-primary bg-gray-800 font-semibold text-white";
+
+    this.leftButton = this.p5.createButton("E");
+    this.leftButton.parent(this.directionButtonDiv);
+    this.leftButton.class(buttonClass);
+    this.leftButton.id("leftButton");
+    this.leftButton.mousePressed(() => this.switchButtons("left"));
+
+    this.rightButton = this.p5.createButton("D");
+    this.rightButton.parent(this.directionButtonDiv);
+    this.rightButton.class(buttonClass);
+    this.rightButton.id("rightButton");
+    this.rightButton.mousePressed(() => this.switchButtons("right"));
+
+    this.stayButton = this.p5.createButton("P");
+    this.stayButton.parent(this.directionButtonDiv);
+    this.stayButton.class(buttonClass);
+    this.stayButton.id("stayButton");
+    this.stayButton.mousePressed(() => this.switchButtons("stay"));
+
+    this.confirmButton = this.p5.createButton(
+      "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'><path fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='3.5' d='M20 7L10 17l-5-5'/></svg>",
+    );
+    this.confirmButton.parent(this.buttonDiv);
+    this.confirmButton.class(cn(buttonClass, "bg-transparent border-none hover:text-darkGreen transition-colors"));
+    this.confirmButton.mousePressed(() => this.confirmRule());
+
+    // Label
+    this.labelDiv = this.p5.createDiv();
+    this.labelDiv.parent(this.mainDiv);
+    this.labelDiv.class("flex w-fit items-center gap-2 rounded-md bg-main px-3 py-1 italic text-white shadow-lg");
+    this.labelSpan = this.p5.createSpan("aasad -> b, D");
+    this.labelSpan.parent(this.labelDiv);
+    this.labelSpan.class("font-semibold text-white");
   }
 
   containsPoint(x = this.p5.mouseX, y = this.p5.mouseY) {
@@ -154,7 +286,7 @@ export default class TransitionBox {
     this.selectedRuleIndex = -1;
     this.selected = false;
 
-    // createHistory(this.p5);
+    createHistory(this.p5);
   }
 
   // Remove all elements
@@ -167,7 +299,7 @@ export default class TransitionBox {
       this.rules.splice(this.selectedRuleIndex, 1);
       this.selectedRuleIndex = -1;
 
-      // createHistory(this.p5);
+      createHistory(this.p5);
     }
   }
 
@@ -291,11 +423,12 @@ export default class TransitionBox {
     this.hovering = this.containsPoint(this.p5.mouseX, this.p5.mouseY);
 
     if (this.selected) {
-      this.mainDiv.position(this.x + this.w / 2 + this.p5.canvasOffset.x, this.y + this.h / 2 + this.p5.canvasOffset.y);
       this.mainDiv.elt.style.visibility = "visible";
+      this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
     } else {
-      this.mainDiv.position(-10000, -10000);
       this.mainDiv.elt.style.visibility = "hidden";
+      this.mainDiv.position(-1000, -1000);
+      this.options?.remove();
 
       this.readInput.value("");
       this.writeInput.value("");

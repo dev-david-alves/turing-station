@@ -62,7 +62,7 @@ export default class StartLink {
   mouseReleased() {
     if (this.dragging) {
       this.dragging = false;
-      // createHistory(this.p5);
+      createHistory(this.p5);
     }
   }
 
