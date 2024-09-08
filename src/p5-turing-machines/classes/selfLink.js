@@ -7,7 +7,7 @@ export default class SelfLink {
   constructor(p5, state, createTransitionBox = false, rules = [], anchorAngle = 0) {
     this.p5 = p5;
     this.state = state;
-    this.scaleFactor = p5.globalScaleFactor;
+    this.previusScale = p5.canvasScale;
     this.anchorAngle = anchorAngle;
     this.mouseOffsetAngle = 0;
     this.hitTargetPadding = 6;
@@ -20,7 +20,7 @@ export default class SelfLink {
 
     // Transition box
     this.transitionBox = null;
-    if (createTransitionBox) this.transitionBox = new TransitionBox(p5, -1000, -1000, "#canvas-container", rules);
+    if (createTransitionBox) this.transitionBox = new TransitionBox(p5, -1000, -1000, rules);
   }
 
   containsPoint(x, y) {
@@ -29,7 +29,7 @@ export default class SelfLink {
     let dy = y - stuff.circleY;
     let distance = this.p5.sqrt(dx * dx + dy * dy) - stuff.circleR;
 
-    return this.p5.abs(distance) < this.hitTargetPadding * this.scaleFactor;
+    return this.p5.abs(distance) < this.hitTargetPadding * this.previusScale;
   }
 
   setAnchorPoint(x, y) {
@@ -44,9 +44,9 @@ export default class SelfLink {
   }
 
   getEndPointsAndCircle() {
-    let circleX = this.state.x + 1.5 * this.state.r * this.p5.cos(this.anchorAngle);
-    let circleY = this.state.y + 1.5 * this.state.r * this.p5.sin(this.anchorAngle);
-    let circleR = 0.75 * this.state.r;
+    let circleX = this.state.x + 1.5 * this.state.radius * this.p5.cos(this.anchorAngle);
+    let circleY = this.state.y + 1.5 * this.state.radius * this.p5.sin(this.anchorAngle);
+    let circleR = 0.75 * this.state.radius;
     let startAngle = this.anchorAngle - this.p5.PI * 0.8;
     let endAngle = this.anchorAngle + this.p5.PI * 0.8;
     let startX = circleX + circleR * this.p5.cos(startAngle);
@@ -68,13 +68,12 @@ export default class SelfLink {
     };
   }
 
-  mouseDragged() {
-    if (this.p5.selectedLeftSidebarButton === "addLink") return;
+  mousePressed() {
+    if (this.p5.selectedLeftToolbarButton === "addLink") return;
 
-    if (this.selected) {
-      this.dragging = true;
-      console.log("Dragging self link");
-    }
+    if (!this.selected) return;
+
+    this.dragging = this.p5.selectedLeftToolbarButton === "selectObject";
   }
 
   mouseReleased() {
@@ -88,8 +87,8 @@ export default class SelfLink {
     if (this.hovering) this.transitionBox.selected = true;
   }
 
-  update(scaleFactor = 1.0) {
-    this.scaleFactor = scaleFactor;
+  update() {
+    this.previusScale = this.p5.canvasScale;
 
     if (this.selected && this.dragging) this.setAnchorPoint(this.p5.mouseX, this.p5.mouseY);
 
@@ -119,7 +118,7 @@ export default class SelfLink {
     this.p5.push();
     this.p5.stroke("#ffffff");
     this.p5.fill("#ffffff");
-    this.p5.strokeWeight(2 * this.scaleFactor);
+    this.p5.strokeWeight(2 * this.previusScale);
 
     if (this.hovering) {
       this.p5.stroke("#E4E4E4");

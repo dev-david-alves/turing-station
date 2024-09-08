@@ -1,17 +1,18 @@
+import { inputVariants } from "../../components/Input";
+import { cn } from "../../utils/cn";
 import { calculateTextWidth, drawText } from "../utils/calculateAndDrawText";
 import { texMap } from "../utils/getTexMaps";
 import { createHistory } from "../utils/history";
 import { convertSubstringsToString, transformInputText } from "../utils/transformInputText";
 
 export default class TransitionBox {
-  constructor(p5, x, y, parent = null, rules = []) {
+  constructor(p5, x, y, rules = []) {
     this.p5 = p5;
-    this.parent = parent;
-    this.scaleFactor = p5.globalScaleFactor;
+    this.previusScale = this.p5.canvasScale;
 
     // Position
-    this.x = x * this.scaleFactor;
-    this.y = y * this.scaleFactor;
+    this.x = x * this.previusScale;
+    this.y = y * this.previusScale;
 
     // Dimensions
     this.w = 0;
@@ -25,9 +26,9 @@ export default class TransitionBox {
 
     // Constants
     this.offsetBoxYConstant = 18;
-    this.offsetBoxY = this.offsetBoxYConstant * this.scaleFactor;
+    this.offsetBoxY = this.offsetBoxYConstant * this.previusScale;
     this.ruleFontSizeConstant = 12;
-    this.ruleFontSize = this.ruleFontSizeConstant * this.scaleFactor;
+    this.ruleFontSize = this.ruleFontSizeConstant * this.previusScale;
 
     // Transition box elements
     this.directionButtonPressed = "left";
@@ -42,13 +43,33 @@ export default class TransitionBox {
     this.confirmButton = null;
     this.labelDiv = null;
     this.labelSpan = null;
+    this.options = null;
 
     this.createBox();
     if (this.leftButton && this.rightButton) this.switchButtons("left");
 
     if (this.readInput && this.writeInput) {
-      this.readInput.input(() => this.changeResultText());
-      this.writeInput.input(() => this.changeResultText());
+      this.readInput.input(() => {
+        const { status, data } = this.getOptions(this.readInput);
+        if (status) {
+          this.customDataList(data, this.readInput, "left-0");
+        }
+
+        this.changeResultText();
+      });
+
+      this.readInput.elt.addEventListener("blur", () => this.options?.remove());
+
+      this.writeInput.input(() => {
+        const { status, data } = this.getOptions(this.writeInput);
+        if (status) {
+          this.customDataList(data, this.writeInput, "right-0");
+        }
+
+        this.changeResultText();
+      });
+
+      this.writeInput.elt.addEventListener("blur", () => this.options?.remove());
     }
 
     // Rules information
@@ -63,6 +84,58 @@ export default class TransitionBox {
     }
 
     this.changeResultText();
+  }
+
+  getOptions(inputField) {
+    if (!inputField) return;
+
+    const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
+      key.toLowerCase().includes(inputField.value().toLowerCase()),
+    );
+
+    if (this.options) this.options.remove();
+
+    if (inputField.value().length <= 1 || inputField.value() === "\\" || texMapKeys.length === 0)
+      return { status: false, data: null };
+
+    return { status: true, data: texMapKeys };
+  }
+
+  customDataList(dataFiltered, inputField, className) {
+    if (!this.mainDiv || !inputField) return;
+
+    this.options = this.p5.createDiv();
+    this.options.parent(this.mainDiv);
+    this.options.class(
+      cn(
+        "flex flex-col overflow-hidden rounded-md border-[1px] border-white bg-main text-white shadow-lg  absolute top-0 transform -translate-y-full mx-3 w-[calc(50%-1rem)]",
+        className,
+      ),
+    );
+
+    for (let i = 0; i < dataFiltered.length; i++) {
+      let option = this.p5.createDiv();
+      option.parent(this.options);
+      option.class(
+        cn(
+          "flex items-center justify-between px-2 py-2 text-xs transition-colors duration-150 hover:bg-background",
+          i > 0 && "border-t border-gray-700",
+        ),
+      );
+      option.mousePressed(() => {
+        inputField.value(dataFiltered[i][0]);
+        this.changeResultText();
+        this.options.remove();
+      });
+
+      let span1 = this.p5.createSpan(dataFiltered[i][0]);
+      span1.parent(option);
+      span1.class("font-semibold");
+
+      let span2 = this.p5.createSpan(dataFiltered[i][1]);
+      span2.parent(option);
+      span2.class("text-gray-300");
+    }
   }
 
   switchButtons(direction) {
@@ -89,27 +162,28 @@ export default class TransitionBox {
   createBox() {
     this.mainDiv = this.p5.createDiv();
     this.mainDiv.parent(this.parent);
-    this.mainDiv.position(this.x + this.p5.globalWindowOffset.x, this.y + this.p5.globalWindowOffset.y);
-    this.mainDiv.class("flex flex-col gap-[.2rem] items-center justify-center absolute z-[100]");
+    this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
+    this.mainDiv.class("relative z-[200]");
+    this.auxDiv = this.p5.createDiv();
+    this.auxDiv.parent(this.mainDiv);
+    this.auxDiv.class("flex flex-col items-center justify-center gap-2");
+
     this.boxDiv = this.p5.createDiv();
-    this.boxDiv.parent(this.mainDiv);
-    this.boxDiv.class("bg-[#222831] p-[1rem] rounded-[.5rem] flex flex-col gap-[.5rem] drop-shadow-md");
+    this.boxDiv.parent(this.auxDiv);
+    this.boxDiv.class("flex w-[220px] max-w-[220px] flex-col gap-2 rounded-md bg-main p-3 shadow-lg");
 
     // Inputs
     this.inputDiv = this.p5.createDiv();
     this.inputDiv.parent(this.boxDiv);
     this.inputDiv.class("flex items-center justify-center gap-[.5rem]");
+
     this.readInput = this.p5.createInput();
     this.readInput.parent(this.inputDiv);
-    this.readInput.class(
-      "px-[1rem] py-1 rounded-[.4rem] focus:outline-none w-[8rem] bg-transparent border-2 border-[--color-primary] text-white",
-    );
+    this.readInput.class(cn(inputVariants({ variant: "default", size: "sm" }), "text-md py-1"));
     this.readInput.attribute("placeholder", "Lê");
     this.writeInput = this.p5.createInput();
     this.writeInput.parent(this.inputDiv);
-    this.writeInput.class(
-      "px-[1rem] py-1 rounded-[.4rem] focus:outline-none w-[8rem] bg-transparent border-2 border-[--color-primary] text-white",
-    );
+    this.writeInput.class(cn(inputVariants({ variant: "default", size: "sm" }), "text-md py-1"));
     this.writeInput.attribute("placeholder", "Escreve");
 
     // Buttons
@@ -120,48 +194,63 @@ export default class TransitionBox {
     this.directionButtonDiv.parent(this.buttonDiv);
     this.directionButtonDiv.class("flex items-center gap-[.4rem]");
 
+    const buttonClass =
+      "flex h-9 w-9 items-center justify-center rounded-md border-2 border-primary bg-gray-800 font-semibold text-white";
+
     this.leftButton = this.p5.createButton("E");
     this.leftButton.parent(this.directionButtonDiv);
-    this.leftButton.class(
-      "w-[3rem] h-[3rem] text-[1.2rem] text-white font-semibold border-[.1rem] border-[--color-primary] rounded-[.4rem] bg-transparent transition-colors",
-    );
+    this.leftButton.class(buttonClass);
     this.leftButton.id("leftButton");
     this.leftButton.mousePressed(() => this.switchButtons("left"));
 
     this.rightButton = this.p5.createButton("D");
     this.rightButton.parent(this.directionButtonDiv);
-    this.rightButton.class(
-      "w-[3rem] h-[3rem] text-[1.2rem] text-white font-semibold border-[.1rem] border-[--color-primary] rounded-[5px] bg-transparent transition-colors",
-    );
+    this.rightButton.class(buttonClass);
     this.rightButton.id("rightButton");
     this.rightButton.mousePressed(() => this.switchButtons("right"));
 
     this.stayButton = this.p5.createButton("P");
     this.stayButton.parent(this.directionButtonDiv);
-    this.stayButton.class(
-      "w-[3rem] h-[3rem] text-[1.2rem] text-white font-semibold border-[.1rem] border-[--color-primary] rounded-[5px] bg-transparent transition-colors",
-    );
+    this.stayButton.class(buttonClass);
     this.stayButton.id("stayButton");
     this.stayButton.mousePressed(() => this.switchButtons("stay"));
 
-    this.confirmButton = this.p5.createButton("<span class='material-symbols-outlined'>check</span>");
+    this.confirmButton = this.p5.createButton(
+      "<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'><path fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='3.5' d='M20 7L10 17l-5-5'/></svg>",
+    );
     this.confirmButton.parent(this.buttonDiv);
-    this.confirmButton.class("text-center w-[40px] h-[40px] outline-none text-white");
+    this.confirmButton.class(cn(buttonClass, "bg-transparent border-none hover:text-darkGreen transition-colors"));
     this.confirmButton.mousePressed(() => this.confirmRule());
 
     // Label
     this.labelDiv = this.p5.createDiv();
-    this.labelDiv.parent(this.mainDiv);
-    this.labelDiv.class("bg-[#222831] px-[1rem] py-[.2rem] rounded-[5px] flex flex-col gap-1 drop-shadow-md");
+    this.labelDiv.parent(this.auxDiv);
+    this.labelDiv.class("flex w-fit items-center gap-2 rounded-md bg-main px-3 py-1 italic text-white shadow-lg");
     this.labelSpan = this.p5.createSpan("aasad -> b, D");
     this.labelSpan.parent(this.labelDiv);
     this.labelSpan.class("font-semibold text-white");
   }
 
   containsPoint(x = this.p5.mouseX, y = this.p5.mouseY) {
-    if (!this.mainDiv) return false;
+    const padding = 10 * this.p5.canvasScale;
+    // For test, draw rules box
+    // this.p5.push();
+    // this.p5.noFill();
+    // this.p5.stroke("#ffffff");
+    // this.p5.rect(
+    //   this.rulesX - this.rulesWidth / 2 - padding,
+    //   this.rulesY + this.offsetBoxY / 4 - padding,
+    //   this.rulesWidth + padding * 2,
+    //   this.rulesHeight + padding * 2,
+    // );
+    // this.p5.pop();
 
-    return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
+    return (
+      x > this.rulesX - this.rulesWidth / 2 - padding &&
+      x < this.rulesX + this.rulesWidth / 2 + padding &&
+      y > this.rulesY + this.offsetBoxY / 4 - padding &&
+      y < this.rulesY + this.offsetBoxY / 4 + this.rulesHeight + padding
+    );
   }
 
   ruleContainsPoint(x = this.p5.mouseX, y = this.p5.mouseY) {
@@ -277,13 +366,13 @@ export default class TransitionBox {
   mousePressed() {
     this.selectedRuleIndex = this.ruleContainsPoint();
 
-    if (this.selectedRuleIndex !== -1 && this.p5.selectedLeftSidebarButton === "delete") {
+    if (this.selectedRuleIndex !== -1 && this.p5.selectedLeftToolbarButton === "deleteObject") {
       this.removeRule();
     }
   }
 
   doubleClick() {
-    if (this.p5.selectedLeftSidebarButton !== "select" && this.p5.selectedLeftSidebarButton !== "addLink") return;
+    if (this.p5.selectedLeftToolbarButton !== "selectObject" && this.p5.selectedLeftToolbarButton !== "addLink") return;
     this.selectedRuleIndex = this.ruleContainsPoint();
     this.selected = this.selectedRuleIndex !== -1;
     this.getRule();
@@ -343,12 +432,12 @@ export default class TransitionBox {
   update() {
     if (!this.mainDiv) return;
 
-    if (this.scaleFactor != this.p5.globalScaleFactor) {
-      this.x = (this.x / this.scaleFactor) * this.p5.globalScaleFactor;
-      this.y = (this.y / this.scaleFactor) * this.p5.globalScaleFactor;
-      this.offsetBoxY = this.offsetBoxYConstant * this.p5.globalScaleFactor;
-      this.ruleFontSize = this.ruleFontSizeConstant * this.p5.globalScaleFactor;
-      this.scaleFactor = this.p5.globalScaleFactor;
+    if (this.previusScale != this.p5.canvasScale) {
+      this.x = (this.x / this.previusScale) * this.p5.canvasScale;
+      this.y = (this.y / this.previusScale) * this.p5.canvasScale;
+      this.offsetBoxY = this.offsetBoxYConstant * this.p5.canvasScale;
+      this.ruleFontSize = this.ruleFontSizeConstant * this.p5.canvasScale;
+      this.previusScale = this.p5.canvasScale;
     }
 
     for (let i = 0; i < this.rules.length; i++) {
@@ -360,16 +449,19 @@ export default class TransitionBox {
 
     this.hovering = this.containsPoint(this.p5.mouseX, this.p5.mouseY);
 
-    if (this.selected) this.mainDiv.elt.style.visibility = "visible";
-    else this.mainDiv.elt.style.visibility = "hidden";
+    if (this.selected) {
+      this.mainDiv.show();
+      this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
+    } else {
+      this.mainDiv.hide();
+      this.mainDiv.position(-1000, -1000);
+      this.options?.remove();
 
-    if (!this.selected) {
       this.readInput.value("");
       this.writeInput.value("");
       this.switchButtons("left");
     }
 
-    this.mainDiv.position(this.x + this.p5.globalWindowOffset.x, this.y + this.p5.globalWindowOffset.y);
     this.w = this.mainDiv.elt.offsetWidth;
     this.h = this.mainDiv.elt.offsetHeight;
   }

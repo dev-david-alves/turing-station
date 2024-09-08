@@ -25,9 +25,9 @@ export default class CustomInput {
     if (parent) this.input.parent(parent);
     this.input.size(this.width, this.height);
     this.input.class(
-      `absolute px-[5px] outline-none border-solid border-[1px] border-black rounded-1 rounded text-center`,
+      `absolute px-2 py-1 rounded-[.4rem] focus:outline-none w-[8rem] bg-background border-2 border-[--color-primary] text-white`,
     );
-    this.input.position(this.x + this.p5.globalWindowOffset.x, this.y + this.p5.globalWindowOffset.y);
+    this.input.position(this.x, this.y);
 
     this.input.input(() => this.textInput(this.input.value()));
 
@@ -41,10 +41,7 @@ export default class CustomInput {
 
   update() {
     this.textWidth = calculateTextWidth(this.p5, this.x, this.y, this.allSubstrings, this.fontSize);
-    this.input.class(
-      `absolute px-[1rem] py-1 rounded-[.4rem] focus:outline-none w-[8rem] bg-transparent border-2 border-[--color-primary] text-white`,
-    );
-    this.input.position(this.x + this.p5.globalWindowOffset.x, this.y + this.p5.globalWindowOffset.y);
+    this.input.position(this.x, this.y);
 
     if (!this.visible) {
       this.input.elt.setSelectionRange(this.input.elt.selectionStart, this.input.elt.selectionStart);

@@ -22,12 +22,7 @@ const options = [
 
 function LinkModal({ id, className }) {
   return (
-    <div
-      className={cn(
-        "absolute z-[200] w-full max-w-56 translate-x-[-50%] translate-y-[-50%] rounded-md bg-main py-2 shadow-lg",
-        className,
-      )}
-    >
+    <div className={cn("z-[200] w-full max-w-40 rounded-md bg-main py-2 shadow-lg", className)}>
       {options.map((option) => (
         <div className={cn("w-full", option.className || "")} key={option.id}>
           <button

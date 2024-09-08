@@ -95,3 +95,10 @@ input::-webkit-autocomplete-item {
 input::-webkit-autocomplete-item:hover {
   background-color: var(--color-background); /* Tailwind bg-gray-300 */
 }
+
+/* Utils */
+
+.selected-button {
+  background-color: var(--primary);
+  color: var(--white);
+}

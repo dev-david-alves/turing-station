@@ -5,7 +5,7 @@ export default class StartLink {
   constructor(p5, state, start) {
     this.p5 = p5;
     this.state = state;
-    this.scaleFactor = p5.globalScaleFactor;
+    this.previusScale = p5.canvasScale;
     this.deltaX = 0;
     this.deltaY = 0;
     this.snapToPadding = 6;
@@ -27,15 +27,15 @@ export default class StartLink {
     let percent = (dx * (x - stuff.startX) + dy * (y - stuff.startY)) / (length * length);
     let distance = (dx * (y - stuff.startY) - dy * (x - stuff.startX)) / length;
 
-    return percent > 0 && percent < 1 && this.p5.abs(distance) < this.hitTargetPadding * this.scaleFactor;
+    return percent > 0 && percent < 1 && this.p5.abs(distance) < this.hitTargetPadding * this.previusScale;
   }
 
   setAnchorPoint(x, y) {
     this.deltaX = x - this.state.x;
     this.deltaY = y - this.state.y;
 
-    if (this.p5.abs(this.deltaX) < this.snapToPadding * this.scaleFactor) this.deltaX = 0;
-    if (this.p5.abs(this.deltaY) < this.snapToPadding * this.scaleFactor) this.deltaY = 0;
+    if (this.p5.abs(this.deltaX) < this.snapToPadding * this.previusScale) this.deltaX = 0;
+    if (this.p5.abs(this.deltaY) < this.snapToPadding * this.previusScale) this.deltaY = 0;
   }
 
   getEndPoints() {
@@ -51,11 +51,12 @@ export default class StartLink {
     };
   }
 
-  mouseDragged() {
-    if (this.hovering && this.p5.selectedLeftSidebarButton === "select") {
-      this.dragging = true;
-      console.log("Dragging start link");
-    }
+  mousePressed() {
+    if (this.p5.selectedLeftToolbarButton === "addLink") return;
+
+    if (!this.selected) return;
+
+    this.dragging = this.p5.selectedLeftToolbarButton === "selectObject";
   }
 
   mouseReleased() {
@@ -65,10 +66,12 @@ export default class StartLink {
     }
   }
 
-  update(scaleFactor = 1.0) {
-    this.scaleFactor = scaleFactor;
-    this.deltaX = (this.deltaX / this.scaleFactor) * scaleFactor;
-    this.deltaY = (this.deltaY / this.scaleFactor) * scaleFactor;
+  update() {
+    if (this.previusScale !== this.p5.canvasScale) {
+      this.deltaX = (this.deltaX / this.previusScale) * this.p5.canvasScale;
+      this.deltaY = (this.deltaY / this.previusScale) * this.p5.canvasScale;
+      this.previusScale = this.p5.canvasScale;
+    }
 
     if (this.selected && this.dragging) {
       this.setAnchorPoint(this.p5.mouseX, this.p5.mouseY);
@@ -81,7 +84,7 @@ export default class StartLink {
     this.p5.push();
     this.p5.stroke("#ffffff");
     this.p5.fill("#ffffff");
-    this.p5.strokeWeight(2 * this.scaleFactor);
+    this.p5.strokeWeight(2 * this.previusScale);
 
     // draw the line
     if (this.hovering) {
@@ -94,7 +97,7 @@ export default class StartLink {
       this.p5.fill("#11528C");
     }
 
-    this.p5.circle(stuff.startX, stuff.startY, 5 * this.scaleFactor);
+    this.p5.circle(stuff.startX, stuff.startY, 5 * this.previusScale);
     this.p5.line(stuff.startX, stuff.startY, stuff.endX, stuff.endY);
 
     // draw the head of the arrow

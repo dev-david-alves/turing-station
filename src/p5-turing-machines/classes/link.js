@@ -8,7 +8,7 @@ export default class Link {
     this.p5 = p5; // Store the p5 instance
     this.stateA = stateA;
     this.stateB = stateB;
-    this.scaleFactor = p5.globalScaleFactor;
+    this.previusScale = p5.canvasScale;
     this.snapToPadding = 6;
     this.hitTargetPadding = 6;
 
@@ -23,7 +23,7 @@ export default class Link {
     this.lineAngleAdjust = lineAngleAdjust;
 
     // Transition box
-    this.transitionBox = new TransitionBox(p5, -1000, -1000, "#canvas-container", rules);
+    this.transitionBox = new TransitionBox(p5, -1000, -1000, rules);
   }
 
   det(a, b, c, d, e, f, g, h, i) {
@@ -66,7 +66,7 @@ export default class Link {
     if (
       this.parallelPart > 0 &&
       this.parallelPart < 1 &&
-      this.p5.abs(this.perpendicularPart) < this.snapToPadding * this.scaleFactor
+      this.p5.abs(this.perpendicularPart) < this.snapToPadding * this.previusScale
     ) {
       this.lineAngleAdjust = (this.perpendicularPart < 0) * this.p5.PI;
       this.perpendicularPart = 0;
@@ -101,9 +101,11 @@ export default class Link {
     let isReversed = this.perpendicularPart > 0;
     let reverseScale = isReversed ? 1 : -1;
     let startAngle =
-      this.p5.atan2(this.stateA.y - circle.y, this.stateA.x - circle.x) - (reverseScale * this.stateA.r) / circle.r;
+      this.p5.atan2(this.stateA.y - circle.y, this.stateA.x - circle.x) -
+      (reverseScale * this.stateA.radius) / circle.r;
     let endAngle =
-      this.p5.atan2(this.stateB.y - circle.y, this.stateB.x - circle.x) + (reverseScale * this.stateA.r) / circle.r;
+      this.p5.atan2(this.stateB.y - circle.y, this.stateB.x - circle.x) +
+      (reverseScale * this.stateA.radius) / circle.r;
 
     let startX = circle.x + circle.r * this.p5.cos(startAngle);
     let startY = circle.y + circle.r * this.p5.sin(startAngle);
@@ -134,7 +136,7 @@ export default class Link {
       let dy = y - stuff.circleY;
       let distance = this.p5.sqrt(dx * dx + dy * dy) - stuff.circleR;
 
-      if (this.p5.abs(distance) < this.hitTargetPadding * this.scaleFactor) {
+      if (this.p5.abs(distance) < this.hitTargetPadding * this.previusScale) {
         let angle = this.p5.atan2(dy, dx);
         let startAngle = stuff.startAngle;
         let endAngle = stuff.endAngle;
@@ -164,19 +166,18 @@ export default class Link {
       let percent = (dx * (x - stuff.startX) + dy * (y - stuff.startY)) / (length * length);
       let distance = (dx * (y - stuff.startY) - dy * (x - stuff.startX)) / length;
 
-      return percent > 0 && percent < 1 && this.p5.abs(distance) < this.hitTargetPadding * this.scaleFactor;
+      return percent > 0 && percent < 1 && this.p5.abs(distance) < this.hitTargetPadding * this.previusScale;
     }
 
     return false;
   }
 
-  mouseDragged() {
-    if (this.p5.selectedLeftSidebarButton === "addLink") return;
+  mousePressed() {
+    if (this.p5.selectedLeftToolbarButton === "addLink") return;
 
-    if (this.selected) {
-      this.dragging = true;
-      console.log("Dragging link");
-    }
+    if (!this.selected) return;
+
+    this.dragging = this.p5.selectedLeftToolbarButton === "selectObject";
   }
 
   mouseReleased() {
@@ -191,11 +192,11 @@ export default class Link {
   }
 
   update() {
-    if (this.scaleFactor !== this.p5.globalScaleFactor) {
-      this.parallelPart = (this.parallelPart / this.scaleFactor) * this.p5.globalScaleFactor;
-      this.perpendicularPart = (this.perpendicularPart / this.scaleFactor) * this.p5.globalScaleFactor;
-      this.lineAngleAdjust = (this.lineAngleAdjust / this.scaleFactor) * this.p5.globalScaleFactor;
-      this.scaleFactor = this.p5.globalScaleFactor;
+    if (this.previusScale !== this.p5.canvasScale) {
+      this.parallelPart = (this.parallelPart / this.previusScale) * this.p5.canvasScale;
+      this.perpendicularPart = (this.perpendicularPart / this.previusScale) * this.p5.canvasScale;
+      this.lineAngleAdjust = (this.lineAngleAdjust / this.previusScale) * this.p5.canvasScale;
+      this.previusScale = this.p5.canvasScale;
     }
 
     if (this.selected && this.dragging) this.setAnchorPoint(this.p5.mouseX, this.p5.mouseY);
@@ -230,7 +231,7 @@ export default class Link {
     this.p5.push();
     this.p5.stroke("#ffffff");
     this.p5.fill("#ffffff");
-    this.p5.strokeWeight(2 * this.scaleFactor);
+    this.p5.strokeWeight(2 * this.previusScale);
 
     if (this.hovering) {
       this.p5.stroke("#E4E4E4");

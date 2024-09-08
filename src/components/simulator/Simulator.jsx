@@ -5,7 +5,6 @@ import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
 import BottomDrawer from "./BottomDrawer";
 import { useState } from "react";
-import CreateTransition from "./context-menu/CreateTransition";
 import StateModal from "./context-menu/StateModal";
 import LinkModal from "./context-menu/LinkModal";
 import CanvasModal from "./context-menu/CanvasModal";
@@ -23,6 +22,7 @@ const Simulator = ({ id, children }) => {
   const isOpen = simulator.open;
   const isFullScreen = simulator.fullScreen;
   const isFocused = simulator.focused;
+  const showLeftToolbar = simulator.showLeftToolbar;
 
   return (
     <div
@@ -38,22 +38,19 @@ const Simulator = ({ id, children }) => {
       <TopBar id={id} isEditPopoverOpen={isEditPopoverOpen} setIsEditPopoverOpen={setIsEditPopoverOpen} />
       <div
         className={cn(
-          "flex h-[28.5rem] max-h-[40rem] w-full items-center transition-all duration-300",
+          "flex h-[28.5rem] max-h-[40rem] w-full items-center border-b-[5px] border-r-[5px] border-main transition-all duration-300",
           !isOpen && "max-h-0 overflow-hidden",
           isFullScreen && "h-full max-h-full",
+          !showLeftToolbar && "border-l-[5px]",
         )}
       >
         <LeftSideBar id={id} />
-        <div
-          id={`playground-${id}`}
-          className="relative h-full w-full rounded-br-xl border-b-[.4rem] border-r-[.4rem] border-main bg-danger"
-        >
+        <div id={`playground-${id}`} className="relative h-full w-full rounded-br-xl bg-danger">
           {children}
 
-          <CreateTransition id={id} className="left-1/2 top-1/2 hidden" />
-          <StateModal id={id} className="left-1/2 top-1/2 hidden" />
-          <LinkModal id={id} className="left-1/2 top-1/2 hidden" />
-          <CanvasModal id={id} className="left-1/2 top-1/2 hidden" />
+          <StateModal id={id} className="hidden" />
+          {/* <LinkModal id={id} className="hidden" /> */}
+          {/* <CanvasModal id={id} className="hidden" />  */}
 
           <div className="absolute bottom-0 z-[2000] w-full px-1">
             <BottomDrawer id={id} />

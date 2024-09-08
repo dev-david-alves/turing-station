@@ -5,7 +5,7 @@ export default class TemporaryLink {
     this.p5 = p5;
     this.from = null;
     this.to = null;
-    this.scaleFactor = p5.globalScaleFactor;
+    this.previusScale = p5.canvasScale;
   }
 
   draw() {
@@ -14,9 +14,9 @@ export default class TemporaryLink {
     this.p5.push();
     this.p5.stroke("#ffffff");
     this.p5.fill("#ffffff");
-    this.p5.strokeWeight(2 * this.scaleFactor);
+    this.p5.strokeWeight(2 * this.previusScale);
 
-    this.p5.circle(this.from.x, this.from.y, 5 * this.scaleFactor);
+    this.p5.circle(this.from.x, this.from.y, 5 * this.previusScale);
     this.p5.line(this.from.x, this.from.y, this.to.x, this.to.y);
 
     // Draw the head of the arrow

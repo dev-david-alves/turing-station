@@ -16,7 +16,7 @@ export const updateBoxPosition = (p5, tBox, x, y, angleOrNull, isSelfLink = fals
     y += cornerPointY + cosCalc;
 
     // Rules position based on cosine and sine calculations
-    ruleX = x + (tBox.rulesWidth / 2 + 5 * tBox.scaleFactor) * cosCalc;
+    ruleX = x + (tBox.rulesWidth / 2 + 5 * tBox.previusScale) * cosCalc;
 
     if (p5.round(p5.abs(sinCalc)) == 0 && p5.round(p5.abs(cosCalc)) == 1) {
       ruleY = y - (tBox.rulesHeight / 2 + tBox.offsetBoxY / 2);
@@ -37,7 +37,7 @@ export const updateBoxPosition = (p5, tBox, x, y, angleOrNull, isSelfLink = fals
     tBox.rulesY = ruleY;
   } else {
     let angle = p5.atan2(y - parent.y, x - parent.x);
-    tBox.rulesX = x + (tBox.rulesWidth / 2 + 5 * tBox.scaleFactor) * p5.cos(angle);
+    tBox.rulesX = x + (tBox.rulesWidth / 2 + 5 * tBox.previusScale) * p5.cos(angle);
 
     if (angle < 0) {
       let sinn = p5.map(p5.sin(angle), 0, -1, -0.5, -1);

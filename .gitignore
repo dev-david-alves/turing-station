@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Extras
+TODO.md
+oldCodeBackup.js
+test-mts/
