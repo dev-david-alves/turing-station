@@ -40,6 +40,9 @@ export const TMSimulator = ({ id }) => {
       p5.startLink = null;
       p5.links = [];
 
+      // Context Menus
+      p5.stateContextMenu = null;
+
       // Other functions
       p5.reCalculateCanvasSize = () => {
         const playground = p5.select(`#playground-${id}`);
@@ -100,6 +103,7 @@ export const TMSimulator = ({ id }) => {
         p5.cnv.mouseMoved(() => p5.mouseDraggedInsideCanvas()); // Used because there is no mouseDragged event for cnv
         p5.cnv.doubleClicked(() => p5.doubleClickedInsideCanvas());
         p5.cnv.mouseWheel((event) => p5.mouseWheelInsideCanvas(event));
+        window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
         p5.states.push(new State(p5, p5.getNewStateId(), 150, 200));
@@ -123,7 +127,7 @@ export const TMSimulator = ({ id }) => {
           button.mousePressed(() => p5.setLeftToolbarButton(button.elt.id));
         });
 
-        // Set functions to buttons there cannot be selected
+        // Set functions to menu buttons
         p5.select(`#menu-cleanCanvas-${id}`).mousePressed(() => p5.cleanCanvas());
         p5.select(`#menu-undo-${id}`).mousePressed(() => undo());
         p5.select(`#menu-redo-${id}`).mousePressed(() => redo());
@@ -134,6 +138,13 @@ export const TMSimulator = ({ id }) => {
         );
         p5.select(`#export-mt-png-${id}`).mousePressed(() => exportAsPNG(p5));
         p5.select(`#export-mt-json-${id}`).mousePressed(() => exportAsJSON(p5));
+
+        // Set context menu buttons
+        p5.stateContextMenu = p5.select(`#state-contextMenu-${id}`);
+        p5.select(`#toggle-initial-state-${id}`).mousePressed(() => p5.setInitialState());
+        p5.select(`#toggle-final-state-${id}`).mousePressed(() => p5.setFinalState());
+        p5.select(`#rename-state-${id}`).mousePressed(() => p5.renameState());
+        p5.select(`#delete-state-${id}`).mousePressed(() => p5.deleteObject());
 
         // First save on history
         p5.history.push(createJSONExportObj(p5));
@@ -252,99 +263,138 @@ export const TMSimulator = ({ id }) => {
         }
       };
 
-      // p5.setInitialState = (index = null, props = null) => {
-      //   let linkSize = 80 * p5.canvasScale;
+      p5.setInitialState = (index = null, props = null) => {
+        let linkSize = 80 * p5.canvasScale;
 
-      //   if (index === null) {
-      //     if (p5.selectedObject && p5.selectedObject.object instanceof State) {
-      //       let start = {
-      //         x: p5.selectedObject.object.x - linkSize,
-      //         y: p5.selectedObject.object.y,
-      //       };
-      //       p5.startLink = new StartLink(p5, p5.selectedObject.object, start);
-      //       p5.startLink.selected = true;
+        if (index === null) {
+          if (!p5.selectedObject) return;
+          if ((!p5.selectedObject.object) instanceof State) return;
 
-      //       // Unset the start state for all states
-      //       for (let i = 0; i < p5.states.length; i++) {
-      //         p5.selectedObject.object.isStartState = false;
-      //       }
+          const selectedState = p5.selectedObject.object;
+          let start = {
+            x: selectedState.x - linkSize,
+            y: selectedState.y,
+          };
+          p5.startLink = new StartLink(p5, selectedState, start);
+          p5.startLink.selected = true;
 
-      //       // Set the selected state as the start state
-      //       p5.selectedObject.object.isStartState = true;
-      //       p5.cnvIsFocused = "export-menu";
-      //     }
-      //   } else {
-      //     let start = { x: p5.states[index].x - linkSize, y: p5.states[index].y };
+          // Unset the start state for all states
+          p5.states.forEach((state) => {
+            state.isStartState = false;
+          });
 
-      //     // Modify the starting position if props are provided
-      //     if (props) {
-      //       start = {
-      //         x: p5.states[index].x + props.deltaX,
-      //         y: p5.states[index].y + props.deltaY,
-      //       };
-      //     }
+          // Set the selected state as the start state
+          selectedState.isStartState = true;
+        } else {
+          let start = { x: p5.states[index].x - linkSize, y: p5.states[index].y };
 
-      //     // Create a new StartLink for the specified state
-      //     p5.startLink = new StartLink(p5, p5.states[index], start);
-      //     p5.startLink.selected = true;
-
-      //     // Unset the start state for all states
-      //     for (let i = 0; i < p5.states.length; i++) {
-      //       p5.states[i].isStartState = false;
-      //     }
-
-      //     // Set the specified state as the start state
-      //     p5.states[index].isStartState = true;
-      //   }
-
-      //   // Hide the context menu
-      //   p5.contextMenu.hide();
-      // };
-
-      p5.deleteObject = () => {
-        if (p5.selectedObject) {
-          if (p5.selectedObject.object instanceof State) {
-            // Remove State
-            for (let i = 0; i < p5.links.length; i++) {
-              if (p5.links[i] instanceof Link) {
-                if (
-                  p5.links[i].stateA.id === p5.selectedObject.object.id ||
-                  p5.links[i].stateB.id === p5.selectedObject.object.id
-                ) {
-                  p5.links[i].transitionBox.remove();
-                  p5.links.splice(i, 1);
-                  i--;
-                }
-              } else {
-                if (p5.links[i].state.id === p5.selectedObject.object.id) {
-                  p5.links[i].transitionBox.remove();
-                  p5.links.splice(i, 1);
-                  i--;
-                }
-              }
-            }
-
-            if (p5.startLink && p5.startLink.state.id === p5.selectedObject.object.id) p5.startLink = null;
-
-            p5.selectedObject.object.remove();
-            p5.states.splice(p5.selectedObject.index, 1);
-          } else if (p5.selectedObject.object instanceof Link || p5.selectedObject.object instanceof SelfLink) {
-            // Remove Link
-            p5.selectedObject.object.transitionBox.remove();
-            p5.links.splice(p5.selectedObject.index, 1);
-          } else if (p5.selectedObject.object instanceof StartLink) {
-            // Remove StartLink
-            p5.startLink = null;
+          // Modify the starting position if props are provided
+          if (props) {
+            start = {
+              x: p5.states[index].x + props.deltaX,
+              y: p5.states[index].y + props.deltaY,
+            };
           }
 
-          p5.selectedObject = null;
-          createHistory(p5);
+          // Create a new StartLink for the specified state
+          p5.startLink = new StartLink(p5, p5.states[index], start);
+          p5.startLink.selected = true;
+
+          // Unset the start state for all states
+          p5.states.forEach((state) => {
+            state.isStartState = false;
+          });
+
+          // Set the specified state as the start state
+          p5.states[index].isStartState = true;
         }
+
+        // Hide the context menu
+        if (p5.stateContextMenu) p5.stateContextMenu.hide();
+      };
+
+      p5.setFinalState = () => {
+        if (!p5.selectedObject) return;
+        if (!(p5.selectedObject.object instanceof State)) return;
+
+        const selectedState = p5.selectedObject.object;
+        selectedState.isFinalState = !selectedState.isFinalState;
+
+        // Hide the context menu
+        if (p5.stateContextMenu) p5.stateContextMenu.hide();
+      };
+
+      p5.renameState = () => {
+        if (!p5.selectedObject) return;
+        if (!(p5.selectedObject.object instanceof State)) return;
+
+        const selectedState = p5.selectedObject.object;
+        selectedState.input.visible = true;
+        p5.stateContextMenu.hide();
+      };
+
+      p5.deleteObject = () => {
+        if (!p5.selectedObject) return false;
+
+        if (p5.selectedObject.object instanceof State) {
+          // Remove State
+          for (let i = 0; i < p5.links.length; i++) {
+            if (p5.links[i] instanceof Link) {
+              if (
+                p5.links[i].stateA.id === p5.selectedObject.object.id ||
+                p5.links[i].stateB.id === p5.selectedObject.object.id
+              ) {
+                p5.links[i].transitionBox.remove();
+                p5.links.splice(i, 1);
+                i--;
+              }
+            } else {
+              if (p5.links[i].state.id === p5.selectedObject.object.id) {
+                p5.links[i].transitionBox.remove();
+                p5.links.splice(i, 1);
+                i--;
+              }
+            }
+          }
+
+          if (p5.startLink && p5.startLink.state.id === p5.selectedObject.object.id) p5.startLink = null;
+
+          p5.selectedObject.object.remove();
+          p5.states.splice(p5.selectedObject.index, 1);
+        } else if (p5.selectedObject.object instanceof Link || p5.selectedObject.object instanceof SelfLink) {
+          // Remove Link
+          p5.selectedObject.object.transitionBox.remove();
+          p5.links.splice(p5.selectedObject.index, 1);
+        } else if (p5.selectedObject.object instanceof StartLink) {
+          // Remove StartLink
+          p5.startLink = null;
+        }
+
+        p5.selectedObject = null;
+        createHistory(p5);
+        if (p5.stateContextMenu) p5.stateContextMenu.hide();
+      };
+
+      p5.createState = (x = p5.mouseX, y = p5.mouseX) => {
+        // Check if mouse is over a link transition box
+        if (p5.links.some((link) => link.transitionBox.containsPoint(x, y))) return;
+
+        // Create new state
+        let stateID = p5.getNewStateId();
+        p5.states.push(new State(p5, stateID, x, y));
+        p5.states[p5.states.length - 1].selected = true;
+        p5.selectedObject = {
+          object: p5.states[p5.states.length - 1],
+          index: p5.states.length - 1,
+        };
+
+        createHistory(p5);
       };
 
       p5.stateRepulse = () => {
         if (p5.states.length < 2) return;
 
+        // For states to repulse each other
         const repulseRatio = 2.2;
         const repulseFactor = repulseRatio * p5.states[0].radius;
 
@@ -365,9 +415,15 @@ export const TMSimulator = ({ id }) => {
         }
       };
 
-      // function checkAnyStateInputVisible() {
-      //   return p5.states.some((state) => state.input.visible);
-      // }
+      p5.checkAndCloseAllStateInputVisible = () => {
+        const stateInputVisible = p5.states.some((state) => state.input.visible);
+        if (stateInputVisible) {
+          p5.states.forEach((state) => (state.input.visible = false));
+          return true;
+        }
+
+        return false;
+      };
 
       p5.unHoverAllObjects = () => {
         p5.states.forEach((state) => (state.hovering = false));
@@ -513,8 +569,28 @@ export const TMSimulator = ({ id }) => {
         return false;
       };
 
+      p5.openStateContextMenu = () => {
+        if (p5.selectedObject && p5.selectedObject.object instanceof State) {
+          if (!p5.stateContextMenu) return false;
+          const selectedState = p5.selectedObject.object;
+
+          // Get height of the context menu
+          p5.stateContextMenu.position(p5.canvasOffset.x + selectedState.x, p5.canvasOffset.y + selectedState.y);
+
+          if (selectedState.isFinalState) {
+            p5.select("#toggle-final-state-" + id).html("Definir como não final");
+          } else {
+            p5.select("#toggle-final-state-" + id).html("Definir como final");
+          }
+
+          p5.stateContextMenu.show();
+        }
+      };
+
       p5.mousePressedInsideCanvas = () => {
         if (!focused) return false;
+        if (p5.stateContextMenu) p5.stateContextMenu.hide();
+        if (p5.checkAndCloseAllStateInputVisible()) createHistory(p5);
 
         if (
           p5.mouseButton === p5.CENTER ||
@@ -522,7 +598,7 @@ export const TMSimulator = ({ id }) => {
           p5.keyIsDown(p5.CONTROL) ||
           p5.selectedLeftToolbarButton === "move"
         )
-          return;
+          return false;
 
         p5.selectedObject = p5.getFirstSelectedObject();
         if (p5.selectedObject) p5.selectedObject.object.selected = true;
@@ -531,27 +607,13 @@ export const TMSimulator = ({ id }) => {
           // Add State on Click Canvas
           if (p5.selectedLeftToolbarButton === "addState" && !p5.selectedObject) {
             p5.unSelectAllObjects();
+            p5.createState(p5.mouseX, p5.mouseY);
 
-            // Check if mouse is over a link transition box
-            if (p5.links.some((link) => link.transitionBox.containsPoint(p5.mouseX, p5.mouseY))) return;
-
-            // Create new state
-            let stateID = p5.getNewStateId();
-            p5.states.push(new State(p5, stateID, p5.mouseX, p5.mouseY));
-            p5.states[p5.states.length - 1].selected = true;
-            p5.selectedObject = {
-              object: p5.states[p5.states.length - 1],
-              index: p5.states.length - 1,
-            };
-
-            createHistory(p5);
             return false;
           }
 
           // Delete Object on Click Canvas
           if (p5.selectedLeftToolbarButton === "deleteObject") {
-            // if (checkAnyStateInputVisible()) createHistory(p5);
-
             p5.deleteObject();
 
             p5.links.forEach((link) => {
@@ -562,27 +624,11 @@ export const TMSimulator = ({ id }) => {
           if (p5.selectedLeftToolbarButton === "selectObject" && p5.selectedObject) {
             p5.selectedObject.object.mousePressed();
           }
+        } else if (p5.mouseButton === p5.RIGHT) {
+          p5.openStateContextMenu();
         }
 
-        //   } else if (p5.mouseButton === p5.RIGHT) {
-        //     if (p5.selectedObject && p5.selectedObject.object instanceof State) {
-        //       p5.contextMenu.position(
-        //         p5.globalWindowOffset.x + p5.selectedObject.object.x,
-        //         p5.globalWindowOffset.y + p5.selectedObject.object.y,
-        //       );
-
-        //       if (p5.selectedObject.object.isEndState) {
-        //         p5.select("#set-final-state-" + sketchIndex).html("Definir como Não Final");
-        //       } else {
-        //         p5.select("#set-final-state-" + sketchIndex).html("Definir como Final");
-        //       }
-
-        //       p5.contextMenu.show();
-        //     }
-        //   }
-
-        //   return false;
-        // }
+        return false;
       };
 
       p5.mouseReleased = () => {
@@ -615,35 +661,17 @@ export const TMSimulator = ({ id }) => {
 
         if (p5.selectedLeftToolbarButton === "selectObject") {
           if (!hoveredObject) {
-            console.log("Double clicked on empty space");
-            let stateID = p5.getNewStateId();
-            p5.states.push(new State(p5, stateID, p5.mouseX / p5.canvasScale, p5.mouseY / p5.canvasScale));
-            p5.states[p5.states.length - 1].selected = true;
-            p5.selectedObject = {
-              object: p5.states[p5.states.length - 1],
-              index: p5.states.length - 1,
-            };
+            console.log("Double clicked on canvas");
+            p5.unSelectAllObjects();
+            p5.checkAndCloseAllStateInputVisible();
+            p5.createState(p5.mouseX, p5.mouseY);
+          } else {
+            if (hoveredObject.object instanceof State) {
+              console.log("Double clicked on state");
 
-            createHistory(p5);
+              p5.openStateContextMenu();
+            }
           }
-
-          // else {
-          //   if (hoveredObject.object instanceof State) {
-          //     console.log("Double clicked on state");
-          //     p5.contextMenu.position(
-          //       p5.globalWindowOffset.x + hoveredObject.object.x,
-          //       p5.globalWindowOffset.y + hoveredObject.object.y,
-          //     );
-
-          //     if (hoveredObject.object.isEndState) {
-          //       p5.select("#set-final-state-" + sketchIndex).html("Definir como Não Final");
-          //     } else {
-          //       p5.select("#set-final-state-" + sketchIndex).html("Definir como Final");
-          //     }
-
-          //     p5.contextMenu.show();
-          //   }
-          // }
         }
 
         return false;
@@ -676,24 +704,11 @@ export const TMSimulator = ({ id }) => {
       p5.keyPressed = () => {
         if (!focused) return false;
 
-        // if (
-        //   (p5.keyCode === 49 || p5.keyCode === 50 || p5.keyCode === 51 || p5.keyCode === 52 || p5.keyCode === 53) &&
-        //   !p5.keyIsDown(p5.SHIFT) &&
-        //   !p5.states.some((state) => state.input.visible) &&
-        //   !p5.links.some((link) => link.transitionBox.selected) &&
-        //   !p5.select("#lab-test-" + sketchIndex).hasClass("active")
-        // ) {
-        //   let index = p5.keyCode - 49;
-        //   let buttons = ["select", "move", "addState", "addLink", "delete"];
-        //   p5.setSelectedMenuButton(buttons[index]);
-        //   // return false;
-        // }
-
         if (p5.keyCode === p5.DELETE) p5.deleteObject();
 
-        // p5.states.forEach((state) => {
-        //   state.keyPressed();
-        // });
+        p5.states.forEach((state) => {
+          state.keyPressed();
+        });
 
         p5.links.forEach((link) => {
           link.transitionBox.keyPressed();

@@ -7,7 +7,7 @@ export default class State {
     this.p5 = p5;
     this.id = id;
     this.isStartState = false;
-    this.isEndState = false;
+    this.isFinalState = false;
     this.previusScale = this.p5.canvasScale;
 
     // Dragging
@@ -26,9 +26,9 @@ export default class State {
     this.radius = 25 * this.p5.canvasScale;
 
     // Text input
-    // this.input = new CustomInput(p5, -1000, -1000, "#canvas-container");
-    // this.input.input.value("Q_{" + id + "}");
-    // this.input.textInput("Q_{" + id + "}");
+    this.input = new CustomInput(p5, -1000, -1000);
+    this.input.input.value("Q_{" + id + "}");
+    this.input.textInput("Q_{" + id + "}");
   }
 
   closestPointOnCircle(x, y) {
@@ -48,10 +48,10 @@ export default class State {
   }
 
   mousePressed() {
-    // if (this.input.visible) {
-    //   this.input.visible = false;
-    //   createHistory(this.p5);
-    // }
+    if (this.input.visible) {
+      this.input.visible = false;
+      createHistory(this.p5);
+    }
 
     if (!this.selected) return;
 
@@ -65,12 +65,12 @@ export default class State {
   mouseReleased() {
     if (this.dragging) {
       this.dragging = false;
-      // createHistory(this.p5);
+      createHistory(this.p5);
     }
   }
 
   remove() {
-    // this.input.input.remove();
+    this.input.input.remove();
   }
 
   update() {
@@ -89,22 +89,22 @@ export default class State {
       this.y = this.p5.mouseY + this.offsetY;
     }
 
-    // this.input.x = this.x - this.input.width / 2;
-    // this.input.y = this.y - (this.radius + this.input.height + 5 * this.p5.canvasScale);
+    this.input.x = this.x - this.input.width / 2;
+    this.input.y = this.y - (this.radius + this.input.height + 5 * this.p5.canvasScale);
 
-    // if (this.input.visible && document.activeElement !== this.input.input.elt) {
-    //   this.input.input.elt.focus();
-    // }
+    if (this.input.visible && document.activeElement !== this.input.input.elt) {
+      this.input.input.elt.focus();
+    }
 
-    // this.input.update(this.p5.canvasScale);
+    this.input.update(this.p5.canvasScale);
   }
 
-  // keyPressed() {
-  //   if (this.p5.keyCode === this.p5.ENTER && this.input.visible) {
-  //     this.input.visible = false;
-  //     createHistory(this.p5);
-  //   }
-  // }
+  keyPressed() {
+    if (this.p5.keyCode === this.p5.ENTER && this.input.visible) {
+      this.input.visible = false;
+      createHistory(this.p5);
+    }
+  }
 
   draw() {
     this.p5.push();
@@ -120,7 +120,7 @@ export default class State {
 
     this.p5.ellipseMode(this.p5.CENTER);
     this.p5.ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
-    if (this.isEndState) this.p5.ellipse(this.x, this.y, this.radius * 1.6, this.radius * 1.6);
+    if (this.isFinalState) this.p5.ellipse(this.x, this.y, this.radius * 1.6, this.radius * 1.6);
 
     this.p5.pop();
 
@@ -128,13 +128,13 @@ export default class State {
     // Different fill based on status
     this.p5.fill("#ffffff");
 
-    // drawText(
-    //   this.p5,
-    //   this.x - (this.input.textWidth / 2) * this.p5.globalP5p5.canvasScale,
-    //   this.y,
-    //   this.input.allSubstrings,
-    //   this.input.fontSize * this.p5.globalP5p5.canvasScale,
-    // );
+    drawText(
+      this.p5,
+      this.x - (this.input.textWidth / 2) * this.p5.canvasScale,
+      this.y,
+      this.input.allSubstrings,
+      this.input.fontSize * this.p5.canvasScale,
+    );
     this.p5.pop();
   }
 }

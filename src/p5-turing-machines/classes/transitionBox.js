@@ -3,7 +3,7 @@ import { cn } from "../../utils/cn";
 import { calculateTextWidth, drawText } from "../utils/calculateAndDrawText";
 import { texMap } from "../utils/getTexMaps";
 import { createHistory } from "../utils/history";
-import { transformInputText } from "../utils/transformInputText";
+import { convertSubstringsToString, transformInputText } from "../utils/transformInputText";
 
 export default class TransitionBox {
   constructor(p5, x, y, rules = []) {
@@ -163,9 +163,13 @@ export default class TransitionBox {
     this.mainDiv = this.p5.createDiv();
     this.mainDiv.parent(this.parent);
     this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
-    this.mainDiv.class("relative z-[200] flex flex-col items-center justify-center gap-2");
+    this.mainDiv.class("relative z-[200]");
+    this.auxDiv = this.p5.createDiv();
+    this.auxDiv.parent(this.mainDiv);
+    this.auxDiv.class("flex flex-col items-center justify-center gap-2");
+
     this.boxDiv = this.p5.createDiv();
-    this.boxDiv.parent(this.mainDiv);
+    this.boxDiv.parent(this.auxDiv);
     this.boxDiv.class("flex w-[220px] max-w-[220px] flex-col gap-2 rounded-md bg-main p-3 shadow-lg");
 
     // Inputs
@@ -220,7 +224,7 @@ export default class TransitionBox {
 
     // Label
     this.labelDiv = this.p5.createDiv();
-    this.labelDiv.parent(this.mainDiv);
+    this.labelDiv.parent(this.auxDiv);
     this.labelDiv.class("flex w-fit items-center gap-2 rounded-md bg-main px-3 py-1 italic text-white shadow-lg");
     this.labelSpan = this.p5.createSpan("aasad -> b, D");
     this.labelSpan.parent(this.labelDiv);
@@ -228,9 +232,25 @@ export default class TransitionBox {
   }
 
   containsPoint(x = this.p5.mouseX, y = this.p5.mouseY) {
-    if (!this.mainDiv) return false;
+    const padding = 10 * this.p5.canvasScale;
+    // For test, draw rules box
+    // this.p5.push();
+    // this.p5.noFill();
+    // this.p5.stroke("#ffffff");
+    // this.p5.rect(
+    //   this.rulesX - this.rulesWidth / 2 - padding,
+    //   this.rulesY + this.offsetBoxY / 4 - padding,
+    //   this.rulesWidth + padding * 2,
+    //   this.rulesHeight + padding * 2,
+    // );
+    // this.p5.pop();
 
-    return x > this.x && x < this.x + this.w && y > this.y && y < this.y + this.h;
+    return (
+      x > this.rulesX - this.rulesWidth / 2 - padding &&
+      x < this.rulesX + this.rulesWidth / 2 + padding &&
+      y > this.rulesY + this.offsetBoxY / 4 - padding &&
+      y < this.rulesY + this.offsetBoxY / 4 + this.rulesHeight + padding
+    );
   }
 
   ruleContainsPoint(x = this.p5.mouseX, y = this.p5.mouseY) {
@@ -430,10 +450,10 @@ export default class TransitionBox {
     this.hovering = this.containsPoint(this.p5.mouseX, this.p5.mouseY);
 
     if (this.selected) {
-      this.mainDiv.elt.style.visibility = "visible";
+      this.mainDiv.show();
       this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
     } else {
-      this.mainDiv.elt.style.visibility = "hidden";
+      this.mainDiv.hide();
       this.mainDiv.position(-1000, -1000);
       this.options?.remove();
 

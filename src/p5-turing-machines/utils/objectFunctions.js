@@ -12,7 +12,7 @@ export const compareJSONObjects = (obj1, obj2) => {
       obj1.states[i].x !== obj2.states[i].x ||
       obj1.states[i].y !== obj2.states[i].y ||
       obj1.states[i].isStartState !== obj2.states[i].isStartState ||
-      obj1.states[i].isEndState !== obj2.states[i].isEndState ||
+      obj1.states[i].isFinalState !== obj2.states[i].isFinalState ||
       obj1.states[i].label !== obj2.states[i].label
     )
       return false;
@@ -98,37 +98,37 @@ export const createJSONExportObj = (p5) => {
     initialStateLink: null,
   };
 
-  for (let i = 0; i < p5.states.length; i++) {
+  p5.states.forEach((state) => {
     dmt.states.push({
-      id: p5.states[i].id,
-      x: p5.states[i].x / p5.canvasScale,
-      y: p5.states[i].y / p5.canvasScale,
-      isStartState: p5.states[i].isStartState,
-      isEndState: p5.states[i].isEndState,
-      // label: p5.states[i].input.input.value(),
+      id: state.id,
+      x: state.x / p5.canvasScale,
+      y: state.y / p5.canvasScale,
+      isStartState: state.isStartState,
+      isFinalState: state.isFinalState,
+      label: state.input.allSubstrings.join(""),
     });
-  }
+  });
 
-  for (let i = 0; i < p5.links.length; i++) {
-    if (p5.links[i] instanceof Link) {
+  p5.links.forEach((link) => {
+    if (link instanceof Link) {
       dmt.links.push({
         isSelfLink: false,
-        stateA: p5.links[i].stateA.id,
-        stateB: p5.links[i].stateB.id,
-        rules: p5.links[i].transitionBox.rules,
-        parallelPart: p5.links[i].parallelPart,
-        perpendicularPart: p5.links[i].perpendicularPart,
-        lineAngleAdjust: p5.links[i].lineAngleAdjust,
+        stateA: link.stateA.id,
+        stateB: link.stateB.id,
+        rules: link.transitionBox.rules,
+        parallelPart: link.parallelPart,
+        perpendicularPart: link.perpendicularPart,
+        lineAngleAdjust: link.lineAngleAdjust,
       });
-    } else if (p5.links[i] instanceof SelfLink) {
+    } else if (link instanceof SelfLink) {
       dmt.links.push({
         isSelfLink: true,
-        state: p5.links[i].state.id,
-        rules: p5.links[i].transitionBox.rules,
-        anchorAngle: p5.links[i].anchorAngle,
+        state: link.state.id,
+        rules: link.transitionBox.rules,
+        anchorAngle: link.anchorAngle,
       });
     }
-  }
+  });
 
   if (p5.startLink) {
     dmt.initialStateLink = {
@@ -150,9 +150,9 @@ export const createCanvasFromOBJ = (p5, obj) => {
   obj.states.forEach((state) => {
     let newState = new State(p5, state.id, state.x, state.y);
     newState.isStartState = state.isStartState;
-    newState.isEndState = state.isEndState;
-    // state.input.input.value(state.label);
-    // state.input.textInput(state.label);
+    newState.isFinalState = state.isFinalState;
+    newState.input.input.value(state.label);
+    newState.input.textInput(state.label);
     p5.states.push(newState);
   });
 
