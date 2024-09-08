@@ -50,14 +50,10 @@ export default class TransitionBox {
 
     if (this.readInput && this.writeInput) {
       this.readInput.input(() => {
-        const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
-          key.toLowerCase().includes(this.readInput.value().toLowerCase()),
-        );
-
-        if (this.options) this.options.remove();
-
-        if (this.readInput.value().length <= 1 || this.readInput.value() === "\\" || texMapKeys.length === 0) return;
-        this.customDataList(texMapKeys, this.readInput, "left-0");
+        const { status, data } = this.getOptions(this.readInput);
+        if (status) {
+          this.customDataList(data, this.readInput, "left-0");
+        }
 
         this.changeResultText();
       });
@@ -65,14 +61,10 @@ export default class TransitionBox {
       this.readInput.elt.addEventListener("blur", () => this.options?.remove());
 
       this.writeInput.input(() => {
-        const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
-          key.toLowerCase().includes(this.writeInput.value().toLowerCase()),
-        );
-
-        if (this.options) this.options.remove();
-
-        if (this.writeInput.value().length <= 1 || this.writeInput.value() === "\\" || texMapKeys.length === 0) return;
-        this.customDataList(texMapKeys, this.writeInput, "right-0");
+        const { status, data } = this.getOptions(this.writeInput);
+        if (status) {
+          this.customDataList(data, this.writeInput, "right-0");
+        }
 
         this.changeResultText();
       });
@@ -94,25 +86,19 @@ export default class TransitionBox {
     this.changeResultText();
   }
 
-  switchButtons(direction) {
-    if (direction === "left") {
-      this.directionButtonPressed = "left";
-      this.leftButton.style("background-color", "#1762a3");
-      this.rightButton.style("background-color", "transparent");
-      this.stayButton.style("background-color", "transparent");
-    } else if (direction === "right") {
-      this.directionButtonPressed = "right";
-      this.rightButton.style("background-color", "#1762a3");
-      this.leftButton.style("background-color", "transparent");
-      this.stayButton.style("background-color", "transparent");
-    } else {
-      this.directionButtonPressed = "stay";
-      this.stayButton.style("background-color", "#1762a3");
-      this.leftButton.style("background-color", "transparent");
-      this.rightButton.style("background-color", "transparent");
-    }
+  getOptions(inputField) {
+    if (!inputField) return;
 
-    this.changeResultText();
+    const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
+      key.toLowerCase().includes(inputField.value().toLowerCase()),
+    );
+
+    if (this.options) this.options.remove();
+
+    if (inputField.value().length <= 1 || inputField.value() === "\\" || texMapKeys.length === 0)
+      return { status: false, data: null };
+
+    return { status: true, data: texMapKeys };
   }
 
   customDataList(dataFiltered, inputField, className) {
@@ -150,6 +136,27 @@ export default class TransitionBox {
       span2.parent(option);
       span2.class("text-gray-300");
     }
+  }
+
+  switchButtons(direction) {
+    if (direction === "left") {
+      this.directionButtonPressed = "left";
+      this.leftButton.style("background-color", "#1762a3");
+      this.rightButton.style("background-color", "transparent");
+      this.stayButton.style("background-color", "transparent");
+    } else if (direction === "right") {
+      this.directionButtonPressed = "right";
+      this.rightButton.style("background-color", "#1762a3");
+      this.leftButton.style("background-color", "transparent");
+      this.stayButton.style("background-color", "transparent");
+    } else {
+      this.directionButtonPressed = "stay";
+      this.stayButton.style("background-color", "#1762a3");
+      this.leftButton.style("background-color", "transparent");
+      this.rightButton.style("background-color", "transparent");
+    }
+
+    this.changeResultText();
   }
 
   createBox() {
