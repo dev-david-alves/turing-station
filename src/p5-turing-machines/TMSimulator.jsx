@@ -10,6 +10,12 @@ import { useMemo } from "react";
 import { useSimulator } from "../providers/simulator";
 import { createCanvasFromOBJ, createJSONExportObj } from "./utils/objectFunctions";
 import { exportAsJSON, exportAsPNG, handleInputFile } from "./utils/importAndExport";
+import {
+  simulationReset,
+  simulationStepBack,
+  simulationStepForward,
+  simulationFastResult,
+} from "./classes/simulation/run";
 
 export const TMSimulator = ({ id }) => {
   const { getOne } = useSimulator();
@@ -106,12 +112,21 @@ export const TMSimulator = ({ id }) => {
         window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
-        p5.states.push(new State(p5, p5.getNewStateId(), 150, 200));
-        p5.states.push(new State(p5, p5.getNewStateId(), 450, 200));
+        p5.states.push(new State(p5, p5.getNewStateId(), 200, 200));
+        p5.states.push(new State(p5, p5.getNewStateId(), 400, 200));
+        p5.states.push(new State(p5, p5.getNewStateId(), 600, 200));
+        p5.states[2].isFinalState = true;
         p5.links.push(
           new Link(p5, p5.states[0], p5.states[1], [
             {
-              label: ["☐", " ", "→", " ", "☐", ", ", "E"],
+              label: ["a", " ", "→", " ", "b", ", ", "D"],
+              width: 54.01171875,
+            },
+          ]),
+
+          new Link(p5, p5.states[1], p5.states[2], [
+            {
+              label: ["b", " ", "→", " ", "c", ", ", "D"],
               width: 54.01171875,
             },
             {
@@ -119,7 +134,18 @@ export const TMSimulator = ({ id }) => {
               width: 54.01171875,
             },
           ]),
+
+          new SelfLink(p5, p5.states[1], true),
         );
+        p5.links[2].transitionBox.rules = [
+          {
+            label: ["c", " ", "→", " ", "d", ", ", "D"],
+            width: 54.01171875,
+          },
+        ];
+
+        p5.startLink = new StartLink(p5, p5.states[0], { x: 100, y: 200 });
+        // End of testing
 
         // Set leftToolbar buttons mousePressed
         const getAllButtons = p5.selectAll(".toolbar-action-buttons");
@@ -145,6 +171,12 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#toggle-final-state-${id}`).mousePressed(() => p5.setFinalState());
         p5.select(`#rename-state-${id}`).mousePressed(() => p5.renameState());
         p5.select(`#delete-state-${id}`).mousePressed(() => p5.deleteObject());
+
+        // Set simulation buttons
+        p5.select(`#simulation-fast-reset-${id}`).mousePressed(() => simulationReset(p5));
+        p5.select(`#simulation-step-back-${id}`).mousePressed(() => simulationStepBack(p5));
+        p5.select(`#simulation-step-forward-${id}`).mousePressed(() => simulationStepForward(p5));
+        p5.select(`#simulation-fast-simulation-${id}`).mousePressed(() => simulationFastResult(p5));
 
         // First save on history
         p5.history.push(createJSONExportObj(p5));
@@ -268,7 +300,7 @@ export const TMSimulator = ({ id }) => {
 
         if (index === null) {
           if (!p5.selectedObject) return;
-          if ((!p5.selectedObject.object) instanceof State) return;
+          if (!(p5.selectedObject.object instanceof State)) return;
 
           const selectedState = p5.selectedObject.object;
           let start = {

@@ -6,14 +6,14 @@ export class MT {
     gamma = new set(),
     delta = {},
     initialState = 0,
-    endStates = new set(),
+    finalStates = new set(),
   ) {
     this.Q = Q;
     this.sigma = sigma;
     this.gamma = gamma;
     this.delta = delta;
     this.initialState = initialState;
-    this.endStates = endStates;
+    this.finalStates = finalStates;
     this.tape = [];
     this.head = 0;
 
@@ -46,8 +46,8 @@ export class MT {
     if (!this.isSubset(this.sigma, this.gamma)) return false;
     // Q must contain initial state
     if (!this.Q.has(this.initialState)) return false;
-    // End states must be a subset of Q
-    if (!this.isSubset(this.endStates, this.Q)) return false;
+    // Final states must be a subset of Q
+    if (!this.isSubset(this.finalStates, this.Q)) return false;
 
     // Check if all transitions are valid
     for (const state in this.delta) {
@@ -69,7 +69,7 @@ export class MT {
   }
 
   checkAcceptance() {
-    if (this.endStates.has(this.currentState)) {
+    if (this.finalStates.has(this.currentState)) {
       if (this.maxInterectedIndex >= this.simulatedWord.length) return { accepted: true, end: true };
       else return { accepted: false, end: true };
     }
@@ -86,22 +86,16 @@ export class MT {
     });
   }
 
-  fastSimulationReset() {
-    this.head = 0;
-    this.tape = [];
-    this.maxInterectedIndex = 0;
-    this.history = [];
-  }
-
-  backwardSimulation() {
+  stepBack() {
     let last = this.history.pop();
+    if (!last) return { accepted: false, end: false };
     this.tape = last.tape;
     this.head = last.tapeHead;
     this.currentState = last.currentState;
     this.maxInterectedIndex = last.maxInterectedIndex;
   }
 
-  forwardSimulation() {
+  stepForward() {
     if (!this.checkValidMTFormat()) {
       alert("Invalid Turing Machine format\n\n");
       return { accepted: false, end: true };
@@ -135,7 +129,7 @@ export class MT {
     return this.checkAcceptance();
   }
 
-  fastSimulation(word = "", maxIteractions = 100) {
+  fastResult(word = "", maxIteractions = 100) {
     if (!this.checkValidMTFormat()) {
       alert("Invalid Turing Machine format\n\n");
       return false;
@@ -150,7 +144,7 @@ export class MT {
     this.head = 0;
 
     do {
-      let result = this.forwardSimulation();
+      let result = this.stepForward();
       if (result.end) return result;
 
       maxIteractions--;

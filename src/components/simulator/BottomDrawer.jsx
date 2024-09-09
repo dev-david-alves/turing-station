@@ -33,37 +33,36 @@ const simulationButtons = [
   },
 ];
 
-function TestTab({ id }) {
+function TestTab({ id, className }) {
   return (
-    <>
-      <div className="flex w-full max-w-full items-center gap-2">
+    <div className={cn("w-full overflow-hidden", className)}>
+      <div className="flex w-full max-w-full items-center gap-1">
         <p className="font-semibold text-white">Entrada</p>
-        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} />
+        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} value="acccb" onChange={() => {}} />
         {simulationButtons.map((button, index) => (
           <button
             id={`simulation-${button.id}-${id}`}
             key={index}
             className="flex h-[2rem] w-14 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton"
-            disabled={button.id === "fast-reset"}
           >
             <Icon icon={button.icon} className="icon h-5 w-5" />
           </button>
         ))}
       </div>
-      <div id={`erros-container-${id}`} className="flex w-full flex-col items-center justify-center gap-2">
+      {/* <div id={`erros-container-${id}`} className="flex w-full flex-col items-center justify-center gap-2">
         <div id={`error-${id}`} className="flex w-full items-center justify-center rounded-sm bg-danger py-1">
           <p className="font-semibold text-white">Defina um estado inicial!</p>
         </div>
         <div id={`error-${id}`} className="flex w-full items-center justify-center rounded-sm bg-danger py-1">
           <p className="font-semibold text-white">Defina pelo menos um estado final!</p>
         </div>
-      </div>
+      </div> */}
 
       <div
         id={`tape-container-${id}`}
-        className="flex w-full flex-col items-center justify-center gap-2 overflow-x-auto"
+        className="flex h-fit w-full flex-col items-center justify-center gap-2 overflow-x-auto overflow-y-hidden rounded-md"
       ></div>
-    </>
+    </div>
   );
 }
 
@@ -131,21 +130,22 @@ function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
 }
 
 function BottomDrawer({ id }) {
-  const [selectedNavButton, setSelectedNavButton] = useState(undefined);
+  const [selectedNavButton, setSelectedNavButton] = useState("test-tab");
 
   const bottomRef = useRef(null);
-  useClickOuside(bottomRef, () => setSelectedNavButton(undefined));
+  useClickOuside(bottomRef, () => setSelectedNavButton("test-tab"));
 
   return (
     <div
+      id={`bottom-drawer-${id}`}
       ref={bottomRef}
       className={cn(
         "flex w-full flex-col items-center gap-2 rounded-t-md bg-main px-4 pt-2 transition-all duration-200",
-        selectedNavButton !== undefined && "pb-2",
+        selectedNavButton !== undefined && `opened-${selectedNavButton} pb-2`,
       )}
     >
       <Navgation id={id} selectedNavButton={selectedNavButton} setSelectedNavButton={setSelectedNavButton} />
-      {selectedNavButton === "test-tab" && <TestTab id={id} />}
+      <TestTab id={id} className={cn(selectedNavButton !== "test-tab" && "max-h-0")} />
     </div>
   );
 }
