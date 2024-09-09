@@ -36,11 +36,11 @@ function EditSimulatorModal({ id }) {
     setIsRenaming(false);
   };
 
-  const handleToggleLeftToolbar = () => {
-    setSimulatorInfo((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, showLeftToolbar: !item.showLeftToolbar } : item)),
-    );
-  };
+  // const handleToggleLeftToolbar = () => {
+  //   setSimulatorInfo((prev) =>
+  //     prev.map((item) => (item.id === id ? { ...item, showLeftToolbar: !item.showLeftToolbar } : item)),
+  //   );
+  // };
 
   const handleToggleTooltips = () => {
     setSimulatorInfo((prev) =>
@@ -105,12 +105,12 @@ function EditSimulatorModal({ id }) {
 
       <hr className="border-darkenBlue border-opacity-10" />
 
-      <div className="mx-4 flex w-full items-center gap-2">
+      {/* <div className="mx-4 flex w-full items-center gap-2">
         <Checkbox id="hide-toolbar" checked={showLeftToolbar} onClick={handleToggleLeftToolbar} />
         <label htmlFor="hide-toolbar" className="cursor-pointer text-sm font-medium">
           Mostrar barra de ferramentas
         </label>
-      </div>
+      </div> */}
 
       <div className="mx-4 flex w-full items-center gap-2">
         <Checkbox id="disable-tooltips" checked={showTooltips} onClick={handleToggleTooltips} />

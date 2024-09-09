@@ -38,23 +38,22 @@ const Simulator = ({ id, children }) => {
       <TopBar id={id} isEditPopoverOpen={isEditPopoverOpen} setIsEditPopoverOpen={setIsEditPopoverOpen} />
       <div
         className={cn(
-          "flex h-[28.5rem] max-h-[40rem] w-full items-center border-b-[5px] border-r-[5px] border-main transition-all duration-300",
+          "relative flex h-[28.5rem] max-h-[40rem] w-full items-center border-b-[5px] border-r-[5px] border-main transition-all duration-300",
           !isOpen && "max-h-0 overflow-hidden",
           isFullScreen && "h-full max-h-full",
           !showLeftToolbar && "border-l-[5px]",
         )}
       >
-        <LeftSideBar id={id} />
-        <div id={`playground-${id}`} className="relative h-full w-full rounded-br-xl bg-danger">
+        <LeftSideBar id={id} className="absolute left-0 top-0" />
+        <div id={`playground-${id}`} className="h-full w-full rounded-br-xl bg-danger">
           {children}
 
           <StateModal id={id} className="hidden" />
           {/* <LinkModal id={id} className="hidden" /> */}
           {/* <CanvasModal id={id} className="hidden" />  */}
-
-          <div className="absolute bottom-0 z-[2000] w-full px-1">
-            <BottomDrawer id={id} />
-          </div>
+        </div>
+        <div className="absolute bottom-0 z-[2000] ml-14 w-[calc(100%-3.5rem)] px-1">
+          <BottomDrawer id={id} />
         </div>
       </div>
     </div>

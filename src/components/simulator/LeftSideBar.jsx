@@ -77,80 +77,85 @@ const bottomButtons = [
   },
 ];
 
-function LeftSideBar({ id }) {
+function LeftSideBar({ id, className }) {
   const { getOne } = useSimulator();
 
   const simulator = getOne(id);
 
   if (!simulator) return null;
 
-  const { showLeftToolbar, showTooltips } = simulator;
-
-  if (!showLeftToolbar) return null;
+  const { showTooltips } = simulator;
 
   return (
-    <div className="flex h-full max-h-full flex-col items-center justify-between bg-main shadow-default">
-      {topButtons.map((button, index) => (
-        <div className="flex h-fit flex-col items-center" key={index}>
-          {showTooltips ? (
-            <TooltipProvider>
-              <Tooltip delayDuration={200} sideOffset={5}>
-                <TooltipTrigger asChild>
-                  <Button id={`${button.id}-${id}`} variant="simulatorMenu" className="toolbar-action-buttons">
-                    <Icon icon={button.icon} className={`${button.className} icon`} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
-                  <div className="w-full px-4 py-2">
-                    <p className="text-xs font-bold text-darkGreen">Dica!</p>
-                    <hr className="my-1 border-infoDark opacity-20" />
-                    <p>{button.tip}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <Button id={`${button.id}-${id}`} variant="simulatorMenu" className="toolbar-action-buttons">
-              <Icon icon={button.icon} className={`${button.className} icon`} />
-            </Button>
-          )}
-        </div>
-      ))}
+    <div
+      id={`left-toolbar-${id}`}
+      className={cn("flex h-full max-h-full flex-col items-center justify-between bg-main shadow-default", className)}
+    >
+      <div className="flex h-fit flex-col items-center">
+        {topButtons.map((button, index) => (
+          <div className="w-full" key={index}>
+            {showTooltips ? (
+              <TooltipProvider>
+                <Tooltip delayDuration={200} sideOffset={5}>
+                  <TooltipTrigger asChild>
+                    <Button id={`${button.id}-${id}`} variant="simulatorMenu" className="toolbar-action-buttons">
+                      <Icon icon={button.icon} className={`${button.className} icon`} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
+                    <div className="w-full px-4 py-2">
+                      <p className="text-xs font-bold text-darkGreen">Dica!</p>
+                      <hr className="my-1 border-infoDark opacity-20" />
+                      <p>{button.tip}</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <Button id={`${button.id}-${id}`} variant="simulatorMenu" className="toolbar-action-buttons">
+                <Icon icon={button.icon} className={`${button.className} icon`} />
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
 
-      {bottomButtons.map((button, index) => (
-        <div className="flex h-fit flex-col items-center" key={index}>
-          {showTooltips ? (
-            <TooltipProvider>
-              <Tooltip delayDuration={200} sideOffset={5}>
-                <TooltipTrigger asChild>
-                  <Button
-                    id={`${button.id}-${id}`}
-                    variant="simulatorMenu"
-                    className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200"
-                  >
-                    <Icon icon={button.icon} className={`${button.className} icon`} />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
-                  <div className="w-full px-4 py-2">
-                    <p className="text-xs font-bold text-darkGreen">Dica!</p>
-                    <hr className="my-1 border-infoDark opacity-20" />
-                    <p>{button.tip}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <Button
-              id={`${button.id}-${id}`}
-              variant="simulatorMenu"
-              className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200"
-            >
-              <Icon icon={button.icon} className={`${button.className} icon`} />
-            </Button>
-          )}
-        </div>
-      ))}
+      <div className="flex flex-col items-center">
+        {bottomButtons.map((button, index) => (
+          <div className="w-full" key={index}>
+            {showTooltips ? (
+              <TooltipProvider>
+                <Tooltip delayDuration={200} sideOffset={5}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      id={`${button.id}-${id}`}
+                      variant="simulatorMenu"
+                      className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200"
+                    >
+                      <Icon icon={button.icon} className={`${button.className} icon`} />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
+                    <div className="w-full px-4 py-2">
+                      <p className="text-xs font-bold text-darkGreen">Dica!</p>
+                      <hr className="my-1 border-infoDark opacity-20" />
+                      <p>{button.tip}</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <Button
+                id={`${button.id}-${id}`}
+                variant="simulatorMenu"
+                className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200"
+              >
+                <Icon icon={button.icon} className={`${button.className} icon`} />
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
