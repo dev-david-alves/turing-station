@@ -1,9 +1,10 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Input } from "../Input";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "../../utils/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip";
 import { useSimulator } from "../../providers/simulator";
+import { useClickOuside } from "../../hooks/useClickDetection";
 
 const navButtons = [
   {
@@ -132,8 +133,12 @@ function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
 function BottomDrawer({ id }) {
   const [selectedNavButton, setSelectedNavButton] = useState(undefined);
 
+  const bottomRef = useRef(null);
+  useClickOuside(bottomRef, () => setSelectedNavButton(undefined));
+
   return (
     <div
+      ref={bottomRef}
       className={cn(
         "flex w-full flex-col items-center gap-2 rounded-t-md bg-main px-4 pt-2 transition-all duration-200",
         selectedNavButton !== undefined && "pb-2",

@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
-import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
 import EditSimulatorModal from "./EditSimulatorModal";
+import { useClickOuside } from "../../hooks/useClickDetection";
 
 function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
   const { setSimulatorInfo, getOne } = useSimulator();
@@ -25,6 +25,9 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
   const isOpen = simulator.open;
   const isFullScreen = simulator.fullScreen;
 
+  const modalRef = useRef(null);
+  useClickOuside(modalRef, () => setIsEditPopoverOpen(false));
+
   return (
     <div className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3")}>
       <div className="flex items-center gap-2">
@@ -42,7 +45,7 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="relative">
+        <div className="relative" ref={modalRef}>
           <button
             className="border-none bg-none p-2 text-white"
             onClick={() => setIsEditPopoverOpen(!isEditPopoverOpen)}
