@@ -12,7 +12,7 @@ const stateSchema = z.object({
   x: z.number(),
   y: z.number(),
   isStartState: z.boolean(),
-  isEndState: z.boolean(),
+  isFinalState: z.boolean(),
   label: z.string(),
 });
 
@@ -58,6 +58,6 @@ const mtSchema = z.object({
 // Test the object against the schema
 export const checkFileFormat = (dmt) => {
   const parsed = mtSchema.safeParse(dmt);
-
+  console.log(parsed.error);
   return parsed;
 };

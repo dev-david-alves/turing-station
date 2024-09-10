@@ -107,6 +107,8 @@ export const TMSimulator = ({ id }) => {
         const { success, mt } = createMT(p5);
         if (success) {
           p5.mtCreated = mt;
+          let input = p5.select(`#simulation-input-${id}`).value();
+          p5.mtCreated.setComputedWord(input);
           updateTape(p5);
           updateUIWhenSimulating(p5, false, false, true);
         }

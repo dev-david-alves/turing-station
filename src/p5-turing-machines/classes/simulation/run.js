@@ -1,6 +1,6 @@
 import { texMap } from "../../utils/getTexMaps";
 import SelfLink from "../selfLink";
-import { MT } from "./mt";
+import { MTND } from "./mtnd";
 
 export const createMT = (p5) => {
   p5.mtCreated = null;
@@ -26,44 +26,45 @@ export const createMT = (p5) => {
   let delta = {};
 
   p5.links.forEach((link) => {
-    let stateA = null;
-    let stateB = null;
+    let from = null;
+    let to = null;
 
     if (link instanceof SelfLink) {
-      stateA = link.state.id;
-      stateB = link.state.id;
+      from = link.state.id;
+      to = link.state.id;
     } else {
-      stateA = link.stateA.id;
-      stateB = link.stateB.id;
+      from = link.stateA.id;
+      to = link.stateB.id;
     }
 
-    if (!delta[stateA]) delta[stateA] = {};
+    if (!delta[from]) delta[from] = {};
 
     link.transitionBox.rules.forEach((rule) => {
       let ruleBreak = rule.label.filter((r) => r !== " " && r !== "→" && r !== ", ");
-
-      if (!delta[stateA][ruleBreak[0]]) delta[stateA][ruleBreak[0]] = {};
 
       let mappingMove = {
         E: -1,
         D: 1,
         P: 0,
       };
-      delta[stateA][ruleBreak[0]] = {
-        write: ruleBreak[1],
-        move: mappingMove[ruleBreak[2]],
-        nextState: stateB,
-      };
+
+      let read = ruleBreak[0];
+      let write = ruleBreak[1];
+      let move = mappingMove[ruleBreak[2]];
+
+      if (!delta[from][read]) delta[from][read] = [];
+
+      delta[from][read].push({ write, move, to });
     });
   });
 
-  // console.log("Q: ", q);
-  // console.log("Gamma: ", gamma);
-  // console.log("Delta: ", delta);
-  // console.log("Start State: ", startState);
-  // console.log("Final States: ", finalStates);
+  console.log("Q: ", q);
+  console.log("Gamma: ", gamma);
+  console.log("Delta: ", delta);
+  console.log("Start State: ", startState);
+  console.log("Final States: ", finalStates);
 
-  const mt = new MT(q, sigma, gamma, delta, startState, finalStates);
+  const mt = new MTND(q, sigma, gamma, delta, startState, finalStates);
   if (!mt.checkValidMTFormat()) return { success: false, message: "Máquina de Turing inválida!", mt: null };
 
   let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
@@ -94,15 +95,16 @@ export const simulationStepBack = (p5) => {
 
 export const simulationStepForward = (p5) => {
   if (!p5.mtCreated) {
-    const { success, mt } = createMT(p5);
-
+    const { success, mt, message } = createMT(p5);
+    // console.log("Success: ", message);
     if (!success) return;
 
     p5.mtCreated = mt;
 
     let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
-    p5.mtCreated.simulatedWord = inputValue;
-    p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
+    // p5.mtCreated.simulatedWord = inputValue;
+    // p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
+    p5.mtCreated.setComputedWord(inputValue);
   }
 
   const { accepted, end } = p5.mtCreated.stepForward();
@@ -118,8 +120,9 @@ export const simulationFastResult = (p5) => {
   p5.mtCreated = mt;
 
   let inputWord = p5.select(`#simulation-input-${p5.canvasID}`).value();
+  p5.mtCreated.setComputedWord(inputWord);
 
-  const { accepted, end } = p5.mtCreated.fastResult(inputWord, 1000);
+  const { accepted, end } = p5.mtCreated.fastForward();
 
   updateTape(p5);
   updateUIWhenSimulating(p5, accepted, end, true);
@@ -140,51 +143,61 @@ export const updateTape = (p5) => {
 
     p5.mtCreated = mt;
     let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
-    p5.mtCreated.simulatedWord = inputValue;
-    p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
+    // p5.mtCreated.simulatedWord = inputValue;
+    // p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
+    p5.mtCreated.setComputedWord(inputValue);
   }
 
-  if (p5.mtCreated.tape.length === 0) return;
+  // if (p5.mtCreated.tape.length === 0) return;
 
   // Draw the tape
   tapeDiv.show();
-  let tapeWrapper = p5.createDiv("");
-  tapeWrapper.class("flex items-center justify-center px-2 py-1");
-  tapeWrapper.parent(tapeDiv);
 
-  let tapeBoundsImage = p5.createImg("./assets/tape-bounds.svg", "tape-bounds-image");
-  tapeBoundsImage.class("h-7");
-  tapeBoundsImage.parent(tapeWrapper);
+  for (const branch of p5.mtCreated.branchs) {
+    console.log("Branch: ", branch);
+    let tapeWrapper = p5.createDiv("");
+    tapeWrapper.class("flex items-center justify-center px-2 py-1");
+    tapeWrapper.parent(tapeDiv);
 
-  for (let i = 0; i < p5.mtCreated.tape.length; i++) {
-    let tapeCell = p5.createDiv("");
-    tapeCell.class(
-      "relative w-7 h-7 bg-white border-x-[.05rem] border-[--color-white] text-[1.4rem] font-semibold text-[dark-white] flex items-center justify-center",
-    );
-    tapeCell.parent(tapeWrapper);
-    let span = p5.createElement("span", p5.mtCreated.tape[i]);
-    span.parent(tapeCell);
-    span.class("text-sm font-semibold text-[dark-white]");
+    let tapeBoundsImage = p5.createImg("./assets/tape-bounds.svg", "tape-bounds-image");
+    tapeBoundsImage.class("h-7");
+    tapeBoundsImage.parent(tapeWrapper);
 
-    // Tape head
-    if (i === p5.mtCreated.head) {
-      let tapeHead = p5.createDiv("<img src='./assets/tape-head.svg' class='w-[2rem] h-[2rem]'>");
-      tapeHead.class("absolute -bottom-[1.2rem]");
-      tapeHead.parent(tapeCell);
+    const tape = branch[1].getTape();
+    for (let i = 0; i < tape.length; i++) {
+      let cell = tape[i];
+      let tapeCell = p5.createDiv("");
+      tapeCell.class(
+        "relative w-7 h-7 bg-white border-x-[.05rem] border-[--color-white] text-[1.4rem] font-semibold text-[dark-white] flex items-center justify-center",
+      );
+      tapeCell.parent(tapeWrapper);
+      let span = p5.createElement("span", cell);
+      span.parent(tapeCell);
+      span.class("text-sm font-semibold text-[dark-white]");
+
+      // Tape head
+      if (i === branch[1].head) {
+        let tapeHead = p5.createDiv("<img src='./assets/tape-head.svg' class='w-[2rem] h-[2rem]'>");
+        tapeHead.class("absolute -bottom-[1.2rem]");
+        tapeHead.parent(tapeCell);
+      }
     }
-  }
 
-  let tapeBoundsImage2 = p5.createImg("./assets/tape-bounds.svg", "tape-bounds-image");
-  tapeBoundsImage2.class("h-7 rotate-180 mt-[.01rem]");
-  tapeBoundsImage2.parent(tapeWrapper);
+    let tapeBoundsImage2 = p5.createImg("./assets/tape-bounds.svg", "tape-bounds-image");
+    tapeBoundsImage2.class("h-7 rotate-180 mt-[.01rem]");
+    tapeBoundsImage2.parent(tapeWrapper);
+  }
 };
 
 export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => {
   if (!p5.mtCreated) return;
+  if (!labOpened) return;
 
   p5.states.forEach((state) => {
     state.simulating = false;
-    if (state.id === p5.mtCreated.currentState && labOpened) state.simulating = true;
+    p5.mtCreated.branchs.forEach((branch) => {
+      if (branch[0] === state.id) state.simulating = true;
+    });
   });
 
   // Enable/Disable simulation buttons
