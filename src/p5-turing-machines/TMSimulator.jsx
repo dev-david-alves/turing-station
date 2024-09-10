@@ -15,6 +15,9 @@ import {
   simulationStepBack,
   simulationStepForward,
   simulationFastResult,
+  createMT,
+  updateTape,
+  updateUIWhenSimulating,
 } from "./classes/simulation/run";
 
 export const TMSimulator = ({ id }) => {
@@ -30,6 +33,7 @@ export const TMSimulator = ({ id }) => {
       p5.canvasScale = 1.0;
       p5.mtCreated = null;
       p5.selectedLeftToolbarButton = null;
+      p5.selectedBottomTab = undefined;
 
       // History
       p5.history = [];
@@ -64,6 +68,7 @@ export const TMSimulator = ({ id }) => {
       };
 
       p5.setLeftToolbarButton = (buttonId) => {
+        p5.closeLabTab();
         if (p5.selectedLeftToolbarButton === buttonId.split("-")[1]) return;
 
         p5.selectedLeftToolbarButton = buttonId.split("-")[1];
@@ -96,6 +101,34 @@ export const TMSimulator = ({ id }) => {
         } else {
           p5.canvasScale = p5.canvasScale + scale;
         }
+      };
+
+      p5.abstractCreateMT = () => {
+        const { success, mt } = createMT(p5);
+        if (success) {
+          p5.mtCreated = mt;
+          updateTape(p5);
+          updateUIWhenSimulating(p5, false, false, true);
+        }
+      };
+
+      p5.closeLabTab = () => {
+        p5.selectedBottomTab = undefined;
+        p5.select(`#simulation-nav-test-tab-${id}`).removeClass("selected-bottom-tab-button");
+        p5.select(`#test-tab-${id}`).hide();
+        p5.select(`#test-tab-${id}`).removeClass("pb-2");
+        updateUIWhenSimulating(p5, false, false, false);
+      };
+
+      p5.openLabTab = () => {
+        p5.unSelectAllObjects();
+
+        p5.selectedBottomTab = "test-tab";
+        p5.select(`#simulation-nav-test-tab-${id}`).addClass("selected-bottom-tab-button");
+        p5.select(`#test-tab-${id}`).show();
+        p5.select(`#test-tab-${id}`).addClass("pb-2");
+
+        p5.abstractCreateMT();
       };
 
       // Main functions
@@ -172,17 +205,47 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#rename-state-${id}`).mousePressed(() => p5.renameState());
         p5.select(`#delete-state-${id}`).mousePressed(() => p5.deleteObject());
 
-        // Set simulation buttons
+        // Bottom drawer buttons
+        p5.select(`#test-tab-${id}`).hide();
+        p5.select(`#simulation-nav-test-tab-${id}`).mousePressed(() => {
+          if (p5.selectedBottomTab === "test-tab") {
+            p5.closeLabTab();
+          } else {
+            p5.openLabTab();
+          }
+        });
+
+        // Set simulation input and buttons
+        p5.select(`#simulation-input-${id}`).input(() => p5.abstractCreateMT());
         p5.select(`#simulation-fast-reset-${id}`).mousePressed(() => simulationReset(p5));
         p5.select(`#simulation-step-back-${id}`).mousePressed(() => simulationStepBack(p5));
         p5.select(`#simulation-step-forward-${id}`).mousePressed(() => simulationStepForward(p5));
         p5.select(`#simulation-fast-simulation-${id}`).mousePressed(() => simulationFastResult(p5));
+        p5.select(`#erros-container-${id}`).show();
 
         // First save on history
         p5.history.push(createJSONExportObj(p5));
       };
 
+      p5.showErrors = () => {
+        let simulationBottomButtons = p5.selectAll(`.simulation-bottom-buttons-${id}`);
+        let input = p5.select(`#simulation-input-${id}`);
+        if (!p5.startLink) {
+          p5.select(`#erros-container-${id}`).show();
+          p5.select(`#tape-container-${id}`).hide();
+          simulationBottomButtons.forEach((button) => button.attribute("disabled", "true"));
+          input.attribute("disabled", "true");
+          return;
+        }
+
+        input.removeAttribute("disabled");
+        p5.select(`#erros-container-${id}`).hide();
+      };
+
       p5.draw = () => {
+        if (!focused) return;
+        p5.showErrors();
+
         // Set properties
         p5.reCalculateCanvasSize();
         p5.background("#181a1e");
@@ -620,6 +683,7 @@ export const TMSimulator = ({ id }) => {
       };
 
       p5.mousePressedInsideCanvas = () => {
+        p5.closeLabTab();
         if (!focused) return false;
         if (p5.stateContextMenu) p5.stateContextMenu.hide();
         if (p5.checkAndCloseAllStateInputVisible()) createHistory(p5);

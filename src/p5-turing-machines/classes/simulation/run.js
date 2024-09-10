@@ -1,3 +1,4 @@
+import { texMap } from "../../utils/getTexMaps";
 import SelfLink from "../selfLink";
 import { MT } from "./mt";
 
@@ -56,14 +57,18 @@ export const createMT = (p5) => {
     });
   });
 
-  console.log("Q: ", q);
-  console.log("Gamma: ", gamma);
-  console.log("Delta: ", delta);
-  console.log("Start State: ", startState);
-  console.log("Final States: ", finalStates);
+  // console.log("Q: ", q);
+  // console.log("Gamma: ", gamma);
+  // console.log("Delta: ", delta);
+  // console.log("Start State: ", startState);
+  // console.log("Final States: ", finalStates);
 
   const mt = new MT(q, sigma, gamma, delta, startState, finalStates);
   if (!mt.checkValidMTFormat()) return { success: false, message: "Máquina de Turing inválida!", mt: null };
+
+  let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
+  mt.simulatedWord = inputValue;
+  mt.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
 
   return {
     success: true,
@@ -92,15 +97,15 @@ export const simulationStepForward = (p5) => {
     const { success, mt } = createMT(p5);
 
     if (!success) return;
-    console.log("MT: ", mt);
+
     p5.mtCreated = mt;
 
-    p5.mtCreated.simulatedWord = p5.select(`#simulation-input-${p5.canvasID}`).value();
-    p5.mtCreated.tape = p5.select(`#simulation-input-${p5.canvasID}`).value().split("");
+    let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
+    p5.mtCreated.simulatedWord = inputValue;
+    p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
   }
-  console.log("MT Created: ", p5.mtCreated);
+
   const { accepted, end } = p5.mtCreated.stepForward();
-  console.log("Accepted: ", accepted, "End: ", end);
 
   updateTape(p5);
   updateUIWhenSimulating(p5, accepted, end, true);
@@ -115,8 +120,6 @@ export const simulationFastResult = (p5) => {
   let inputWord = p5.select(`#simulation-input-${p5.canvasID}`).value();
 
   const { accepted, end } = p5.mtCreated.fastResult(inputWord, 1000);
-
-  console.log("Accepted: ", accepted, "End: ", end);
 
   updateTape(p5);
   updateUIWhenSimulating(p5, accepted, end, true);
@@ -136,7 +139,9 @@ export const updateTape = (p5) => {
     if (!success) return;
 
     p5.mtCreated = mt;
-    p5.mtCreated.tape = p5.select(`#simulation-input-${p5.canvasID}`).value().split("");
+    let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
+    p5.mtCreated.simulatedWord = inputValue;
+    p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
   }
 
   if (p5.mtCreated.tape.length === 0) return;
@@ -182,37 +187,6 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
     if (state.id === p5.mtCreated.currentState && labOpened) state.simulating = true;
   });
 
-  if (accepted && end) {
-    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
-    tapeDiv.show();
-    tapeDiv.removeClass("bg-[#ff0000]");
-    tapeDiv.addClass("bg-[#6cfe6c]");
-    tapeDiv.addClass("filter-[blur(1rem)]");
-
-    tapeDiv.removeClass("word-rejected");
-    tapeDiv.addClass("word-accepeted");
-
-    // alert("Word accepted!");
-  } else if (!accepted && end) {
-    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
-    tapeDiv.show();
-    tapeDiv.removeClass("bg-[#6cfe6c]");
-    tapeDiv.addClass("bg-[#ff0000]");
-
-    tapeDiv.removeClass("word-accepeted");
-    tapeDiv.addClass("word-rejected");
-
-    // alert("Word rejected!");
-  } else {
-    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
-    tapeDiv.show();
-    tapeDiv.removeClass("bg-[#ff0000]");
-    tapeDiv.removeClass("bg-[#6cfe6c]");
-
-    tapeDiv.removeClass("word-rejected");
-    tapeDiv.removeClass("word-accepeted");
-  }
-
   // Enable/Disable simulation buttons
   let fastReset = p5.select(`#simulation-fast-reset-${p5.canvasID}`);
   let stepBack = p5.select(`#simulation-step-back-${p5.canvasID}`);
@@ -220,6 +194,12 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
   let fastSimulation = p5.select(`#simulation-fast-simulation-${p5.canvasID}`);
 
   if (!fastReset || !stepBack || !stepForward || !fastSimulation) return;
+
+  fastReset.removeAttribute("disabled");
+  stepBack.removeAttribute("disabled");
+  stepForward.removeAttribute("disabled");
+  fastSimulation.removeAttribute("disabled");
+
   if (!p5.mtCreated) {
     fastReset.attribute("disabled", true);
     stepBack.attribute("disabled", true);
@@ -229,19 +209,39 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
     return;
   }
 
-  if (end) {
+  if (accepted && end) {
+    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
+    tapeDiv.show();
+    tapeDiv.removeClass("bg-[#ff0000]");
+    tapeDiv.addClass("bg-[#6cfe6c]");
+    tapeDiv.addClass("filter-[blur(1rem)]");
+
+    stepBack.removeAttribute("disabled");
+    fastReset.removeAttribute("disabled");
+    stepForward.attribute("disabled", true);
+    fastSimulation.attribute("disabled", true);
+  } else if (!accepted && end) {
+    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
+    tapeDiv.show();
+    tapeDiv.removeClass("bg-[#6cfe6c]");
+    tapeDiv.addClass("bg-[#ff0000]");
+
+    stepBack.removeAttribute("disabled");
+    fastReset.removeAttribute("disabled");
     stepForward.attribute("disabled", true);
     fastSimulation.attribute("disabled", true);
   } else {
-    stepForward.removeAttribute("disabled");
-    fastSimulation.removeAttribute("disabled");
-  }
+    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
+    tapeDiv.show();
+    tapeDiv.removeClass("bg-[#ff0000]");
+    tapeDiv.removeClass("bg-[#6cfe6c]");
 
-  if (p5.mtCreated.history.length === 0) {
-    fastReset.attribute("disabled", true);
-    stepBack.attribute("disabled", true);
-  } else {
-    fastReset.removeAttribute("disabled");
-    stepBack.removeAttribute("disabled");
+    if (p5.mtCreated.history.length === 0) {
+      fastReset.attribute("disabled", true);
+      stepBack.attribute("disabled", true);
+    } else {
+      fastReset.removeAttribute("disabled");
+      stepBack.removeAttribute("disabled");
+    }
   }
 };

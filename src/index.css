@@ -102,3 +102,12 @@ input::-webkit-autocomplete-item:hover {
   background-color: var(--primary);
   color: var(--white);
 }
+
+.selected-bottom-tab-button {
+  @apply h-8 w-8 border-primary bg-primary transition-all;
+}
+
+/* First child */
+.selected-bottom-tab-button > .icon {
+  @apply h-5 w-5;
+}

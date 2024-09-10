@@ -1,10 +1,8 @@
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Input } from "../Input";
-import { useRef, useState } from "react";
 import { cn } from "../../utils/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip";
 import { useSimulator } from "../../providers/simulator";
-import { useClickOuside } from "../../hooks/useClickDetection";
 
 const navButtons = [
   {
@@ -35,46 +33,38 @@ const simulationButtons = [
 
 function TestTab({ id, className }) {
   return (
-    <div className={cn("w-full overflow-hidden", className)}>
+    <div id={`test-tab-${id}`} className={cn("w-full overflow-hidden", className)}>
       <div className="flex w-full max-w-full items-center gap-1">
         <p className="font-semibold text-white">Entrada</p>
-        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} value="acccb" onChange={() => {}} />
+        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} />
         {simulationButtons.map((button, index) => (
           <button
             id={`simulation-${button.id}-${id}`}
             key={index}
-            className="flex h-[2rem] w-14 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton"
+            className={`flex h-[2rem] w-14 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton simulation-bottom-buttons-${id}`}
           >
             <Icon icon={button.icon} className="icon h-5 w-5" />
           </button>
         ))}
       </div>
-      {/* <div id={`erros-container-${id}`} className="flex w-full flex-col items-center justify-center gap-2">
-        <div id={`error-${id}`} className="flex w-full items-center justify-center rounded-sm bg-danger py-1">
-          <p className="font-semibold text-white">Defina um estado inicial!</p>
+
+      <div id={`erros-container-${id}`} className="mt-2 flex w-full flex-col items-center justify-center gap-2">
+        <div className="flex w-full items-center justify-center rounded-md bg-danger py-1">
+          <p id={`start-link-error-${id}`} className="font-semibold text-white">
+            Defina um estado inicial!
+          </p>
         </div>
-        <div id={`error-${id}`} className="flex w-full items-center justify-center rounded-sm bg-danger py-1">
-          <p className="font-semibold text-white">Defina pelo menos um estado final!</p>
-        </div>
-      </div> */}
+      </div>
 
       <div
         id={`tape-container-${id}`}
-        className="flex h-fit w-full flex-col items-center justify-center gap-2 overflow-x-auto overflow-y-hidden rounded-md"
+        className="mt-2 flex h-fit w-full flex-col items-center justify-center gap-2 overflow-x-auto overflow-y-hidden rounded-md"
       ></div>
     </div>
   );
 }
 
-function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
-  const handleSelectNavButton = (index) => {
-    if (selectedNavButton === index) {
-      setSelectedNavButton(undefined);
-    } else {
-      setSelectedNavButton(index);
-    }
-  };
-
+function Navgation({ id }) {
   const { getOne } = useSimulator();
   const { showTooltips } = getOne(id);
 
@@ -89,16 +79,10 @@ function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
                   <button
                     id={`simulation-nav-${button.id}-${id}`}
                     className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
-                      selectedNavButton === button.id && "border-primary bg-primary",
-                      selectedNavButton === undefined && "h-7 w-7",
+                      "flex h-7 w-7 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
                     )}
-                    onClick={() => handleSelectNavButton(button.id)}
                   >
-                    <Icon
-                      icon={button.icon}
-                      className={cn("icon h-5 w-5", selectedNavButton === undefined && "h-4 w-4")}
-                    />
+                    <Icon icon={button.icon} className={cn("icon h-4 w-4")} />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
@@ -114,13 +98,10 @@ function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
             <button
               id={`simulation-nav-${button.id}-${id}`}
               className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
-                selectedNavButton === button.id && "border-primary bg-primary",
-                selectedNavButton === undefined && "h-7 w-7",
+                "flex h-7 w-7 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
               )}
-              onClick={() => handleSelectNavButton(button.id)}
             >
-              <Icon icon={button.icon} className={cn("icon h-5 w-5", selectedNavButton === undefined && "h-4 w-4")} />
+              <Icon icon={button.icon} className={cn("icon h-4 w-4")} />
             </button>
           )}
         </div>
@@ -130,22 +111,15 @@ function Navgation({ id, selectedNavButton, setSelectedNavButton }) {
 }
 
 function BottomDrawer({ id }) {
-  const [selectedNavButton, setSelectedNavButton] = useState("test-tab");
-
-  const bottomRef = useRef(null);
-  useClickOuside(bottomRef, () => setSelectedNavButton("test-tab"));
-
   return (
     <div
       id={`bottom-drawer-${id}`}
-      ref={bottomRef}
       className={cn(
         "flex w-full flex-col items-center gap-2 rounded-t-md bg-main px-4 pt-2 transition-all duration-200",
-        selectedNavButton !== undefined && `opened-${selectedNavButton} pb-2`,
       )}
     >
-      <Navgation id={id} selectedNavButton={selectedNavButton} setSelectedNavButton={setSelectedNavButton} />
-      <TestTab id={id} className={cn(selectedNavButton !== "test-tab" && "max-h-0")} />
+      <Navgation id={id} />
+      <TestTab id={id} />
     </div>
   );
 }
