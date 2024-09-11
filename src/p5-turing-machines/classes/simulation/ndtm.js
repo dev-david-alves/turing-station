@@ -47,7 +47,7 @@ class Tape {
 }
 
 // Non Deterministic Turing Machine
-export class MTND {
+export class NDTM {
   constructor(
     Q = new set(),
     sigma = new set(),
@@ -63,7 +63,7 @@ export class MTND {
     this.initialState = initialState; // Initial state
     this.finalStates = finalStates; // Final states
 
-    this.branchs = [[this.initialState, new Tape([BLANK])]]; // Queue the keep track of the branchs
+    this.branchs = [[this.initialState, new Tape([BLANK], false)]]; // Queue the keep track of the branchs
 
     // Extras
     this.maxInterections = 1000;
@@ -79,9 +79,9 @@ export class MTND {
 
   setComputedWord(word) {
     let tapeContent = word.length === 0 ? [BLANK] : [...word.split("")];
-    this.branchs = [[this.initialState, new Tape(tapeContent)]];
+    this.branchs = [[this.initialState, new Tape(tapeContent), false]];
     this.history = [];
-    this.createHistory();
+    // this.createHistory();
   }
 
   isSubset(subset, superset) {
@@ -93,7 +93,6 @@ export class MTND {
     if (this.sigma.has(BLANK)) return false;
     // Gamma must contain blank symbol
     if (!this.gamma.has(BLANK)) return false;
-    console.log("here");
     // Sigma must be a subset of Gamma
     if (!this.isSubset(this.sigma, this.gamma)) return false;
     // Q must contain initial state
@@ -102,12 +101,6 @@ export class MTND {
     if (!this.isSubset(this.finalStates, this.Q)) return false;
 
     return true;
-  }
-
-  createDelta({ from, symbol, write, move, to }) {
-    if (!this.delta[from]) this.delta[from] = {};
-    if (!this.delta[from][symbol]) this.delta[from][symbol] = [];
-    this.delta[from][symbol].push({ write, move, to });
   }
 
   checkAcceptance() {
@@ -162,8 +155,16 @@ export class MTND {
 
       const currentSymbol = tapeObj.getSymbol();
 
-      if (!this.delta.hasOwnProperty(currentState)) continue;
-      if (!this.delta[currentState].hasOwnProperty(currentSymbol)) continue;
+      if (!this.delta.hasOwnProperty(currentState)) {
+        const newBranch = [currentState, tapeObj, true];
+        auxBranchs.push(newBranch);
+        continue;
+      }
+      if (!this.delta[currentState].hasOwnProperty(currentSymbol)) {
+        const newBranch = [currentState, tapeObj, true];
+        auxBranchs.push(newBranch);
+        continue;
+      }
 
       const currentDelta = this.delta[currentState][currentSymbol];
       const head = tapeObj.getHead();
@@ -173,7 +174,7 @@ export class MTND {
         newTape.setHead(head);
         newTape.setSymbol(write);
         newTape.move(move);
-        const newBranch = [to, newTape];
+        const newBranch = [to, newTape, false];
         auxBranchs.push(newBranch);
       }
     }
@@ -226,31 +227,6 @@ const delta = {
   },
 };
 
-const mtnd = new MTND(new Set([0, 1, 2, 3, 4]), new Set([0, 1]), new Set([0, 1, BLANK]), delta, 0, new Set([4]));
+const nDTM = new NDTM(new Set([0, 1, 2, 3, 4]), new Set([0, 1]), new Set([0, 1, BLANK]), delta, 0, new Set([4]));
 
-mtnd.setComputedWord("0001");
-
-// mtnd.printBranchs();
-
-// mtnd.stepForward();
-// mtnd.stepForward();
-// mtnd.stepForward();
-// console.log("Step Back");
-// mtnd.stepBack();
-// console.log("---------");
-// console.log("Step Back");
-// mtnd.stepBack();
-// console.log("---------");
-// console.log("Step Back");
-// mtnd.stepBack();
-// console.log("---------");
-// // // mtnd.stepForward();
-// // // console.log("Step Back");
-// // // mtnd.stepBack();
-// // // console.log("---------");
-// mtnd.stepForward();
-// mtnd.stepForward();
-// mtnd.stepForward();
-// mtnd.stepForward();
-// mtnd.stepForward();
-// mtnd.fastForward();
+nDTM.setComputedWord("0001");
