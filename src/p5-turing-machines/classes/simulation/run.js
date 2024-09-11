@@ -196,9 +196,17 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
   if (!labOpened) return;
 
   p5.states.forEach((state) => {
-    state.simulating = false;
+    state.simulating = "none";
     p5.mtCreated.branchs.forEach((branch) => {
-      if (branch[0] === state.id) state.simulating = true;
+      if (branch[0] === state.id) {
+        if (branch[2] || (!accepted && end)) {
+          state.simulating = "rejected";
+        } else if (p5.mtCreated.finalStates.has(state.id)) {
+          state.simulating = "accepted";
+        } else {
+          state.simulating = "simulating";
+        }
+      }
     });
   });
 
@@ -224,26 +232,14 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
     return;
   }
 
-  // console.log("History: ", p5.mtCreated.history);
-  // if (p5.mtCreated.history.length === 0) {
-  //   fastReset.attribute("disabled", true);
-  //   stepBack.attribute("disabled", true);
-  // }
-
   let tapeWrappers = p5.selectAll(`.tape-wrapper-${p5.canvasID}`);
 
   if (!tapeWrappers) return;
 
   tapeWrappers.forEach((tapeWrapper) => {
     if (tapeWrapper.hasClass(`branchRejection-true`)) {
-      // console.log("Rejectiona");
       tapeWrapper.removeClass("bg-[#6cfe6c]");
       tapeWrapper.addClass("bg-[#ff0000]");
-
-      // stepBack.removeAttribute("disabled");
-      // fastReset.removeAttribute("disabled");
-      // stepForward.attribute("disabled", true);
-      // fastSimulation.attribute("disabled", true);
     } else {
       if (accepted && end) {
         tapeWrapper.removeClass("bg-[#ff0000]");

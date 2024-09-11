@@ -20,9 +20,11 @@ import {
   updateUIWhenSimulating,
 } from "./classes/simulation/run";
 
+import test_mt from "../../test-mts/turing-machine - nd 2.json";
+
 export const TMSimulator = ({ id }) => {
   const { getOne } = useSimulator();
-  const { fullScreen, focused, showLeftToolbar } = getOne(id);
+  const { focused, tm_variant } = getOne(id);
 
   const sketch = useMemo(
     () => (p5) => {
@@ -34,6 +36,7 @@ export const TMSimulator = ({ id }) => {
       p5.mtCreated = null;
       p5.selectedLeftToolbarButton = null;
       p5.selectedBottomTab = undefined;
+      p5.tm_variant = tm_variant;
 
       // History
       p5.history = [];
@@ -147,37 +150,39 @@ export const TMSimulator = ({ id }) => {
         window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
-        p5.states.push(new State(p5, p5.getNewStateId(), 200, 200));
-        p5.states.push(new State(p5, p5.getNewStateId(), 400, 200));
-        p5.states.push(new State(p5, p5.getNewStateId(), 600, 200));
-        p5.states[2].isFinalState = true;
-        p5.links.push(
-          new Link(p5, p5.states[0], p5.states[1], [
-            {
-              label: ["a", " ", "→", " ", "b", ", ", "D"],
-              width: 54.01171875,
-            },
-          ]),
+        // p5.states.push(new State(p5, p5.getNewStateId(), 200, 200));
+        // p5.states.push(new State(p5, p5.getNewStateId(), 400, 200));
+        // p5.states.push(new State(p5, p5.getNewStateId(), 600, 200));
+        // p5.states[2].isFinalState = true;
+        // p5.links.push(
+        //   new Link(p5, p5.states[0], p5.states[1], [
+        //     {
+        //       label: ["a", " ", "→", " ", "b", ", ", "D"],
+        //       width: 54.01171875,
+        //     },
+        //   ]),
 
-          new Link(p5, p5.states[1], p5.states[2], [
-            {
-              label: ["b", " ", "→", " ", "c", ", ", "D"],
-              width: 54.01171875,
-            },
-            {
-              label: ["☐", " ", "→", " ", "☐", ", ", "D"],
-              width: 54.01171875,
-            },
-          ]),
+        //   new Link(p5, p5.states[1], p5.states[2], [
+        //     {
+        //       label: ["b", " ", "→", " ", "c", ", ", "D"],
+        //       width: 54.01171875,
+        //     },
+        //     {
+        //       label: ["☐", " ", "→", " ", "☐", ", ", "D"],
+        //       width: 54.01171875,
+        //     },
+        //   ]),
 
-          new SelfLink(p5, p5.states[1], true),
-        );
-        p5.links[2].transitionBox.rules = [
-          {
-            label: ["c", " ", "→", " ", "d", ", ", "D"],
-            width: 54.01171875,
-          },
-        ];
+        //   new SelfLink(p5, p5.states[1], true),
+        // );
+        // p5.links[2].transitionBox.rules = [
+        //   {
+        //     label: ["c", " ", "→", " ", "d", ", ", "D"],
+        //     width: 54.01171875,
+        //   },
+        // ];
+
+        createCanvasFromOBJ(p5, test_mt);
 
         p5.startLink = new StartLink(p5, p5.states[0], { x: 100, y: 200 });
         // End of testing
@@ -360,10 +365,10 @@ export const TMSimulator = ({ id }) => {
         }
       };
 
-      p5.setInitialState = (index = null, props = null) => {
+      p5.setInitialState = (stateID = null, props = null) => {
         let linkSize = 80 * p5.canvasScale;
 
-        if (index === null) {
+        if (stateID === null) {
           if (!p5.selectedObject) return;
           if (!(p5.selectedObject.object instanceof State)) return;
 
@@ -383,27 +388,30 @@ export const TMSimulator = ({ id }) => {
           // Set the selected state as the start state
           selectedState.isStartState = true;
         } else {
-          let start = { x: p5.states[index].x - linkSize, y: p5.states[index].y };
+          const state = p5.states.find((state) => state.id === stateID);
+          if (state) {
+            let start = { x: state.x - linkSize, y: state.y };
 
-          // Modify the starting position if props are provided
-          if (props) {
-            start = {
-              x: p5.states[index].x + props.deltaX,
-              y: p5.states[index].y + props.deltaY,
-            };
+            // Modify the starting position if props are provided
+            if (props) {
+              start = {
+                x: state.x + props.deltaX,
+                y: state.y + props.deltaY,
+              };
+            }
+
+            // Create a new StartLink for the specified state
+            p5.startLink = new StartLink(p5, state, start);
+            p5.startLink.selected = true;
+
+            // Unset the start state for all states
+            p5.states.forEach((state) => {
+              state.isStartState = false;
+            });
+
+            // Set the specified state as the start state
+            state.isStartState = true;
           }
-
-          // Create a new StartLink for the specified state
-          p5.startLink = new StartLink(p5, p5.states[index], start);
-          p5.startLink.selected = true;
-
-          // Unset the start state for all states
-          p5.states.forEach((state) => {
-            state.isStartState = false;
-          });
-
-          // Set the specified state as the start state
-          p5.states[index].isStartState = true;
         }
 
         // Hide the context menu
@@ -830,7 +838,7 @@ export const TMSimulator = ({ id }) => {
         }
       };
     },
-    [id, focused],
+    [id, focused, tm_variant],
   );
 
   return <ReactP5Wrapper sketch={sketch} />;

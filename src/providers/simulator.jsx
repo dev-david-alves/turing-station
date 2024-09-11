@@ -14,6 +14,7 @@ const SimulatorProvider = ({ children }) => {
       focused: true,
       showLeftToolbar: true,
       showTooltips: false,
+      tm_variant: "ndtm", // Three possible values: "tm", "ndtm", "mttm"
       data: undefined,
     },
     // {

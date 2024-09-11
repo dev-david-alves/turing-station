@@ -112,10 +112,14 @@ export default class State {
     this.p5.strokeWeight(2 * this.p5.canvasScale);
     this.p5.fill("#1762A3");
     this.p5.stroke("#ffffff");
+
     if (this.selected) this.p5.fill("#11528C");
-    if (this.simulating) {
+
+    if (this.simulating !== "none") {
       this.p5.strokeWeight(4 * this.p5.canvasScale);
-      this.p5.fill("purple");
+      if (this.simulating === "accepted") this.p5.fill("#6cfe6c");
+      if (this.simulating === "rejected") this.p5.fill("#ff0000");
+      if (this.simulating === "simulating") this.p5.fill("purple");
     }
 
     this.p5.ellipseMode(this.p5.CENTER);

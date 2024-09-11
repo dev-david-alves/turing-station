@@ -180,7 +180,8 @@ export const createCanvasFromOBJ = (p5, obj) => {
       deltaX: obj.initialStateLink.deltaX,
       deltaY: obj.initialStateLink.deltaY,
     });
-    p5.startLink.selected = false;
+
+    if (p5.startLink) p5.startLink.selected = false;
   }
 
   return true;

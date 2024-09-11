@@ -111,3 +111,28 @@ input::-webkit-autocomplete-item:hover {
 .selected-bottom-tab-button > .icon {
   @apply h-5 w-5;
 }
+
+/* Scroll */
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: var(--background);
+  border-radius: 3px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: var(--dark);
+  border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dark-variant);
+}

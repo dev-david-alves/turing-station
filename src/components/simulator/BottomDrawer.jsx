@@ -42,6 +42,7 @@ function TestTab({ id, className }) {
             id={`simulation-${button.id}-${id}`}
             key={index}
             className={`flex h-[2rem] w-14 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton simulation-bottom-buttons-${id}`}
+            disabled={true}
           >
             <Icon icon={button.icon} className="icon h-5 w-5" />
           </button>

@@ -127,6 +127,18 @@ export class NDTM {
     this.history.push([...this.branchs]);
   }
 
+  orderBranchs(newBranchs) {
+    if (!newBranchs || newBranchs.length === 0) return [];
+
+    newBranchs.sort((a, b) => {
+      if (a[2] && !b[2]) return 1;
+      if (!a[2] && b[2]) return -1;
+      return 0;
+    });
+
+    return newBranchs;
+  }
+
   fastReset() {
     this.branchs = [[this.initialState, new Tape([BLANK])]];
     this.history = [];
@@ -179,7 +191,7 @@ export class NDTM {
       }
     }
 
-    this.branchs = auxBranchs;
+    this.branchs = this.orderBranchs(auxBranchs);
 
     this.printBranchs();
 
