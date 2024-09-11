@@ -1,6 +1,6 @@
 import { texMap } from "../../utils/getTexMaps";
 import SelfLink from "../selfLink";
-import { MTND } from "./mtnd";
+import { NDTM } from "./ndtm";
 
 export const createMT = (p5) => {
   p5.mtCreated = null;
@@ -58,13 +58,13 @@ export const createMT = (p5) => {
     });
   });
 
-  console.log("Q: ", q);
-  console.log("Gamma: ", gamma);
-  console.log("Delta: ", delta);
-  console.log("Start State: ", startState);
-  console.log("Final States: ", finalStates);
+  // console.log("Q: ", q);
+  // console.log("Gamma: ", gamma);
+  // console.log("Delta: ", delta);
+  // console.log("Start State: ", startState);
+  // console.log("Final States: ", finalStates);
 
-  const mt = new MTND(q, sigma, gamma, delta, startState, finalStates);
+  const mt = new NDTM(q, sigma, gamma, delta, startState, finalStates);
   if (!mt.checkValidMTFormat()) return { success: false, message: "Máquina de Turing inválida!", mt: null };
 
   let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
@@ -154,9 +154,11 @@ export const updateTape = (p5) => {
   tapeDiv.show();
 
   for (const branch of p5.mtCreated.branchs) {
-    console.log("Branch: ", branch);
+    const branchRejection = branch[2];
     let tapeWrapper = p5.createDiv("");
-    tapeWrapper.class("flex items-center justify-center px-2 py-1");
+    tapeWrapper.class(
+      `flex w-full items-center justify-center px-2 py-1 mb-3 rounded-md tape-wrapper-${p5.canvasID} branchRejection-${branchRejection}`,
+    );
     tapeWrapper.parent(tapeDiv);
 
     let tapeBoundsImage = p5.createImg("./assets/tape-bounds.svg", "tape-bounds-image");
@@ -168,7 +170,7 @@ export const updateTape = (p5) => {
       let cell = tape[i];
       let tapeCell = p5.createDiv("");
       tapeCell.class(
-        "relative w-7 h-7 bg-white border-x-[.05rem] border-[--color-white] text-[1.4rem] font-semibold text-[dark-white] flex items-center justify-center",
+        "relative min-w-7 min-h-7 w-7 h-7 bg-white border-x-[.05rem] border-[--color-white] text-[1.4rem] font-semibold text-[dark-white] flex items-center justify-center",
       );
       tapeCell.parent(tapeWrapper);
       let span = p5.createElement("span", cell);
@@ -177,8 +179,8 @@ export const updateTape = (p5) => {
 
       // Tape head
       if (i === branch[1].head) {
-        let tapeHead = p5.createDiv("<img src='./assets/tape-head.svg' class='w-[2rem] h-[2rem]'>");
-        tapeHead.class("absolute -bottom-[1.2rem]");
+        let tapeHead = p5.createDiv("<img src='./assets/tape-head.svg' class='w-[1.4rem] h-[1.4rem]'>");
+        tapeHead.class("absolute -bottom-[.8rem]");
         tapeHead.parent(tapeCell);
       }
     }
@@ -222,39 +224,55 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
     return;
   }
 
-  if (accepted && end) {
-    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
-    tapeDiv.show();
-    tapeDiv.removeClass("bg-[#ff0000]");
-    tapeDiv.addClass("bg-[#6cfe6c]");
-    tapeDiv.addClass("filter-[blur(1rem)]");
+  // console.log("History: ", p5.mtCreated.history);
+  // if (p5.mtCreated.history.length === 0) {
+  //   fastReset.attribute("disabled", true);
+  //   stepBack.attribute("disabled", true);
+  // }
 
-    stepBack.removeAttribute("disabled");
-    fastReset.removeAttribute("disabled");
-    stepForward.attribute("disabled", true);
-    fastSimulation.attribute("disabled", true);
-  } else if (!accepted && end) {
-    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
-    tapeDiv.show();
-    tapeDiv.removeClass("bg-[#6cfe6c]");
-    tapeDiv.addClass("bg-[#ff0000]");
+  let tapeWrappers = p5.selectAll(`.tape-wrapper-${p5.canvasID}`);
 
-    stepBack.removeAttribute("disabled");
-    fastReset.removeAttribute("disabled");
-    stepForward.attribute("disabled", true);
-    fastSimulation.attribute("disabled", true);
-  } else {
-    let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
-    tapeDiv.show();
-    tapeDiv.removeClass("bg-[#ff0000]");
-    tapeDiv.removeClass("bg-[#6cfe6c]");
+  if (!tapeWrappers) return;
 
-    if (p5.mtCreated.history.length === 0) {
-      fastReset.attribute("disabled", true);
-      stepBack.attribute("disabled", true);
+  tapeWrappers.forEach((tapeWrapper) => {
+    if (tapeWrapper.hasClass(`branchRejection-true`)) {
+      // console.log("Rejectiona");
+      tapeWrapper.removeClass("bg-[#6cfe6c]");
+      tapeWrapper.addClass("bg-[#ff0000]");
+
+      // stepBack.removeAttribute("disabled");
+      // fastReset.removeAttribute("disabled");
+      // stepForward.attribute("disabled", true);
+      // fastSimulation.attribute("disabled", true);
     } else {
-      fastReset.removeAttribute("disabled");
-      stepBack.removeAttribute("disabled");
+      if (accepted && end) {
+        tapeWrapper.removeClass("bg-[#ff0000]");
+        tapeWrapper.addClass("bg-[#6cfe6c]");
+
+        stepBack.removeAttribute("disabled");
+        fastReset.removeAttribute("disabled");
+        stepForward.attribute("disabled", true);
+        fastSimulation.attribute("disabled", true);
+      } else if (!accepted && end) {
+        tapeWrapper.removeClass("bg-[#6cfe6c]");
+        tapeWrapper.addClass("bg-[#ff0000]");
+
+        stepBack.removeAttribute("disabled");
+        fastReset.removeAttribute("disabled");
+        stepForward.attribute("disabled", true);
+        fastSimulation.attribute("disabled", true);
+      } else {
+        tapeWrapper.removeClass("bg-[#ff0000]");
+        tapeWrapper.removeClass("bg-[#6cfe6c]");
+
+        if (p5.mtCreated.history.length === 0) {
+          fastReset.attribute("disabled", true);
+          stepBack.attribute("disabled", true);
+        } else {
+          fastReset.removeAttribute("disabled");
+          stepBack.removeAttribute("disabled");
+        }
+      }
     }
-  }
+  });
 };
