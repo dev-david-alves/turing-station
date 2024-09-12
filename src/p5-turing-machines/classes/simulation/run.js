@@ -2,6 +2,9 @@ import { texMap } from "../../utils/getTexMaps";
 import SelfLink from "../selfLink";
 import { NDTM } from "./ndtm";
 
+import tapeHead from "/assets/tape-head.svg";
+import tapeBound from "/assets/tape-bound.svg";
+
 export const createMT = (p5) => {
   p5.mtCreated = null;
 
@@ -161,7 +164,7 @@ export const updateTape = (p5) => {
     );
     tapeWrapper.parent(tapeDiv);
 
-    let tapeBoundsImage = p5.createImg("./assets/tape-bounds.svg", "tape-bounds-image");
+    let tapeBoundsImage = p5.createImg(tapeBound, "tape-bound-image");
     tapeBoundsImage.class("h-7");
     tapeBoundsImage.parent(tapeWrapper);
 
@@ -179,13 +182,15 @@ export const updateTape = (p5) => {
 
       // Tape head
       if (i === branch[1].head) {
-        let tapeHead = p5.createDiv("<img src='./assets/tape-head.svg' class='w-[1.4rem] h-[1.4rem]'>");
-        tapeHead.class("absolute -bottom-[.8rem]");
-        tapeHead.parent(tapeCell);
+        let headContainer = p5.createDiv();
+        let headImage = p5.createImg(tapeHead, "tape-head-image");
+        headImage.parent(headContainer);
+        headContainer.class("absolute -bottom-[.8rem]");
+        headContainer.parent(tapeCell);
       }
     }
 
-    let tapeBoundsImage2 = p5.createImg("./assets/tape-bounds.svg", "tape-bounds-image");
+    let tapeBoundsImage2 = p5.createImg(tapeBound, "tape-bound-image");
     tapeBoundsImage2.class("h-7 rotate-180 mt-[.01rem]");
     tapeBoundsImage2.parent(tapeWrapper);
   }

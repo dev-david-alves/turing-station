@@ -31,7 +31,7 @@ const Simulator = ({ id, children }) => {
       className={cn(
         "z-10 flex h-[31.8rem] w-full max-w-[45rem] flex-col items-center overflow-hidden rounded-lg bg-main shadow-default transition-all duration-75",
         !isOpen && "h-[3.5rem]",
-        isFullScreen && "min-w-screen max-w-screen fixed left-0 top-0 z-[100] min-h-screen rounded-none",
+        isFullScreen && "min-w-screen max-w-screen fixed left-0 top-0 z-[100] h-[100dvh] min-h-[100dvh] rounded-none",
         isFocused && "shadow-high",
       )}
     >

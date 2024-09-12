@@ -13,5 +13,15 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      // For mobile testing
+      if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // true for mobile device
+        eruda.init({
+          tool: ["console", "elements", "snippets"],
+        });
+      }
+    </script>
   </body>
 </html>

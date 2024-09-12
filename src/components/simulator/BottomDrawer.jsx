@@ -34,19 +34,21 @@ const simulationButtons = [
 function TestTab({ id, className }) {
   return (
     <div id={`test-tab-${id}`} className={cn("w-full overflow-hidden", className)}>
-      <div className="flex w-full max-w-full items-center gap-1">
+      <div className="flex w-full max-w-full flex-col gap-1 sm:flex-row sm:items-center">
         <p className="font-semibold text-white">Entrada</p>
-        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} />
-        {simulationButtons.map((button, index) => (
-          <button
-            id={`simulation-${button.id}-${id}`}
-            key={index}
-            className={`flex h-[2rem] w-14 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton simulation-bottom-buttons-${id}`}
-            disabled={true}
-          >
-            <Icon icon={button.icon} className="icon h-5 w-5" />
-          </button>
-        ))}
+        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} className="flex-grow" />
+        <div className="flex items-center justify-center gap-1">
+          {simulationButtons.map((button, index) => (
+            <button
+              key={index}
+              id={`simulation-${button.id}-${id}`}
+              className={`flex h-10 w-10 max-w-10 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton simulation-bottom-buttons-${id}`}
+              disabled={true}
+            >
+              <Icon icon={button.icon} className="icon h-5 w-5" />
+            </button>
+          ))}
+        </div>
       </div>
 
       <div id={`erros-container-${id}`} className="mt-2 flex w-full flex-col items-center justify-center gap-2">
