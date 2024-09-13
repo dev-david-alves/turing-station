@@ -52,7 +52,10 @@ const Simulator = ({ id, children }) => {
           {/* <LinkModal id={id} className="hidden" /> */}
           {/* <CanvasModal id={id} className="hidden" />  */}
         </div>
-        <div className="absolute bottom-0 z-[2000] ml-14 w-[calc(100%-3.5rem)] px-1">
+        <div
+          id={`bottom-drawer-container-${id}`}
+          className="absolute bottom-0 z-[2000] ml-14 w-[calc(100%-3.5rem)] px-1"
+        >
           <BottomDrawer id={id} />
         </div>
       </div>

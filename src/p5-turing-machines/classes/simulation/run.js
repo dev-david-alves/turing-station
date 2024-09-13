@@ -71,8 +71,7 @@ export const createMT = (p5) => {
   if (!mt.checkValidMTFormat()) return { success: false, message: "Máquina de Turing inválida!", mt: null };
 
   let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
-  mt.simulatedWord = inputValue;
-  mt.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
+  mt.setComputedWord(inputValue);
 
   return {
     success: true,
@@ -98,15 +97,12 @@ export const simulationStepBack = (p5) => {
 
 export const simulationStepForward = (p5) => {
   if (!p5.mtCreated) {
-    const { success, mt, message } = createMT(p5);
-    // console.log("Success: ", message);
+    const { success, mt } = createMT(p5);
     if (!success) return;
 
     p5.mtCreated = mt;
 
     let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
-    // p5.mtCreated.simulatedWord = inputValue;
-    // p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
     p5.mtCreated.setComputedWord(inputValue);
   }
 
@@ -131,8 +127,35 @@ export const simulationFastResult = (p5) => {
   updateUIWhenSimulating(p5, accepted, end, true);
 };
 
-// UI Update
+const convertStateLabelToHtml = (allSubstrings) => {
+  let html = "";
 
+  allSubstrings.forEach((substring) => {
+    if (substring.startsWith("_{") && substring.endsWith("}")) {
+      html += "<sub>";
+      html += substring.slice(2, substring.length - 1);
+      html += "</sub>";
+    } else if (substring.startsWith("^{") && substring.endsWith("}")) {
+      html += "<sup>";
+      html += substring.slice(2, substring.length - 1);
+      html += "</sup>";
+    } else if (substring.startsWith("_") && substring.length === 2) {
+      html += "<sub>";
+      html += substring[1];
+      html += "</sub>";
+    } else if (substring.startsWith("^") && substring.length === 2) {
+      html += "<sup>";
+      html += substring[1];
+      html += "</sup>";
+    } else {
+      html += substring;
+    }
+  });
+
+  return html;
+};
+
+// UI Update
 export const updateTape = (p5) => {
   let tapeDiv = p5.select(`#tape-container-${p5.canvasID}`);
   if (!tapeDiv) return;
@@ -146,23 +169,30 @@ export const updateTape = (p5) => {
 
     p5.mtCreated = mt;
     let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
-    // p5.mtCreated.simulatedWord = inputValue;
-    // p5.mtCreated.tape = inputValue.length > 0 ? inputValue.split("") : [texMap["\\blank"]];
     p5.mtCreated.setComputedWord(inputValue);
   }
-
-  // if (p5.mtCreated.tape.length === 0) return;
 
   // Draw the tape
   tapeDiv.show();
 
   for (const branch of p5.mtCreated.branchs) {
     const branchRejection = branch[2];
+    let tapeContainer = p5.createDiv("");
+    tapeContainer.class("flex justify-center w-full gap-1");
+    tapeContainer.parent(tapeDiv);
+
+    const realState = p5.states.find((state) => state.id === branch[0]);
+    let stateDiv = p5.createDiv(convertStateLabelToHtml(realState.input.allSubstrings));
+    stateDiv.class(
+      `tape-state tape-state-${p5.canvasID}`, // border-4 border-white
+    );
+    stateDiv.parent(tapeContainer);
+
     let tapeWrapper = p5.createDiv("");
     tapeWrapper.class(
-      `flex w-full items-center justify-center px-2 py-1 mb-3 rounded-md tape-wrapper-${p5.canvasID} branchRejection-${branchRejection}`,
+      `flex w-full px-2 py-1 mb-3 rounded-md tape-wrapper-${p5.canvasID} branchRejection-${branchRejection} overflow-x-auto h-12`,
     );
-    tapeWrapper.parent(tapeDiv);
+    tapeWrapper.parent(tapeContainer);
 
     let tapeBoundsImage = p5.createImg(tapeBound, "tape-bound-image");
     tapeBoundsImage.class("h-7");
@@ -238,17 +268,25 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
   }
 
   let tapeWrappers = p5.selectAll(`.tape-wrapper-${p5.canvasID}`);
+  let tapeStates = p5.selectAll(`.tape-state-${p5.canvasID}`);
 
   if (!tapeWrappers) return;
 
-  tapeWrappers.forEach((tapeWrapper) => {
+  tapeWrappers.forEach((tapeWrapper, index) => {
+    tapeStates[index].removeClass("bg-[#8B008B]");
+    tapeStates[index].removeClass("bg-[#8B008B]");
+
     if (tapeWrapper.hasClass(`branchRejection-true`)) {
       tapeWrapper.removeClass("bg-[#6cfe6c]");
       tapeWrapper.addClass("bg-[#ff0000]");
+      tapeStates[index].removeClass("bg-[#6cfe6c]");
+      tapeStates[index].addClass("bg-[#ff0000]");
     } else {
       if (accepted && end) {
         tapeWrapper.removeClass("bg-[#ff0000]");
         tapeWrapper.addClass("bg-[#6cfe6c]");
+        tapeStates[index].removeClass("bg-[#ff0000]");
+        tapeStates[index].addClass("bg-[#6cfe6c]");
 
         stepBack.removeAttribute("disabled");
         fastReset.removeAttribute("disabled");
@@ -257,6 +295,8 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
       } else if (!accepted && end) {
         tapeWrapper.removeClass("bg-[#6cfe6c]");
         tapeWrapper.addClass("bg-[#ff0000]");
+        tapeStates[index].removeClass("bg-[#6cfe6c]");
+        tapeStates[index].addClass("bg-[#ff0000]");
 
         stepBack.removeAttribute("disabled");
         fastReset.removeAttribute("disabled");
@@ -265,6 +305,10 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
       } else {
         tapeWrapper.removeClass("bg-[#ff0000]");
         tapeWrapper.removeClass("bg-[#6cfe6c]");
+        tapeStates[index].removeClass("bg-[#ff0000]");
+        tapeStates[index].removeClass("bg-[#6cfe6c]");
+        tapeStates[index].addClass("bg-[#8B008B]");
+        tapeStates[index].addClass("bg-[#8B008B]");
 
         if (p5.mtCreated.history.length === 0) {
           fastReset.attribute("disabled", true);

@@ -122,7 +122,18 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#simulation-nav-test-tab-${id}`).removeClass("selected-bottom-tab-button");
         p5.select(`#test-tab-${id}`).hide();
         p5.select(`#test-tab-${id}`).removeClass("pb-2");
+
+        // p5.select(`#left-toolbar-${id}`).show();
+        // p5.select(`#bottom-drawer-container-${id}`).removeClass("w-full");
+        // p5.select(`#bottom-drawer-container-${id}`).addClass("w-[calc(100%-3.5rem)]");
+        // p5.select(`#bottom-drawer-container-${id}`).addClass("ml-14");
+
         updateUIWhenSimulating(p5, false, false, false);
+
+        p5.states.forEach((state) => {
+          state.simulating = false;
+          state.input.visible = false;
+        });
       };
 
       p5.openLabTab = () => {
@@ -133,7 +144,14 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#test-tab-${id}`).show();
         p5.select(`#test-tab-${id}`).addClass("pb-2");
 
+        // p5.select(`#left-toolbar-${id}`).hide();
+        // p5.select(`#bottom-drawer-container-${id}`).removeClass("w-[calc(100%-3.5rem)]");
+        // p5.select(`#bottom-drawer-container-${id}`).removeClass("ml-14");
+        // p5.select(`#bottom-drawer-container-${id}`).addClass("w-full");
+
         p5.abstractCreateMT();
+
+        p5.states.forEach((state) => (state.input.visible = false));
       };
 
       // Main functions

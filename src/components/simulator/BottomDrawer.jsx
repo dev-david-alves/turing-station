@@ -61,7 +61,7 @@ function TestTab({ id, className }) {
 
       <div
         id={`tape-container-${id}`}
-        className="mt-2 flex h-fit w-full flex-col items-center justify-center gap-2 overflow-x-auto overflow-y-hidden rounded-md"
+        className="mt-2 flex h-fit max-h-32 w-full flex-col items-center justify-center gap-2 overflow-y-auto overflow-x-hidden rounded-md"
       ></div>
     </div>
   );

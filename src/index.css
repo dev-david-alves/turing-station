@@ -112,6 +112,10 @@ input::-webkit-autocomplete-item:hover {
   @apply h-5 w-5;
 }
 
+.tape-state {
+  @apply mx-2 flex h-10 max-h-10 min-h-10 w-10 min-w-10 max-w-10 items-center justify-center truncate rounded-full border-2 border-white text-center font-semibold text-white;
+}
+
 /* Scroll */
 
 /* width */
