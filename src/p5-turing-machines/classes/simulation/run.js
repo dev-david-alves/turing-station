@@ -253,18 +253,15 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
 
   if (!fastReset || !stepBack || !stepForward || !fastSimulation) return;
 
-  fastReset.removeAttribute("disabled");
-  stepBack.removeAttribute("disabled");
-  stepForward.removeAttribute("disabled");
-  fastSimulation.removeAttribute("disabled");
+  fastReset.attribute("disabled", true);
+  stepBack.attribute("disabled", true);
+  stepForward.attribute("disabled", true);
+  fastSimulation.attribute("disabled", true);
+  if (!p5.mtCreated) return;
 
-  if (!p5.mtCreated) {
-    fastReset.attribute("disabled", true);
-    stepBack.attribute("disabled", true);
-    stepForward.attribute("disabled", true);
-    fastSimulation.attribute("disabled", true);
-
-    return;
+  if (p5.mtCreated.history.length > 0) {
+    fastReset.removeAttribute("disabled");
+    stepBack.removeAttribute("disabled");
   }
 
   let tapeWrappers = p5.selectAll(`.tape-wrapper-${p5.canvasID}`);
@@ -274,50 +271,28 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
 
   tapeWrappers.forEach((tapeWrapper, index) => {
     tapeStates[index].removeClass("bg-[#8B008B]");
-    tapeStates[index].removeClass("bg-[#8B008B]");
+    tapeStates[index].removeClass("bg-[#ff0000]");
+    tapeStates[index].removeClass("bg-[#6cfe6c]");
+    tapeWrapper.removeClass("bg-[#6cfe6c]");
+    tapeWrapper.removeClass("bg-[#ff0000]");
 
     if (tapeWrapper.hasClass(`branchRejection-true`)) {
-      tapeWrapper.removeClass("bg-[#6cfe6c]");
       tapeWrapper.addClass("bg-[#ff0000]");
-      tapeStates[index].removeClass("bg-[#6cfe6c]");
       tapeStates[index].addClass("bg-[#ff0000]");
-    } else {
-      if (accepted && end) {
-        tapeWrapper.removeClass("bg-[#ff0000]");
+    }
+
+    if (end) {
+      if (accepted) {
         tapeWrapper.addClass("bg-[#6cfe6c]");
-        tapeStates[index].removeClass("bg-[#ff0000]");
         tapeStates[index].addClass("bg-[#6cfe6c]");
-
-        stepBack.removeAttribute("disabled");
-        fastReset.removeAttribute("disabled");
-        stepForward.attribute("disabled", true);
-        fastSimulation.attribute("disabled", true);
-      } else if (!accepted && end) {
-        tapeWrapper.removeClass("bg-[#6cfe6c]");
-        tapeWrapper.addClass("bg-[#ff0000]");
-        tapeStates[index].removeClass("bg-[#6cfe6c]");
-        tapeStates[index].addClass("bg-[#ff0000]");
-
-        stepBack.removeAttribute("disabled");
-        fastReset.removeAttribute("disabled");
-        stepForward.attribute("disabled", true);
-        fastSimulation.attribute("disabled", true);
       } else {
-        tapeWrapper.removeClass("bg-[#ff0000]");
-        tapeWrapper.removeClass("bg-[#6cfe6c]");
-        tapeStates[index].removeClass("bg-[#ff0000]");
-        tapeStates[index].removeClass("bg-[#6cfe6c]");
-        tapeStates[index].addClass("bg-[#8B008B]");
-        tapeStates[index].addClass("bg-[#8B008B]");
-
-        if (p5.mtCreated.history.length === 0) {
-          fastReset.attribute("disabled", true);
-          stepBack.attribute("disabled", true);
-        } else {
-          fastReset.removeAttribute("disabled");
-          stepBack.removeAttribute("disabled");
-        }
+        tapeWrapper.addClass("bg-[#ff0000]");
+        tapeStates[index].addClass("bg-[#ff0000]");
       }
+    } else {
+      tapeStates[index].addClass("bg-[#8B008B]");
+      stepForward.removeAttribute("disabled");
+      fastSimulation.removeAttribute("disabled");
     }
   });
 };

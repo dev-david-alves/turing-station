@@ -113,14 +113,7 @@ export class NDTM {
   }
 
   checkRejection() {
-    let rejected = this.branchs.every((branch) => {
-      const currentState = branch[0];
-      if (this.finalStates.has(currentState)) return false;
-      if (!this.delta.hasOwnProperty(currentState)) return true;
-      if (!this.delta[currentState].hasOwnProperty(branch[1].getSymbol())) return true;
-    });
-
-    return rejected;
+    return this.branchs.every((branch) => branch[2]);
   }
 
   createHistory() {
@@ -195,14 +188,8 @@ export class NDTM {
 
     this.printBranchs();
 
-    if (this.checkAcceptance()) {
-      console.log("Accepted");
-      return { accepted: true, end: true };
-    }
-    if (this.checkRejection()) {
-      console.log("Rejected");
-      return { accepted: false, end: true };
-    }
+    if (this.checkRejection()) return { accepted: false, end: true };
+    if (this.checkAcceptance()) return { accepted: true, end: true };
 
     return { accepted: false, end: false };
   }
@@ -216,6 +203,8 @@ export class NDTM {
 
       itr++;
     }
+
+    return { accepted: false, end: true };
   }
 }
 
