@@ -15,6 +15,8 @@ export const createHistory = (p5) => {
 
     p5.history.push(currentState);
     p5.currentHistoryIndex++;
+
+    p5.abstractCreateMT();
   }
 };
 

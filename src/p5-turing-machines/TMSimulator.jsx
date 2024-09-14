@@ -36,6 +36,8 @@ export const TMSimulator = ({ id }) => {
       p5.mtCreated = null;
       p5.selectedLeftToolbarButton = null;
       p5.selectedBottomTab = undefined;
+      p5.testTabClasslist = false;
+      // p5.multiTestTabClasslist = false;
       p5.tm_variant = tm_variant;
 
       // History
@@ -71,7 +73,6 @@ export const TMSimulator = ({ id }) => {
       };
 
       p5.setLeftToolbarButton = (buttonId) => {
-        p5.closeLabTab();
         if (p5.selectedLeftToolbarButton === buttonId.split("-")[1]) return;
 
         p5.selectedLeftToolbarButton = buttonId.split("-")[1];
@@ -119,14 +120,6 @@ export const TMSimulator = ({ id }) => {
 
       p5.closeLabTab = () => {
         p5.selectedBottomTab = undefined;
-        p5.select(`#simulation-nav-test-tab-${id}`).removeClass("selected-bottom-tab-button");
-        p5.select(`#test-tab-${id}`).hide();
-        p5.select(`#test-tab-${id}`).removeClass("pb-2");
-
-        // p5.select(`#left-toolbar-${id}`).show();
-        // p5.select(`#bottom-drawer-container-${id}`).removeClass("w-full");
-        // p5.select(`#bottom-drawer-container-${id}`).addClass("w-[calc(100%-3.5rem)]");
-        // p5.select(`#bottom-drawer-container-${id}`).addClass("ml-14");
 
         updateUIWhenSimulating(p5, false, false, false);
 
@@ -138,20 +131,38 @@ export const TMSimulator = ({ id }) => {
 
       p5.openLabTab = () => {
         p5.unSelectAllObjects();
-
         p5.selectedBottomTab = "test-tab";
-        p5.select(`#simulation-nav-test-tab-${id}`).addClass("selected-bottom-tab-button");
-        p5.select(`#test-tab-${id}`).show();
-        p5.select(`#test-tab-${id}`).addClass("pb-2");
-
-        // p5.select(`#left-toolbar-${id}`).hide();
-        // p5.select(`#bottom-drawer-container-${id}`).removeClass("w-[calc(100%-3.5rem)]");
-        // p5.select(`#bottom-drawer-container-${id}`).removeClass("ml-14");
-        // p5.select(`#bottom-drawer-container-${id}`).addClass("w-full");
 
         p5.abstractCreateMT();
 
         p5.states.forEach((state) => (state.input.visible = false));
+      };
+
+      p5.showErrors = () => {
+        let simulationBottomButtons = p5.selectAll(`.simulation-bottom-buttons-${id}`);
+        let input = p5.select(`#simulation-input-${id}`);
+        if (!p5.startLink) {
+          p5.select(`#erros-container-${id}`).show();
+          p5.select(`#tape-container-${id}`).hide();
+          simulationBottomButtons.forEach((button) => button.attribute("disabled", "true"));
+          input.attribute("disabled", "true");
+          return;
+        }
+
+        input.removeAttribute("disabled");
+        p5.select(`#erros-container-${id}`).hide();
+      };
+
+      p5.toggleTestTab = () => {
+        let newTestTabClasslist = Array.from(p5.select(`#simulation-nav-test-tab-${id}`).elt.classList);
+        if (newTestTabClasslist.toString() !== p5.testTabClasslist.toString()) {
+          p5.testTabClasslist = newTestTabClasslist;
+          if (newTestTabClasslist.includes("selected-bottom-tab-button")) {
+            p5.openLabTab();
+          } else {
+            p5.closeLabTab();
+          }
+        }
       };
 
       // Main functions
@@ -165,7 +176,7 @@ export const TMSimulator = ({ id }) => {
         p5.cnv.mouseMoved(() => p5.mouseDraggedInsideCanvas()); // Used because there is no mouseDragged event for cnv
         p5.cnv.doubleClicked(() => p5.doubleClickedInsideCanvas());
         p5.cnv.mouseWheel((event) => p5.mouseWheelInsideCanvas(event));
-        window.addEventListener("contextmenu", (e) => e.preventDefault());
+        // window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
         // p5.states.push(new State(p5, p5.getNewStateId(), 200, 200));
@@ -230,16 +241,6 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#rename-state-${id}`).mousePressed(() => p5.renameState());
         p5.select(`#delete-state-${id}`).mousePressed(() => p5.deleteObject());
 
-        // Bottom drawer buttons
-        p5.select(`#test-tab-${id}`).hide();
-        p5.select(`#simulation-nav-test-tab-${id}`).mousePressed(() => {
-          if (p5.selectedBottomTab === "test-tab") {
-            p5.closeLabTab();
-          } else {
-            p5.openLabTab();
-          }
-        });
-
         // Set simulation input and buttons
         p5.select(`#simulation-input-${id}`).input(() => p5.abstractCreateMT());
         p5.select(`#simulation-fast-reset-${id}`).mousePressed(() => simulationReset(p5));
@@ -250,26 +251,20 @@ export const TMSimulator = ({ id }) => {
 
         // First save on history
         p5.history.push(createJSONExportObj(p5));
-      };
 
-      p5.showErrors = () => {
-        let simulationBottomButtons = p5.selectAll(`.simulation-bottom-buttons-${id}`);
-        let input = p5.select(`#simulation-input-${id}`);
-        if (!p5.startLink) {
-          p5.select(`#erros-container-${id}`).show();
-          p5.select(`#tape-container-${id}`).hide();
-          simulationBottomButtons.forEach((button) => button.attribute("disabled", "true"));
-          input.attribute("disabled", "true");
-          return;
-        }
+        p5.abstractCreateMT();
+        p5.states.forEach((state) => (state.simulating = false));
 
-        input.removeAttribute("disabled");
-        p5.select(`#erros-container-${id}`).hide();
+        // Get the tab
+        p5.testTabClasslist = Array.from(p5.select(`#simulation-nav-test-tab-${id}`).elt.classList);
+        // p5.multiTestTabClasslist = Array.from(p5.select(`#simulation-nav-multitest-tab-${id}`).elt.classList);
       };
 
       p5.draw = () => {
         if (!focused) return;
         p5.showErrors();
+
+        p5.toggleTestTab();
 
         // Set properties
         p5.reCalculateCanvasSize();
@@ -711,7 +706,6 @@ export const TMSimulator = ({ id }) => {
       };
 
       p5.mousePressedInsideCanvas = () => {
-        p5.closeLabTab();
         if (!focused) return false;
         if (p5.stateContextMenu) p5.stateContextMenu.hide();
         if (p5.checkAndCloseAllStateInputVisible()) createHistory(p5);
