@@ -21,6 +21,7 @@ import {
 } from "./classes/simulation/run";
 
 import test_mt from "../../test-mts/turing-machine - nd 2.json";
+import { texMap } from "./utils/getTexMaps";
 
 export const TMSimulator = ({ id }) => {
   const { getOne } = useSimulator();
@@ -37,8 +38,9 @@ export const TMSimulator = ({ id }) => {
       p5.selectedLeftToolbarButton = null;
       p5.selectedBottomTab = undefined;
       p5.testTabClasslist = false;
-      // p5.multiTestTabClasslist = false;
+      p5.multiTestTabClasslist = false;
       p5.tm_variant = tm_variant;
+      p5.multitestNumTests = -1;
 
       // History
       p5.history = [];
@@ -118,6 +120,11 @@ export const TMSimulator = ({ id }) => {
         }
       };
 
+      // p5.closeBottomDrawer = () => {
+      //   p5.select(`#bottom-drawer-${id}`);
+      //   console.log("Closing bottom drawer");
+      // };
+
       p5.closeLabTab = () => {
         p5.selectedBottomTab = undefined;
 
@@ -163,6 +170,96 @@ export const TMSimulator = ({ id }) => {
             p5.closeLabTab();
           }
         }
+      };
+
+      p5.toggleMultiTestTab = () => {
+        let newMultiTestTabClasslist = Array.from(p5.select(`#simulation-nav-multitest-tab-${id}`).elt.classList);
+        if (newMultiTestTabClasslist.toString() !== p5.multiTestTabClasslist.toString()) {
+          p5.multiTestTabClasslist = newMultiTestTabClasslist;
+          p5.cleanAllMultiTestInputs();
+          if (newMultiTestTabClasslist.includes("selected-bottom-tab-button")) {
+            p5.selectedBottomTab = "multitest-tab";
+            p5.abstractCreateMT();
+            p5.states.forEach((state) => {
+              state.input.visible = false;
+              state.simulating = false;
+            });
+            console.log("MultiTestTab opened");
+          } else {
+            p5.selectedBottomTab = undefined;
+            console.log("MultiTestTab closed");
+          }
+        }
+      };
+
+      p5.cleanAllMultiTestInputs = () => {
+        p5.selectAll(`.multitest-input-${id}`).forEach((input) => {
+          input.removeClass("border-lightDanger");
+          input.removeClass("border-lightGreen");
+
+          let inputRandomId = input.attribute("data-randomid");
+          let acceptedIcon = p5.select(`#accepted-testIcon-${inputRandomId}-${id}`);
+          let rejectedIcon = p5.select(`#rejected-testIcon-${inputRandomId}-${id}`);
+
+          if (acceptedIcon) acceptedIcon.hide();
+          if (rejectedIcon) rejectedIcon.hide();
+        });
+      };
+
+      p5.runMultiTest = () => {
+        if (!p5.mtCreated) return;
+        const allTestInputs = p5.selectAll(`.multitest-input-${id}`);
+
+        allTestInputs.forEach((input) => {
+          let value = input.value();
+          if (value === "" || value.length === 0) value = texMap["\\Blank"];
+
+          p5.mtCreated.setComputedWord(input.value());
+
+          const { accepted } = p5.mtCreated.fastForward();
+
+          input.removeClass("border-lightDanger");
+          input.removeClass("border-lightGreen");
+          let inputRandomId = input.attribute("data-randomid");
+          let acceptedIcon = p5.select(`#accepted-testIcon-${inputRandomId}-${id}`);
+          let rejectedIcon = p5.select(`#rejected-testIcon-${inputRandomId}-${id}`);
+
+          if (accepted) {
+            input.addClass("border-lightGreen");
+            acceptedIcon.show();
+            rejectedIcon.hide();
+          } else {
+            input.addClass("border-lightDanger");
+            acceptedIcon.hide();
+            rejectedIcon.show();
+          }
+        });
+      };
+
+      // Set multitest input events
+      p5.setMultiTestInputEvents = () => {
+        p5.selectAll(`.multitest-input-${id}`).forEach((input) => {
+          input.input(() => p5.cleanAllMultiTestInputs());
+
+          // Get the data-randomid attribute
+          let dataRandomId = input.attribute("data-randomid");
+          let deleteButton = p5.select(`#delete-multitest-input-${dataRandomId}-${id}`);
+
+          // Toggling the delete button
+          input.elt.addEventListener("focus", () => {
+            deleteButton.removeClass("hidden");
+            deleteButton.addClass("flex");
+          });
+
+          // Add a blur event listener
+          input.elt.addEventListener("blur", () => {
+            // After a delay, hide the delete button
+            setTimeout(() => {
+              deleteButton.removeClass("flex");
+              deleteButton.addClass("hidden");
+            }, 300);
+          });
+        });
       };
 
       // Main functions
@@ -257,7 +354,11 @@ export const TMSimulator = ({ id }) => {
 
         // Get the tab
         p5.testTabClasslist = Array.from(p5.select(`#simulation-nav-test-tab-${id}`).elt.classList);
-        // p5.multiTestTabClasslist = Array.from(p5.select(`#simulation-nav-multitest-tab-${id}`).elt.classList);
+        p5.multiTestTabClasslist = Array.from(p5.select(`#simulation-nav-multitest-tab-${id}`).elt.classList);
+        p5.select(`#run-multitest-${id}`).mousePressed(() => p5.runMultiTest());
+
+        p5.setMultiTestInputEvents();
+        p5.multitestNumTests = p5.selectAll(`.multitest-input-${id}`).length;
       };
 
       p5.draw = () => {
@@ -265,6 +366,13 @@ export const TMSimulator = ({ id }) => {
         p5.showErrors();
 
         p5.toggleTestTab();
+        p5.toggleMultiTestTab();
+
+        if (p5.selectAll(`.multitest-input-${id}`).length !== p5.multitestNumTests) {
+          p5.multitestNumTests = p5.selectAll(`.multitest-input-${id}`).length;
+          p5.setMultiTestInputEvents();
+          p5.cleanAllMultiTestInputs();
+        }
 
         // Set properties
         p5.reCalculateCanvasSize();

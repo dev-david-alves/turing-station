@@ -18,6 +18,7 @@
   --primary: #1762a3;
   --primary-hover: #11528c;
   --danger: #e10000;
+  --light-danger: #ff4d4d;
   --success: #1b9c85;
   --warning: #f7d060;
   --main: #ffffff;
@@ -27,6 +28,7 @@
   --dark-variant: #677483;
   --background: #f6f6f9;
   --dark-green: #009121;
+  --light-green: #6cfe6c;
   --white: #ffffff;
   --disabled-button: #4b4b4b;
   --darken-blue: #36404e;

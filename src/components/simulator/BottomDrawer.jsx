@@ -4,7 +4,6 @@ import { cn } from "../../utils/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip";
 import { useSimulator } from "../../providers/simulator";
 import { useEffect, useRef, useState } from "react";
-import { useClickOuside } from "../../hooks/useClickDetection";
 import { texMap } from "../../p5-turing-machines/utils/getTexMaps";
 import { Button } from "../Button";
 
@@ -42,8 +41,7 @@ const simulationButtons = [
 
 function MultiTestTab({ id, className }) {
   const generateRandomId = () => Math.random().toString(36).substring(7);
-  const [testInputs, setTestInputs] = useState([generateRandomId()]);
-  const [showDeleteButton, setShowDeleteButton] = useState(undefined);
+  const [testInputs, setTestInputs] = useState([generateRandomId(), generateRandomId(), generateRandomId()]);
 
   return (
     <div id={`multitest-tab-${id}`} className={cn("w-full", className)}>
@@ -51,32 +49,45 @@ function MultiTestTab({ id, className }) {
         <p className="font-semibold text-white">Multiteste</p>
       </div>
       {testInputs.map((value) => (
-        <div className="flex w-full max-w-full items-center gap-2 overflow-hidden px-4 py-2" key={value}>
+        <div
+          key={value}
+          id={`multitest-input-container-${value}-${id}`}
+          className="mt-2 flex w-full max-w-full items-center gap-2 overflow-hidden px-4 py-1"
+        >
+          <Icon
+            id={`accepted-testIcon-${value}-${id}`}
+            icon="solar:check-circle-outline"
+            className="icon text-lightGreen hidden h-8 min-h-8 w-8 min-w-8"
+          />
+          <Icon
+            id={`rejected-testIcon-${value}-${id}`}
+            icon="icon-park-outline:close-one"
+            className="icon text-lightDanger hidden h-8 min-h-8 w-8 min-w-8"
+          />
           <Input
+            id={`multitest-input-${value}-${id}`}
             type="text"
             placeholder={texMap["\\Blank"]}
-            className={cn(
-              "multitest-input mr-2 min-w-full py-1.5 transition-all duration-500",
-              showDeleteButton === value && testInputs.length > 1 && "mr-0 min-w-[90%]",
-            )}
-            onFocus={() => setShowDeleteButton(value)}
-            onBlur={() => setShowDeleteButton(undefined)}
+            className={cn(`multitest-input-${id} min-h-full w-full py-1.5 outline-none focus-visible:ring-0`)}
+            data-randomid={value}
           />
           <Button
+            id={`delete-multitest-input-${value}-${id}`}
             variant="default"
             onClick={() => {
               if (testInputs.length === 1) return;
               setTestInputs(testInputs.filter((v) => v !== value));
             }}
-            className={cn("w-20 bg-danger text-white", testInputs.length === 1 && "hidden")}
+            className={cn("hidden h-8 w-12 items-center justify-center bg-danger text-white")}
             disabled={testInputs.length === 1}
           >
             <Icon icon="ri:delete-bin-2-line" className="icon h-5 w-5" />
           </Button>
         </div>
       ))}
-      <div className="flex w-full items-center justify-between px-4">
+      <div className="mt-2 flex w-full items-center justify-between px-4">
         <Button
+          id={`add-multitest-input-${id}`}
           variant="default"
           onClick={() => setTestInputs([...testInputs, generateRandomId()])}
           className="w-20 bg-zinc-700 text-white"
@@ -142,9 +153,9 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
     }
   };
 
-  useEffect(() => {
-    console.log("selectedTab", selectedTab, bottomDrawerOpen);
-  }, [selectedTab, bottomDrawerOpen]);
+  // useEffect(() => {
+  //   console.log("selectedTab", selectedTab, bottomDrawerOpen);
+  // }, [selectedTab, bottomDrawerOpen]);
 
   useEffect(() => {
     if (!bottomDrawerOpen) setSelectedTab(undefined);
@@ -207,7 +218,7 @@ function BottomDrawer({ id, setBottomDrawerOpen, bottomDrawerOpen }) {
   return (
     <div
       // ref={bottomDrawerRef}
-      id={`bottom-drawer-${id}`}
+      // id={`bottom-drawer-${id}`}
       className={cn(
         "flex min-h-full w-full flex-col items-center gap-2 rounded-t-md bg-main pt-2 transition-all duration-200",
       )}
