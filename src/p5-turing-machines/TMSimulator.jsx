@@ -426,6 +426,30 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.stateRepulse();
       };
 
+      p5.findAllLinkSiblingRules = (originState) => {
+        let rules = [];
+        if (!originState) return rules;
+
+        p5.links.forEach((link) => {
+          if (link instanceof Link) {
+            if (link.stateA.id === originState.id) {
+              link.transitionBox.rules.forEach((rule) => {
+                rules.push(rule);
+              });
+            }
+          } else {
+            if (link.state.id === originState.id) {
+              link.transitionBox.rules.forEach((rule) => {
+                rules.push(rule);
+              });
+            }
+          }
+        });
+
+        console.log(rules);
+        return rules;
+      };
+
       p5.createLink = () => {
         if (
           (p5.selectedLeftToolbarButton !== "selectObject" && p5.selectedLeftToolbarButton !== "addLink") ||
@@ -712,6 +736,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
                   )
                 ) {
                   p5.links.push(new Link(p5, from, to));
+                  p5.links[p5.links.length - 1].transitionBox.siblingRules = p5.findAllLinkSiblingRules(from);
                   p5.links[p5.links.length - 1].transitionBox.selected = true;
 
                   // Extra: if already exists a link to -> from, turn links curved
@@ -735,6 +760,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
                     (link) => link instanceof Link && link.stateA.id === from.id && link.stateB.id === to.id,
                   );
                   if (link) {
+                    link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(from);
                     link.transitionBox.selected = true;
                     console.log("Link already exists");
                   }
@@ -761,12 +787,14 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
           // Check if already exists a link to itself
           if (!p5.links.some((link) => link instanceof SelfLink && link.state.id === p5.lastSelectedState.id)) {
             p5.links.push(new SelfLink(p5, p5.currentLink.state, true));
+            p5.links[p5.links.length - 1].transitionBox.siblingRules = p5.findAllLinkSiblingRules(p5.currentLink.state);
             p5.links[p5.links.length - 1].transitionBox.selected = true;
           } else {
             let link = p5.links.find((link) => link instanceof SelfLink && link.state.id === p5.lastSelectedState.id);
             if (link) {
-              console.log("SelfLink already exists");
+              link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(p5.lastSelectedState);
               link.transitionBox.selected = true;
+              console.log("SelfLink already exists");
             }
           }
         }

@@ -9,13 +9,14 @@ const SimulatorProvider = ({ children }) => {
     {
       id: generateRandomId(),
       name: "Custom MT 01",
-      open: true,
+      open: true, // TM accordion open by default
       fullScreen: false,
       focused: true,
       showLeftToolbar: true,
       showTooltips: false,
-      tm_variant: "ndtm", // Three possible values: "tm", "ndtm", "mttm"
-      data: undefined,
+      tm_variant: "mttm", // Three possible values: "tm", "ndtm", "mttm"
+      tm_num_tapes: 1, // Only for "mttm" variant
+      data: undefined, // Last tm saved on the simulator history (same data) used to restore the simulator
     },
     // {
     //   id: generateRandomId(),

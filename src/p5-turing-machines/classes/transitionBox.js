@@ -73,6 +73,7 @@ export default class TransitionBox {
     }
 
     // Rules information
+    this.siblingRules = [];
     this.rules = rules;
     this.rulesX = this.x;
     this.rulesY = this.y;
@@ -280,13 +281,30 @@ export default class TransitionBox {
     return false;
   }
 
+  checkNonDeterministic(allReadSubstringsFromRule) {
+    let fullReadSub = allReadSubstringsFromRule.join("");
+
+    for (let i = 0; i < this.siblingRules.length; i++) {
+      let allReadSubstrings = convertSubstringsToString(this.siblingRules[i].label).split("→")[0].trim();
+
+      if (fullReadSub === allReadSubstrings) return true;
+    }
+
+    return false;
+  }
+
   confirmRule() {
+    // Get the result of the changeResultText function
+    let { allReadSubstrings, allWriteSubstrings, direction } = this.changeResultText();
+    // Concat all arrays
+    let rule = allReadSubstrings.concat([" ", "→", " "], allWriteSubstrings, [", "], [direction]);
+
+    if (this.p5.tm_variant !== "ndtm" && this.checkNonDeterministic(allReadSubstrings)) {
+      alert("Essa variante não aceita regras não determinísticas!");
+      return;
+    }
+
     if (this.selectedRuleIndex !== -1) {
-      let { allReadSubstrings, allWriteSubstrings, direction } = this.changeResultText();
-
-      // Concat all arrays
-      let rule = allReadSubstrings.concat([" ", "→", " "], allWriteSubstrings, [", "], [direction]);
-
       if (!this.ruleAlreadyExists(rule)) {
         this.rules[this.selectedRuleIndex] = {
           label: rule,
@@ -294,11 +312,6 @@ export default class TransitionBox {
         };
       }
     } else {
-      let { allReadSubstrings, allWriteSubstrings, direction } = this.changeResultText();
-
-      // Concat all arrays
-      let rule = allReadSubstrings.concat([" ", "→", " "], allWriteSubstrings, [", "], [direction]);
-
       if (!this.ruleAlreadyExists(rule)) {
         this.rules.push({
           label: rule,
