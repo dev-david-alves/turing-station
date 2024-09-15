@@ -210,15 +210,8 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
 function BottomDrawer({ id, setBottomDrawerOpen, bottomDrawerOpen }) {
   const [selectedTab, setSelectedTab] = useState(undefined);
 
-  // const bottomDrawerRef = useRef(null);
-  // useClickOuside(bottomDrawerRef, () => {
-  //   setBottomDrawerOpen(false);
-  // });
-
   return (
     <div
-      // ref={bottomDrawerRef}
-      // id={`bottom-drawer-${id}`}
       className={cn(
         "flex min-h-full w-full flex-col items-center gap-2 rounded-t-md bg-main pt-2 transition-all duration-200",
       )}

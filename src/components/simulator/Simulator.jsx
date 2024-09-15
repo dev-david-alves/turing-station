@@ -10,7 +10,7 @@ import LinkModal from "./context-menu/LinkModal";
 import CanvasModal from "./context-menu/CanvasModal";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../Resizable";
 
-const Simulator = ({ id, children }) => {
+const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
   if (!id) throw new Error("Simulator component must have an id prop");
 
   const { getOne, handleFocus } = useSimulator();
@@ -25,13 +25,9 @@ const Simulator = ({ id, children }) => {
   const isFocused = simulator.focused;
   const showLeftToolbar = simulator.showLeftToolbar;
 
-  // Test
   const bottomDrawerRef = useRef(null);
-  const [bottomDrawerOpen, setBottomDrawerOpen] = useState(false);
   const MIN_BOTTOM_DRAWER_SIZE = 9;
   const MAX_BOTTOM_DRAWER_SIZE = 80;
-
-  const toggleBottomDrawer = () => {};
 
   const toggleBottomDrawerIsOpen = (size) => {
     if (size > MIN_BOTTOM_DRAWER_SIZE) setBottomDrawerOpen(true);
@@ -42,11 +38,9 @@ const Simulator = ({ id, children }) => {
     const bottomPanel = bottomDrawerRef.current;
     if (bottomPanel) {
       if (bottomDrawerOpen) {
-        bottomPanel.resize(40);
-        setBottomDrawerOpen(true);
+        if (bottomPanel.getSize() == 9) bottomPanel.resize(40);
       } else {
         bottomPanel.resize(MIN_BOTTOM_DRAWER_SIZE);
-        setBottomDrawerOpen(false);
       }
     }
   }, [bottomDrawerOpen]);
@@ -89,6 +83,7 @@ const Simulator = ({ id, children }) => {
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel
+            id={`bottom-drawer-${id}`}
             minSize={MIN_BOTTOM_DRAWER_SIZE}
             maxSize={MAX_BOTTOM_DRAWER_SIZE}
             className="z-[2010] mx-1"
@@ -96,7 +91,7 @@ const Simulator = ({ id, children }) => {
             defaultSize={MIN_BOTTOM_DRAWER_SIZE}
             onResize={(size) => toggleBottomDrawerIsOpen(size)}
           >
-            <div className="min-h-full overflow-hidden rounded-md bg-main">
+            <div className="min-h-full overflow-hidden rounded-t-md bg-main">
               <BottomDrawer id={id} setBottomDrawerOpen={setBottomDrawerOpen} bottomDrawerOpen={bottomDrawerOpen} />
             </div>
           </ResizablePanel>

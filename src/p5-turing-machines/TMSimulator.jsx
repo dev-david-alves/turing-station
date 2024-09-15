@@ -23,7 +23,7 @@ import {
 import test_mt from "../../test-mts/turing-machine - nd 2.json";
 import { texMap } from "./utils/getTexMaps";
 
-export const TMSimulator = ({ id }) => {
+export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
   const { getOne } = useSimulator();
   const { focused, tm_variant } = getOne(id);
 
@@ -120,10 +120,12 @@ export const TMSimulator = ({ id }) => {
         }
       };
 
-      // p5.closeBottomDrawer = () => {
-      //   p5.select(`#bottom-drawer-${id}`);
-      //   console.log("Closing bottom drawer");
-      // };
+      p5.closeBottomDrawer = (event) => {
+        let bottomDrawer = p5.select(`#bottom-drawer-${id}`);
+        if (!bottomDrawer.elt.contains(event.target)) {
+          setBottomDrawerOpen(false);
+        }
+      };
 
       p5.closeLabTab = () => {
         p5.selectedBottomTab = undefined;
@@ -184,10 +186,8 @@ export const TMSimulator = ({ id }) => {
               state.input.visible = false;
               state.simulating = false;
             });
-            console.log("MultiTestTab opened");
           } else {
             p5.selectedBottomTab = undefined;
-            console.log("MultiTestTab closed");
           }
         }
       };
@@ -855,6 +855,10 @@ export const TMSimulator = ({ id }) => {
         }
 
         return false;
+      };
+
+      p5.mousePressed = (event) => {
+        p5.closeBottomDrawer(event);
       };
 
       p5.mouseReleased = () => {
