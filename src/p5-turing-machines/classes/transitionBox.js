@@ -62,27 +62,28 @@ export default class TransitionBox {
     this.resetAllInputsAndButtons();
 
     this.allReadInputs.forEach((input) => {
-      input.addEventListener("input", (event) => {
-        // const { status, data } = this.getOptions(input);
-        // if (status) {
-        //   this.customDataList(data, input, "left-0");
-        // }
+      input.addEventListener("input", () => {
+        const { status, data } = this.getOptions(input);
+        if (status) {
+          this.customDataList(data, input, "left-0");
+        }
         this.changeResultText();
       });
 
-      // input.addEventListener("blur", () => this.options?.remove());
+      input.addEventListener("blur", () => this.options?.remove());
     });
 
     this.allWriteInputs.forEach((input) => {
-      input.addEventListener("input", (event) => {
-        // const { status, data } = this.getOptions(input);
-        // if (status) {
-        //   this.customDataList(data, input, "right-0");
-        // }
+      input.addEventListener("input", () => {
+        const { status, data } = this.getOptions(input);
+        if (status) {
+          let positionX = p5.tm_num_tapes === 1 ? "right-0" : "right-16";
+          this.customDataList(data, input, positionX);
+        }
         this.changeResultText();
       });
 
-      // input.addEventListener("blur", () => this.options?.remove());
+      input.addEventListener("blur", () => this.options?.remove());
     });
 
     // Rules information
@@ -115,61 +116,60 @@ export default class TransitionBox {
       this.rules.push(aux);
     });
 
-    // console.log(this.rules[0]);
     this.changeResultText();
   }
 
-  // getOptions(inputField) {
-  //   if (!inputField) return;
+  getOptions(inputField) {
+    if (!inputField) return;
 
-  //   const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
-  //     key.toLowerCase().includes(inputField.value().toLowerCase()),
-  //   );
+    const texMapKeys = Object.entries(texMap).filter(([key, _]) =>
+      key.toLowerCase().includes(inputField.value.toLowerCase()),
+    );
 
-  //   if (this.options) this.options.remove();
+    if (this.options) this.options.remove();
 
-  //   if (inputField.value().length <= 1 || inputField.value() === "\\" || texMapKeys.length === 0)
-  //     return { status: false, data: null };
+    if (inputField.value.length <= 1 || inputField.value === "\\" || texMapKeys.length === 0)
+      return { status: false, data: null };
 
-  //   return { status: true, data: texMapKeys };
-  // }
+    return { status: true, data: texMapKeys };
+  }
 
-  // customDataList(dataFiltered, inputField, className) {
-  //   if (!this.mainDiv || !inputField) return;
+  customDataList(dataFiltered, inputField, className) {
+    if (!this.mainDiv || !inputField) return;
 
-  //   this.options = this.p5.createDiv();
-  //   this.options.parent(this.mainDiv);
-  //   this.options.class(
-  //     cn(
-  //       "flex flex-col overflow-hidden rounded-md border-[1px] border-white bg-main text-white shadow-lg  absolute top-0 transform -translate-y-full mx-3 w-[calc(50%-1rem)]",
-  //       className,
-  //     ),
-  //   );
+    this.options = this.p5.createDiv();
+    this.options.parent(this.mainDiv);
+    this.options.class(
+      cn(
+        "flex flex-col overflow-hidden rounded-md border-[1px] border-white bg-main text-white shadow-lg  absolute top-0 transform -translate-y-full mx-3 w-[calc(50%-1rem)]",
+        className,
+      ),
+    );
 
-  //   for (let i = 0; i < dataFiltered.length; i++) {
-  //     let option = this.p5.createDiv();
-  //     option.parent(this.options);
-  //     option.class(
-  //       cn(
-  //         "flex items-center justify-between px-2 py-2 text-xs transition-colors duration-150 hover:bg-background",
-  //         i > 0 && "border-t border-gray-700",
-  //       ),
-  //     );
-  //     option.mousePressed(() => {
-  //       inputField.value(dataFiltered[i][0]);
-  //       // this.changeResultText();
-  //       this.options.remove();
-  //     });
+    for (let i = 0; i < dataFiltered.length; i++) {
+      let option = this.p5.createDiv();
+      option.parent(this.options);
+      option.class(
+        cn(
+          "flex items-center justify-between px-2 py-2 text-xs transition-colors duration-150 hover:bg-background",
+          i > 0 && "border-t border-gray-700",
+        ),
+      );
+      option.mousePressed(() => {
+        inputField.value = dataFiltered[i][0];
+        this.changeResultText();
+        this.options.remove();
+      });
 
-  //     let span1 = this.p5.createSpan(dataFiltered[i][0]);
-  //     span1.parent(option);
-  //     span1.class("font-semibold");
+      let span1 = this.p5.createSpan(dataFiltered[i][0]);
+      span1.parent(option);
+      span1.class("font-semibold");
 
-  //     let span2 = this.p5.createSpan(dataFiltered[i][1]);
-  //     span2.parent(option);
-  //     span2.class("text-gray-300");
-  //   }
-  // }
+      let span2 = this.p5.createSpan(dataFiltered[i][1]);
+      span2.parent(option);
+      span2.class("text-gray-300");
+    }
+  }
 
   createBox() {
     this.mainDiv = this.p5.createDiv();
@@ -588,7 +588,7 @@ export default class TransitionBox {
     } else {
       this.mainDiv.hide();
       this.mainDiv.position(-1000, -1000);
-      // this.options?.remove();
+      this.options?.remove();
 
       this.resetAllInputsAndButtons();
     }

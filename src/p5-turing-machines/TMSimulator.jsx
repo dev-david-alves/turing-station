@@ -20,12 +20,12 @@ import {
   updateUIWhenSimulating,
 } from "./classes/simulation/run";
 
-import test_mt from "../../test-mts/turing-machine - nd 2.json";
+import test_mt from "../../test-mts/multitape-machine.json";
 import { texMap } from "./utils/getTexMaps";
 
 export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
   const { getOne } = useSimulator();
-  const { focused, tm_variant } = getOne(id);
+  const { focused, tm_variant, tm_num_tapes } = getOne(id);
 
   const sketch = useMemo(
     () => (p5) => {
@@ -40,6 +40,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       p5.testTabClasslist = false;
       p5.multiTestTabClasslist = false;
       p5.tm_variant = tm_variant;
+      p5.tm_num_tapes = tm_num_tapes;
       p5.multitestNumTests = -1;
 
       // History
@@ -446,7 +447,6 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
           }
         });
 
-        console.log(rules);
         return rules;
       };
 
@@ -628,6 +628,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       p5.createState = (x = p5.mouseX, y = p5.mouseX) => {
         // Check if mouse is over a link transition box
         if (p5.links.some((link) => link.transitionBox.containsPoint(x, y))) return;
+        if (p5.links.some((link) => link.transitionBox.ruleContainsPoint(x, y) != -1)) return;
 
         // Create new state
         let stateID = p5.getNewStateId();
