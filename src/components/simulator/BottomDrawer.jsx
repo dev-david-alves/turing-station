@@ -57,12 +57,12 @@ function MultiTestTab({ id, className }) {
           <Icon
             id={`accepted-testIcon-${value}-${id}`}
             icon="solar:check-circle-outline"
-            className="icon text-lightGreen hidden h-8 min-h-8 w-8 min-w-8"
+            className="icon hidden h-8 min-h-8 w-8 min-w-8 text-lightGreen"
           />
           <Icon
             id={`rejected-testIcon-${value}-${id}`}
             icon="icon-park-outline:close-one"
-            className="icon text-lightDanger hidden h-8 min-h-8 w-8 min-w-8"
+            className="icon hidden h-8 min-h-8 w-8 min-w-8 text-lightDanger"
           />
           <Input
             id={`multitest-input-${value}-${id}`}
@@ -153,10 +153,6 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
     }
   };
 
-  // useEffect(() => {
-  //   console.log("selectedTab", selectedTab, bottomDrawerOpen);
-  // }, [selectedTab, bottomDrawerOpen]);
-
   useEffect(() => {
     if (!bottomDrawerOpen) setSelectedTab(undefined);
     else if (selectedTab === undefined) setSelectedTab("test-tab");
@@ -166,41 +162,35 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
     <div className="flex w-full items-center justify-center gap-2">
       {navButtons.map((button, index) => (
         <div key={index}>
-          {showTooltips ? (
-            <TooltipProvider>
-              <Tooltip delayDuration={200} sideOffset={5}>
-                <TooltipTrigger asChild>
-                  <button
-                    id={`simulation-nav-${button.id}-${id}`}
-                    className={cn(
-                      "flex h-7 w-7 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
-                      bottomDrawerOpen && "selected-bottom-tab-button",
-                    )}
-                  >
-                    <Icon icon={button.icon} className={cn("icon h-4 w-4")} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-56 rounded-md bg-main text-white shadow-4xl">
-                  <div className="w-full px-4 py-2">
-                    <p className="text-xs font-bold text-darkGreen">Dica!</p>
-                    <hr className="my-1 border-infoDark opacity-20" />
-                    <p>{button.tip}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <button
-              id={`simulation-nav-${button.id}-${id}`}
-              className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
-                selectedTab === button.id && `selected-bottom-tab-button opened-${button.id}-${id}`,
-              )}
-              onClick={() => handleClick(button.id)}
-            >
-              <Icon icon={button.icon} className={cn("icon h-4 w-4")} />
-            </button>
-          )}
+          <TooltipProvider>
+            <Tooltip delayDuration={200} sideOffset={5}>
+              <TooltipTrigger asChild>
+                <button
+                  id={`simulation-nav-${button.id}-${id}`}
+                  className={cn(
+                    "flex h-7 w-7 items-center justify-center rounded-md border-[1px] border-white text-white outline-none transition-colors duration-200",
+                    selectedTab === button.id && `selected-bottom-tab-button opened-${button.id}-${id}`,
+                  )}
+                  onClick={() => handleClick(button.id)}
+                >
+                  <Icon icon={button.icon} className={cn("icon h-4 w-4")} />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                className={cn(
+                  "max-w-56 rounded-md bg-main text-white shadow-4xl",
+                  showTooltips ? "visible" : "invisible",
+                )}
+              >
+                <div className="w-full px-4 py-2">
+                  <p className="text-xs font-bold text-darkGreen">Dica!</p>
+                  <hr className="my-1 border-infoDark opacity-20" />
+                  <p>{button.tip}</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       ))}
     </div>
