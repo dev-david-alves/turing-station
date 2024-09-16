@@ -210,7 +210,6 @@ export const updateTape = (p5) => {
 
         // Tape head
         if (i === tape.head) {
-          console.log("here");
           let headContainer = p5.createDiv();
           let headImage = p5.createImg(tapeHead, "tape-head-image");
           headImage.parent(headContainer);

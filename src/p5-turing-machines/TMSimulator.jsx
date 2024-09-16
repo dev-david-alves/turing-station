@@ -80,7 +80,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
 
         p5.selectedLeftToolbarButton = buttonId.split("-")[1];
 
-        const getAllButtons = p5.selectAll(".toolbar-action-buttons");
+        const getAllButtons = p5.selectAll(`.toolbar-action-buttons-${id}`);
         getAllButtons.forEach((button) => {
           if (button.elt.id === buttonId) button.addClass("selected-button");
           else button.removeClass("selected-button");
@@ -146,6 +146,11 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.abstractCreateMT();
 
         p5.states.forEach((state) => (state.input.visible = false));
+
+        p5.currentLink = null;
+        p5.lastSelectedState = null;
+        p5.selectedObject = null;
+        p5.setLeftToolbarButton(`menu-selectObject-${id}`);
       };
 
       p5.showErrors = () => {
@@ -315,7 +320,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         // End of testing
 
         // Set leftToolbar buttons mousePressed
-        const getAllButtons = p5.selectAll(".toolbar-action-buttons");
+        const getAllButtons = p5.selectAll(`.toolbar-action-buttons-${id}`);
         getAllButtons.forEach((button) => {
           button.mousePressed(() => p5.setLeftToolbarButton(button.elt.id));
         });
@@ -763,7 +768,6 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
                   if (link) {
                     link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(from);
                     link.transitionBox.selected = true;
-                    console.log("Link already exists");
                   }
                 }
               } else {
@@ -795,7 +799,6 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
             if (link) {
               link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(p5.lastSelectedState);
               link.transitionBox.selected = true;
-              console.log("SelfLink already exists");
             }
           }
         }
@@ -890,11 +893,20 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.closeBottomDrawer(event);
       };
 
+      p5.isMouseOutsideCanvas = () => {
+        return p5.mouseX < 0 || p5.mouseY < 0 || p5.mouseX > p5.width || p5.mouseY > p5.height;
+      };
+
       p5.mouseReleased = () => {
         p5.canvasOffset.x = 0;
         p5.canvasOffset.y = 0;
 
         if (!focused) return false;
+        // Outside canvas
+        if (p5.isMouseOutsideCanvas()) {
+          p5.currentLink = null;
+          return false;
+        }
 
         p5.states.forEach((state) => {
           state.mouseReleased();
@@ -920,14 +932,11 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
 
         if (p5.selectedLeftToolbarButton === "selectObject") {
           if (!hoveredObject) {
-            console.log("Double clicked on canvas");
             p5.unSelectAllObjects();
             p5.checkAndCloseAllStateInputVisible();
             p5.createState(p5.mouseX, p5.mouseY);
           } else {
             if (hoveredObject.object instanceof State) {
-              console.log("Double clicked on state");
-
               p5.openStateContextMenu();
             }
           }

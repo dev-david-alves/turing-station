@@ -97,7 +97,7 @@ function LeftSideBar({ id, className }) {
             <TooltipProvider>
               <Tooltip delayDuration={200} sideOffset={5} disableHoverableContent={true}>
                 <TooltipTrigger asChild>
-                  <Button id={`${button.id}-${id}`} variant="simulatorMenu" className="toolbar-action-buttons">
+                  <Button id={`${button.id}-${id}`} variant="simulatorMenu" className={`toolbar-action-buttons-${id}`}>
                     <Icon icon={button.icon} className={`${button.className} icon`} />
                   </Button>
                 </TooltipTrigger>

@@ -337,7 +337,6 @@ export default class TransitionBox {
   ruleAlreadyExists(labelA) {
     for (let i = 0; i < this.rules.length; i++) {
       let allEquals = this.rules[i].every((rule, index) => {
-        // console.log(rule.label, labelA[index]);
         return JSON.stringify(rule.label) === JSON.stringify(labelA[index]);
       });
 
@@ -391,7 +390,6 @@ export default class TransitionBox {
     });
 
     if (!this.ruleAlreadyExists(fullRules) && this.selectedRuleIndex === -1) {
-      console.log("Adding new rule");
       this.rules.push([]);
       fullRules.forEach((rule) => {
         let lastIndex = this.rules.length - 1;
@@ -402,7 +400,6 @@ export default class TransitionBox {
       });
     } else {
       if (this.selectedRuleIndex !== -1) {
-        console.log("Updating rule");
         fullRules.forEach((rule, index) => {
           this.rules[this.selectedRuleIndex][index].label = rule;
           this.rules[this.selectedRuleIndex][index].width = calculateTextWidth(
@@ -550,7 +547,7 @@ export default class TransitionBox {
   // Mouse events
   mousePressed() {
     this.selectedRuleIndex = this.ruleContainsPoint();
-    console.log(this.selectedRuleIndex);
+
     if (this.selectedRuleIndex !== -1 && this.p5.selectedLeftToolbarButton === "deleteObject") {
       this.removeRule();
     }
