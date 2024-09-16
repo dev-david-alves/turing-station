@@ -89,7 +89,7 @@ function LeftSideBar({ id, className }) {
   return (
     <div
       id={`left-toolbar-${id}`}
-      className={cn("flex h-full max-h-full flex-col items-center justify-between bg-main shadow-default", className)}
+      className={cn("flex h-full max-h-full justify-between bg-main shadow-default", className)}
     >
       <div className="flex h-fit flex-col items-center">
         {topButtons.map((button, index) => (
@@ -120,17 +120,13 @@ function LeftSideBar({ id, className }) {
         ))}
       </div>
 
-      <div className="flex flex-col items-center">
+      <div className="flex h-fit flex-col items-center">
         {bottomButtons.map((button, index) => (
           <div className="w-full" key={index}>
             <TooltipProvider>
-              <Tooltip delayDuration={200} sideOffset={5}>
+              <Tooltip delayDuration={200} sideOffset={5} disableHoverableContent={true}>
                 <TooltipTrigger asChild>
-                  <Button
-                    id={`${button.id}-${id}`}
-                    variant="simulatorMenu"
-                    className="flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200"
-                  >
+                  <Button id={`${button.id}-${id}`} variant="simulatorMenu" className={`toolbar-action-buttons-${id}`}>
                     <Icon icon={button.icon} className={`${button.className} icon`} />
                   </Button>
                 </TooltipTrigger>

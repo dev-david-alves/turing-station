@@ -44,6 +44,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       p5.tm_variant = tm_variant;
       p5.tm_num_tapes = tm_num_tapes;
       p5.multitestNumTests = -1;
+      p5.prevDeviceOrientation = p5.deviceOrientation;
 
       // History
       p5.history = [];
@@ -68,6 +69,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         const playground = p5.select(`#playground-${id}`);
         if (!playground) return;
         p5.resizeCanvas(playground.width, playground.height);
+        p5.rotateScreen();
       };
 
       p5.getNewStateId = () => {
@@ -270,12 +272,32 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         });
       };
 
+      p5.rotateScreen = () => {
+        p5.prevDeviceOrientation =
+          p5.windowWidth > p5.windowHeight && (p5.windowWidth < 500 || p5.windowHeight < 500)
+            ? "landscape"
+            : "portrait";
+
+        let leftToolbar = p5.select(`#left-toolbar-${id}`);
+        if (!leftToolbar) return;
+
+        // console.log(p5.prevDeviceOrientation);
+        if (p5.prevDeviceOrientation === "landscape") {
+          leftToolbar.removeClass("items-center");
+          leftToolbar.removeClass("flex-col");
+        } else {
+          leftToolbar.addClass("items-center");
+          leftToolbar.addClass("flex-col");
+        }
+      };
+
       // Main functions
       p5.setup = () => {
         // Create canvas
         const playground = p5.select(`#playground-${id}`);
         p5.cnv = p5.createCanvas(playground.width, playground.height);
         p5.cnv.id(`canvas-${id}`);
+        p5.rotateScreen();
         p5.cnv.mousePressed(() => p5.mousePressedInsideCanvas());
         p5.cnv.mouseReleased(() => p5.mouseReleasedInsideCanvas());
         p5.cnv.mouseMoved(() => p5.mouseDraggedInsideCanvas()); // Used because there is no mouseDragged event for cnv
@@ -379,8 +401,8 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
 
       p5.draw = () => {
         if (!focused) return;
-        p5.showErrors();
 
+        p5.showErrors();
         p5.toggleTestTab();
         p5.toggleMultiTestTab();
 
@@ -934,18 +956,18 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.canvasOffset.x = 0;
         p5.canvasOffset.y = 0;
 
+        p5.states.forEach((state) => {
+          state.mouseReleased();
+        });
+
+        p5.links.forEach((link) => {
+          link.mouseReleased();
+        });
+
         // Outside canvas
         if (p5.isMouseOutsideCanvas()) {
           p5.currentLink = null;
         } else if (focused) {
-          p5.states.forEach((state) => {
-            state.mouseReleased();
-          });
-
-          p5.links.forEach((link) => {
-            link.mouseReleased();
-          });
-
           touchEndedInsideCanvas(p5);
         }
       };
