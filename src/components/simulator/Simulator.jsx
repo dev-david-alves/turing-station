@@ -52,7 +52,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
       className={cn(
         "z-10 flex h-[31.8rem] w-full max-w-[45rem] flex-col items-center overflow-hidden rounded-lg bg-background shadow-default transition-all duration-75",
         !isOpen && "h-[3.5rem]",
-        isFullScreen && "min-w-screen max-w-screen fixed left-0 top-0 z-[100] h-[100dvh] min-h-[100dvh] rounded-none",
+        isFullScreen && "min-w-screen max-w-screen fixed left-0 top-0 z-[100] h-full min-h-full rounded-none",
         isFocused && "shadow-high",
       )}
     >

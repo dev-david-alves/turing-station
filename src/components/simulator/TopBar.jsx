@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
@@ -7,6 +7,48 @@ import { useClickOuside } from "../../hooks/useClickDetection";
 
 function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
   const { setSimulatorInfo, getOne } = useSimulator();
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === "F11") {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Handler to update full-screen state
+    const handleFullScreenChange = () => {
+      setSimulatorInfo((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, fullScreen: !!document.fullscreenElement } : item)),
+      );
+    };
+
+    // Listen for full-screen change events
+    document.addEventListener("fullscreenchange", handleFullScreenChange);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullScreenChange);
+    };
+  }, []);
+
+  const toggleFullScreen = ({ fullScreen }) => {
+    if (!document.fullscreenElement) {
+      if (!fullScreen) return;
+      document.documentElement.requestFullscreen().catch((err) => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   const handleOpen = () => {
     setSimulatorInfo((prev) =>
@@ -27,6 +69,11 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
 
   const modalRef = useRef(null);
   useClickOuside(modalRef, () => setIsEditPopoverOpen(false));
+
+  // Toggle full screen when fullScreen state changes
+  useEffect(() => {
+    toggleFullScreen({ fullScreen: isFullScreen });
+  }, [isFullScreen]);
 
   return (
     <div className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3")}>
