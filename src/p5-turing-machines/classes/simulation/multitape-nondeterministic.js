@@ -88,7 +88,8 @@ export class MTNDTM {
     let tapes = [];
     tapes.push(new Tape([...firstTapeContent]));
     for (let i = 0; i < this.numTapes - 1; i++) {
-      tapes.push(new Tape([BLANK]));
+      // tapes.push(new Tape([BLANK]));
+      tapes.push(new Tape(Array.from({ length: firstTapeContent.length }, () => BLANK)));
     }
 
     return [state, tapes, false];
@@ -102,21 +103,6 @@ export class MTNDTM {
 
   isSubset(subset, superset) {
     return [...subset].every((element) => superset.has(element));
-  }
-
-  checkValidMTFormat() {
-    // Sigma must not contain blank symbol
-    if (this.sigma.has(BLANK)) return false;
-    // Gamma must contain blank symbol
-    if (!this.gamma.has(BLANK)) return false;
-    // Sigma must be a subset of Gamma
-    if (!this.isSubset(this.sigma, this.gamma)) return false;
-    // Q must contain initial state
-    if (!this.Q.has(this.initialState)) return false;
-    // Final states must be a subset of Q
-    if (!this.isSubset(this.finalStates, this.Q)) return false;
-
-    return true;
   }
 
   checkAcceptance() {
@@ -166,13 +152,14 @@ export class MTNDTM {
       const currentState = branch[0];
       const tapesObj = branch[1];
 
-      const currentSymbolsConfig = tapesObj.map((tape) => tape.getSymbol()).toString();
+      const currentSymbolsConfig = tapesObj.map((tape) => tape.getSymbol()).join("");
 
       if (!this.delta.hasOwnProperty(currentState)) {
         const newBranch = [currentState, tapesObj, true];
         auxBranchs.push(newBranch);
         continue;
       }
+
       if (!this.delta[currentState].hasOwnProperty(currentSymbolsConfig)) {
         const newBranch = [currentState, tapesObj, true];
         auxBranchs.push(newBranch);
@@ -198,10 +185,7 @@ export class MTNDTM {
       });
     }
 
-    // this.branchs = this.orderBranchs(auxBranchs);
     this.branchs = auxBranchs;
-
-    this.printBranchs();
 
     if (this.checkRejection()) {
       console.log("Rejected");
@@ -230,92 +214,92 @@ export class MTNDTM {
 }
 
 // Example of how the delta function should look like for  Lmtnd = a's == b's
-let key1 = ["a", BLANK, BLANK].toString();
-let key2 = ["b", BLANK, BLANK].toString();
-let key3 = [BLANK, BLANK, BLANK].toString();
-let key4 = [BLANK, "X", "Y"].toString();
-let key5 = [BLANK, BLANK, BLANK].toString();
-const delta = {
-  0: {
-    [key1]: [
-      {
-        to: 0,
-        actions: [
-          { write: "X", move: RIGHT },
-          { write: "X", move: RIGHT },
-          { write: BLANK, move: STAY },
-        ],
-      },
-    ],
-    [key2]: [
-      {
-        to: 0,
-        actions: [
-          { write: "Y", move: RIGHT },
-          { write: BLANK, move: STAY },
-          { write: "Y", move: RIGHT },
-        ],
-      },
-    ],
-    [key3]: [
-      {
-        to: 1,
-        actions: [
-          { write: BLANK, move: STAY },
-          { write: BLANK, move: LEFT },
-          { write: BLANK, move: LEFT },
-        ],
-      },
-    ],
-  },
-  1: {
-    [key4]: [
-      {
-        to: 1,
-        actions: [
-          { write: BLANK, move: STAY },
-          { write: BLANK, move: LEFT },
-          { write: BLANK, move: LEFT },
-        ],
-      },
-    ],
-    [key5]: [
-      {
-        to: 2,
-        actions: [
-          { write: BLANK, move: STAY },
-          { write: BLANK, move: STAY },
-          { write: BLANK, move: STAY },
-        ],
-      },
-    ],
-  },
-};
+// let key1 = ["a", BLANK, BLANK].toString();
+// let key2 = ["b", BLANK, BLANK].toString();
+// let key3 = [BLANK, BLANK, BLANK].toString();
+// let key4 = [BLANK, "X", "Y"].toString();
+// let key5 = [BLANK, BLANK, BLANK].toString();
+// const delta = {
+//   0: {
+//     [key1]: [
+//       {
+//         to: 0,
+//         actions: [
+//           { write: "X", move: RIGHT },
+//           { write: "X", move: RIGHT },
+//           { write: BLANK, move: STAY },
+//         ],
+//       },
+//     ],
+//     [key2]: [
+//       {
+//         to: 0,
+//         actions: [
+//           { write: "Y", move: RIGHT },
+//           { write: BLANK, move: STAY },
+//           { write: "Y", move: RIGHT },
+//         ],
+//       },
+//     ],
+//     [key3]: [
+//       {
+//         to: 1,
+//         actions: [
+//           { write: BLANK, move: STAY },
+//           { write: BLANK, move: LEFT },
+//           { write: BLANK, move: LEFT },
+//         ],
+//       },
+//     ],
+//   },
+//   1: {
+//     [key4]: [
+//       {
+//         to: 1,
+//         actions: [
+//           { write: BLANK, move: STAY },
+//           { write: BLANK, move: LEFT },
+//           { write: BLANK, move: LEFT },
+//         ],
+//       },
+//     ],
+//     [key5]: [
+//       {
+//         to: 2,
+//         actions: [
+//           { write: BLANK, move: STAY },
+//           { write: BLANK, move: STAY },
+//           { write: BLANK, move: STAY },
+//         ],
+//       },
+//     ],
+//   },
+// };
 
-// aababb
-const mtndtm = new MTNDTM(
-  new Set([0, 1, 2]),
-  new Set(["a", "b"]),
-  new Set(["a", "b", "X", "Y", BLANK]),
-  delta,
-  0,
-  new Set([2]),
-  3,
-);
+// // aababb
+// const mtndtm = new MTNDTM(
+//   new Set([0, 1, 2]),
+//   new Set(["a", "b"]),
+//   new Set(["a", "b", "X", "Y", BLANK]),
+//   delta,
+//   0,
+//   new Set([2]),
+//   3,
+// );
 
-mtndtm.setComputedWord("aababb");
+// mtndtm.setComputedWord("aababb");
 
-mtndtm.printBranchs();
-mtndtm.stepForward();
-mtndtm.stepForward();
-mtndtm.stepForward();
-mtndtm.stepForward();
-mtndtm.stepForward();
+// mtndtm.printBranchs();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
 
-mtndtm.stepForward();
-mtndtm.stepForward();
-mtndtm.stepForward();
-mtndtm.stepForward();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
 
-mtndtm.stepForward();
-mtndtm.stepForward();
+// mtndtm.stepForward();
+// mtndtm.stepForward();
