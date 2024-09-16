@@ -15,7 +15,7 @@ const SimulatorProvider = ({ children }) => {
       showLeftToolbar: true,
       showTooltips: false,
       tm_variant: "mttm", // Three possible values: "tm", "ndtm", "mttm"
-      tm_num_tapes: 1, // Only for "mttm" variant
+      tm_num_tapes: 3, // Only for "mttm" variant
       data: undefined, // Last tm saved on the simulator history (same data) used to restore the simulator
     },
     // {

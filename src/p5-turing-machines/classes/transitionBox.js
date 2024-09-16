@@ -423,6 +423,21 @@ export default class TransitionBox {
     createHistory(this.p5);
   }
 
+  getFormattedRules() {
+    let formattedRules = [];
+    for (let i = 0; i < this.rules.length; i++) {
+      let aux = [];
+      for (let j = 0; j < this.rules[i].length; j++) {
+        let rule = this.rules[i][j].label;
+        let allSubstrings = convertSubstringsToString(rule).split("");
+        aux.push(allSubstrings[0], allSubstrings[4], allSubstrings[7]);
+      }
+      formattedRules.push({ label: aux });
+    }
+
+    return formattedRules;
+  }
+
   // Remove all elements
   remove() {
     this.mainDiv.remove();

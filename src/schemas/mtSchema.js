@@ -3,12 +3,11 @@ import { z } from "zod";
 // Define the rules schema
 const rulesSchema = z.object({
   label: z.array(z.string()), // array of strings
-  width: z.number(), // a floating-point number
 });
 
 // Define the state schema
 const stateSchema = z.object({
-  id: z.number().int(),
+  id: z.number().int().nonnegative(),
   x: z.number(),
   y: z.number(),
   isStartState: z.boolean(),
@@ -19,8 +18,8 @@ const stateSchema = z.object({
 // Define the schema for regular links
 const linkSchema = z.object({
   isSelfLink: z.literal(false),
-  stateA: z.number().int(),
-  stateB: z.number().int(),
+  stateA: z.number().int().nonnegative(),
+  stateB: z.number().int().nonnegative(),
   rules: z.array(rulesSchema),
   parallelPart: z.number(),
   perpendicularPart: z.number(),
@@ -30,21 +29,23 @@ const linkSchema = z.object({
 // Define the schema for self-links
 const selfLinkSchema = z.object({
   isSelfLink: z.literal(true),
-  state: z.number().int(),
+  state: z.number().int().nonnegative(),
   rules: z.array(rulesSchema),
   anchorAngle: z.number(),
 });
 
 // Define the schema for initialStateLink
 const initialStateLinkSchema = z.object({
-  state: z.number().int(),
+  state: z.number().int().nonnegative(),
   deltaX: z.number(),
   deltaY: z.number(),
 });
 
 // Define the main schema for dmt
 const mtSchema = z.object({
-  canvasScale: z.number(),
+  canvasScale: z.number().min(0.5).max(2.0),
+  variant: z.union([z.literal("tm"), z.literal("ndtm"), z.literal("mttm")]),
+  numTapes: z.number().positive(),
   states: z.array(stateSchema),
   links: z.array(
     z.union([

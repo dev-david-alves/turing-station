@@ -93,6 +93,8 @@ export const compareJSONObjects = (obj1, obj2) => {
 export const createJSONExportObj = (p5) => {
   let dmt = {
     canvasScale: p5.canvasScale,
+    variant: p5.tm_variant,
+    numTapes: p5.tm_num_tapes,
     states: [],
     links: [],
     initialStateLink: null,
@@ -115,7 +117,7 @@ export const createJSONExportObj = (p5) => {
         isSelfLink: false,
         stateA: link.stateA.id,
         stateB: link.stateB.id,
-        rules: link.transitionBox.rules,
+        rules: link.transitionBox.getFormattedRules(),
         parallelPart: link.parallelPart,
         perpendicularPart: link.perpendicularPart,
         lineAngleAdjust: link.lineAngleAdjust,
@@ -124,7 +126,7 @@ export const createJSONExportObj = (p5) => {
       dmt.links.push({
         isSelfLink: true,
         state: link.state.id,
-        rules: link.transitionBox.rules,
+        rules: link.transitionBox.getFormattedRules(),
         anchorAngle: link.anchorAngle,
       });
     }
@@ -143,6 +145,8 @@ export const createJSONExportObj = (p5) => {
 
 export const createCanvasFromOBJ = (p5, obj) => {
   p5.canvasScale = obj.canvasScale;
+  p5.tm_variant = obj.variant;
+  p5.tm_num_tapes = obj.numTapes;
   p5.states = [];
   p5.links = [];
   p5.startLink = null;

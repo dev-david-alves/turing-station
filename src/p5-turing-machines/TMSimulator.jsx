@@ -991,7 +991,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         }
       };
     },
-    [id, focused, tm_variant],
+    [id, focused, tm_variant, tm_num_tapes],
   );
 
   return <ReactP5Wrapper sketch={sketch} />;
