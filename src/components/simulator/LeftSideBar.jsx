@@ -24,12 +24,12 @@ const topButtons = [
     className: "h-4 w-4",
     tip: "Adiciona um novo estado de MT ao canvas no local clicado",
   },
-  {
-    id: "menu-addBuildingBlock",
-    icon: "bi:square-fill",
-    className: "h-3 w-3",
-    tip: "Adiciona uma sub-rotina ao canvas no local clicado",
-  },
+  // {
+  //   id: "menu-addBuildingBlock",
+  //   icon: "bi:square-fill",
+  //   className: "h-3 w-3",
+  //   tip: "Adiciona uma sub-rotina ao canvas no local clicado",
+  // },
   {
     id: "menu-addLink",
     icon: "mingcute:arrow-right-fill",

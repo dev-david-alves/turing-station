@@ -20,8 +20,10 @@ import {
   updateUIWhenSimulating,
 } from "./classes/simulation/run";
 
-import test_mt from "../../test-mts/multitape-machine.json";
+import test_mt from "../../test-mts/turing-machine - nd 2.json";
 import { texMap } from "./utils/getTexMaps";
+
+import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanvas } from "./utils/touchInteractions";
 
 export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
   const { getOne } = useSimulator();
@@ -279,6 +281,12 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.cnv.mouseMoved(() => p5.mouseDraggedInsideCanvas()); // Used because there is no mouseDragged event for cnv
         p5.cnv.doubleClicked(() => p5.doubleClickedInsideCanvas());
         p5.cnv.mouseWheel((event) => p5.mouseWheelInsideCanvas(event));
+        p5.cnv.touchStarted((event) => {
+          if (focused) touchStartedInsideCanvas(p5, event);
+        });
+        p5.cnv.touchMoved((event) => {
+          if (focused) touchMovedInsideCanvas(p5, event);
+        });
         // window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
@@ -324,6 +332,8 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         getAllButtons.forEach((button) => {
           button.mousePressed(() => p5.setLeftToolbarButton(button.elt.id));
         });
+
+        p5.setLeftToolbarButton(`menu-selectObject-${id}`);
 
         // Set functions to menu buttons
         p5.select(`#menu-cleanCanvas-${id}`).mousePressed(() => p5.cleanCanvas());
@@ -819,14 +829,6 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         return false;
       };
 
-      p5.mouseDraggedInsideCanvas = () => {
-        if (!p5.mouseIsPressed || p5.mouseButton !== p5.LEFT) return false;
-
-        if (p5.keyIsDown(p5.SHIFT) || p5.selectedLeftToolbarButton === "addLink") p5.createLink();
-
-        return false;
-      };
-
       p5.openStateContextMenu = () => {
         if (p5.selectedObject && p5.selectedObject.object instanceof State) {
           if (!p5.stateContextMenu) return false;
@@ -889,14 +891,25 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         return false;
       };
 
-      p5.mousePressed = (event) => {
-        p5.closeBottomDrawer(event);
-      };
-
       p5.isMouseOutsideCanvas = () => {
         return p5.mouseX < 0 || p5.mouseY < 0 || p5.mouseX > p5.width || p5.mouseY > p5.height;
       };
 
+      // MousePressed
+      p5.mousePressed = (event) => {
+        p5.closeBottomDrawer(event);
+      };
+
+      // MouseDragged
+      p5.mouseDraggedInsideCanvas = () => {
+        if (!p5.mouseIsPressed || p5.mouseButton !== p5.LEFT) return false;
+
+        if (p5.keyIsDown(p5.SHIFT) || p5.selectedLeftToolbarButton === "addLink") p5.createLink();
+
+        return false;
+      };
+
+      // MouseReleased and TouchEnded
       p5.mouseReleased = () => {
         p5.canvasOffset.x = 0;
         p5.canvasOffset.y = 0;
@@ -915,6 +928,26 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.links.forEach((link) => {
           link.mouseReleased();
         });
+      };
+
+      p5.touchEnded = () => {
+        p5.canvasOffset.x = 0;
+        p5.canvasOffset.y = 0;
+
+        // Outside canvas
+        if (p5.isMouseOutsideCanvas()) {
+          p5.currentLink = null;
+        } else if (focused) {
+          p5.states.forEach((state) => {
+            state.mouseReleased();
+          });
+
+          p5.links.forEach((link) => {
+            link.mouseReleased();
+          });
+
+          touchEndedInsideCanvas(p5);
+        }
       };
 
       p5.doubleClickedInsideCanvas = () => {

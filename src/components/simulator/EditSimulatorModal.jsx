@@ -73,33 +73,32 @@ function EditSimulatorModal({ id }) {
             disabled={!isRenaming}
           />
 
-          {!isRenaming ? (
+          <Button
+            type="button"
+            variant="popoverMenu"
+            className={cn("flex max-w-10 items-center justify-center rounded-md p-0", isRenaming && "hidden")}
+            onClick={() => setIsRenaming(true)}
+          >
+            <Icon icon="uil:pen" className="icon h-4 w-4 max-w-full" />
+          </Button>
+
+          <div className={cn("flex items-center gap-1", !isRenaming && "hidden")}>
             <Button
               variant="popoverMenu"
-              className="flex max-w-10 items-center justify-center rounded-md p-0"
-              onClick={() => setIsRenaming(true)}
+              className="flex w-10 items-center justify-center rounded-md p-0"
+              onClick={handleCancelRename}
             >
-              <Icon icon="uil:pen" className="icon h-4 w-4 max-w-full" />
+              <Icon icon="uil:times" className="icon icon h-5 w-5 max-w-full" />
             </Button>
-          ) : (
-            <div className="flex items-center gap-1">
-              <Button
-                variant="popoverMenu"
-                className="flex w-10 items-center justify-center rounded-md p-0"
-                onClick={handleCancelRename}
-              >
-                <Icon icon="uil:times" className="icon icon h-5 w-5 max-w-full" />
-              </Button>
 
-              <Button
-                type="submit"
-                variant="popoverMenu"
-                className="flex w-10 items-center justify-center rounded-md p-0"
-              >
-                <Icon icon="uil:check" className="icon h-5 w-5 max-w-full" />
-              </Button>
-            </div>
-          )}
+            <Button
+              type="submit"
+              variant="popoverMenu"
+              className="flex w-10 items-center justify-center rounded-md p-0"
+            >
+              <Icon icon="uil:check" className="icon h-5 w-5 max-w-full" />
+            </Button>
+          </div>
         </form>
       </div>
 
