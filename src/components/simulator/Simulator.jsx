@@ -15,6 +15,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
 
   const { getOne, handleFocus } = useSimulator();
   const [isEditPopoverOpen, setIsEditPopoverOpen] = useState(false);
+  const [parentHeight, setParentHeight] = useState(0);
 
   const simulator = getOne(id);
 
@@ -30,11 +31,17 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
   const MAX_BOTTOM_DRAWER_SIZE = 80;
 
   const toggleBottomDrawerIsOpen = (size) => {
+    let divR = document.getElementById(`bottom-drawer-${id}`);
+    if (divR) setParentHeight(divR.offsetHeight);
+
     if (size > MIN_BOTTOM_DRAWER_SIZE) setBottomDrawerOpen(true);
     else setBottomDrawerOpen(false);
   };
 
   useEffect(() => {
+    let divR = document.getElementById(`bottom-drawer-${id}`);
+    if (divR) setParentHeight(divR.offsetHeight);
+
     const bottomPanel = bottomDrawerRef.current;
     if (bottomPanel) {
       if (bottomDrawerOpen) {
@@ -44,6 +51,10 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
       }
     }
   }, [bottomDrawerOpen]);
+
+  useEffect(() => {
+    console.log(document.getElementById(`bottom-drawer-${id}`).offsetHeight, parentHeight);
+  }, []);
 
   return (
     <div
@@ -86,13 +97,18 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
             id={`bottom-drawer-${id}`}
             minSize={MIN_BOTTOM_DRAWER_SIZE}
             maxSize={MAX_BOTTOM_DRAWER_SIZE}
-            className="z-[2010] mx-1"
+            className="z-[2010] mx-1 overflow-y-auto"
             ref={bottomDrawerRef}
             defaultSize={MIN_BOTTOM_DRAWER_SIZE}
             onResize={(size) => toggleBottomDrawerIsOpen(size)}
           >
             <div className="min-h-full overflow-hidden rounded-t-md bg-main">
-              <BottomDrawer id={id} setBottomDrawerOpen={setBottomDrawerOpen} bottomDrawerOpen={bottomDrawerOpen} />
+              <BottomDrawer
+                id={id}
+                setBottomDrawerOpen={setBottomDrawerOpen}
+                bottomDrawerOpen={bottomDrawerOpen}
+                parentHeight={parentHeight}
+              />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

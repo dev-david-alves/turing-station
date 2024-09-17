@@ -159,7 +159,7 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
   }, [bottomDrawerOpen]);
 
   return (
-    <div className="flex w-full items-center justify-center gap-2">
+    <div id={`simulation-nav-${id}`} className="flex w-full items-center justify-center gap-2">
       {navButtons.map((button, index) => (
         <div key={index}>
           <TooltipProvider>
@@ -197,8 +197,19 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
   );
 }
 
-function BottomDrawer({ id, setBottomDrawerOpen, bottomDrawerOpen }) {
+function BottomDrawer({ id, setBottomDrawerOpen, bottomDrawerOpen, parentHeight }) {
   const [selectedTab, setSelectedTab] = useState(undefined);
+
+  useEffect(() => {
+    let testTab = document.getElementById(`test-tab-${id}`);
+    let multiTestTab = document.getElementById(`multitest-tab-${id}`);
+    const navContainer = document.getElementById(`simulation-nav-${id}`);
+    let newHeight = parentHeight - navContainer.offsetHeight - 20;
+    if (newHeight < 0) newHeight = 100;
+
+    if (testTab) testTab.style.maxHeight = `${newHeight}px`;
+    if (multiTestTab) multiTestTab.style.maxHeight = `${newHeight}px`;
+  }, [parentHeight]);
 
   return (
     <div
@@ -214,10 +225,16 @@ function BottomDrawer({ id, setBottomDrawerOpen, bottomDrawerOpen }) {
         bottomDrawerOpen={bottomDrawerOpen}
       />
 
-      <TestTab id={id} className={cn("transition-all duration-200", selectedTab === "test-tab" ? "block" : "hidden")} />
+      <TestTab
+        id={id}
+        className={cn("overflow-y-auto transition-all duration-200", selectedTab === "test-tab" ? "block" : "hidden")}
+      />
       <MultiTestTab
         id={id}
-        className={cn("transition-all duration-200", selectedTab === "multitest-tab" ? "block" : "hidden")}
+        className={cn(
+          "overflow-y-auto transition-all duration-200",
+          selectedTab === "multitest-tab" ? "block" : "hidden",
+        )}
       />
     </div>
   );
