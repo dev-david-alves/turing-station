@@ -89,7 +89,7 @@ export default class State {
       this.y = this.p5.mouseY + this.offsetY;
     }
 
-    this.input.x = this.x - this.input.width / 2;
+    this.input.x = this.x;
     this.input.y = this.y - (this.radius + this.input.height + 5 * this.p5.canvasScale);
 
     if (this.input.visible && document.activeElement !== this.input.input.elt) {

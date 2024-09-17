@@ -175,7 +175,7 @@ export default class TransitionBox {
     this.mainDiv = this.p5.createDiv();
     this.mainDiv.parent(this.parent);
     this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
-    this.mainDiv.class("relative z-[200]");
+    this.mainDiv.class("relative z-[2020]");
     this.auxDiv = this.p5.createDiv();
     this.auxDiv.parent(this.mainDiv);
     this.auxDiv.class("flex flex-col items-center justify-center gap-2");
@@ -596,7 +596,7 @@ export default class TransitionBox {
 
     if (this.selected) {
       this.mainDiv.show();
-      this.mainDiv.position(this.x + this.p5.canvasOffset.x, this.y + this.p5.canvasOffset.y);
+      this.mainDiv.position(this.x + this.p5.canvasOffset.x + this.w / 4, this.y + this.p5.canvasOffset.y);
     } else {
       this.mainDiv.hide();
       this.mainDiv.position(-1000, -1000);
