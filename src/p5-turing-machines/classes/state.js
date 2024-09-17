@@ -54,12 +54,12 @@ export default class State {
     }
 
     if (!this.selected) return;
+    if (this.p5.selectedLeftToolbarButton !== "selectObject") return;
+    if (!this.containsPoint(this.p5.mouseX, this.p5.mouseY)) return;
 
-    if (this.p5.selectedLeftToolbarButton === "selectObject") {
-      this.dragging = true;
-      this.offsetX = this.x - this.p5.mouseX;
-      this.offsetY = this.y - this.p5.mouseY;
-    }
+    this.dragging = true;
+    this.offsetX = this.x - this.p5.mouseX;
+    this.offsetY = this.y - this.p5.mouseY;
   }
 
   mouseReleased() {

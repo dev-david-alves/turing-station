@@ -936,26 +936,30 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.canvasOffset.x = 0;
         p5.canvasOffset.y = 0;
 
+        if (p5.startLink) p5.startLink.mouseReleased();
+
+        p5.states.forEach((state) => {
+          state.mouseReleased();
+        });
+
+        p5.links.forEach((link) => {
+          link.mouseReleased();
+        });
+
         if (!focused) return false;
         // Outside canvas
         if (p5.isMouseOutsideCanvas()) {
           p5.currentLink = null;
           return false;
         }
-
-        p5.states.forEach((state) => {
-          state.mouseReleased();
-        });
-
-        p5.links.forEach((link) => {
-          link.mouseReleased();
-        });
       };
 
       p5.touchEnded = () => {
         p5.canvasOffset.x = 0;
         p5.canvasOffset.y = 0;
 
+        if (p5.startLink) p5.startLink.mouseReleased();
+
         p5.states.forEach((state) => {
           state.mouseReleased();
         });
@@ -964,12 +968,14 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
           link.mouseReleased();
         });
 
+        if (!focused) return true;
         // Outside canvas
         if (p5.isMouseOutsideCanvas()) {
           p5.currentLink = null;
-        } else if (focused) {
-          touchEndedInsideCanvas(p5);
+          return true;
         }
+
+        touchEndedInsideCanvas(p5);
       };
 
       p5.doubleClickedInsideCanvas = () => {
@@ -985,15 +991,9 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         )
           return;
 
-        if (p5.selectedLeftToolbarButton === "selectObject") {
-          if (!hoveredObject) {
-            p5.unSelectAllObjects();
-            p5.checkAndCloseAllStateInputVisible();
-            p5.createState(p5.mouseX, p5.mouseY);
-          } else {
-            if (hoveredObject.object instanceof State) {
-              p5.openStateContextMenu();
-            }
+        if (p5.selectedLeftToolbarButton === "selectObject" && hoveredObject) {
+          if (hoveredObject.object instanceof State) {
+            p5.openStateContextMenu();
           }
         }
 

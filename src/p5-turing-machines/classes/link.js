@@ -176,8 +176,10 @@ export default class Link {
     if (this.p5.selectedLeftToolbarButton === "addLink") return;
 
     if (!this.selected) return;
+    if (this.p5.selectedLeftToolbarButton !== "selectObject") return;
+    if (!this.containsPoint(this.p5.mouseX, this.p5.mouseY)) return;
 
-    this.dragging = this.p5.selectedLeftToolbarButton === "selectObject";
+    this.dragging = true;
   }
 
   mouseReleased() {
