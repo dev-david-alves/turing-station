@@ -28,7 +28,7 @@ function StateModal({ id, className }) {
   return (
     <div
       id={`state-contextMenu-${id}`}
-      className={cn("z-[200] w-full max-w-40 rounded-md bg-main py-2 shadow-lg", className)}
+      className={cn("z-[2030] w-full max-w-40 rounded-md bg-main py-2 shadow-lg", className)}
     >
       {options.map((option) => (
         <button
