@@ -52,10 +52,6 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
     }
   }, [bottomDrawerOpen]);
 
-  useEffect(() => {
-    console.log(document.getElementById(`bottom-drawer-${id}`).offsetHeight, parentHeight);
-  }, []);
-
   return (
     <div
       id={`simulator-${id}`}

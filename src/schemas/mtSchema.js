@@ -59,6 +59,20 @@ const mtSchema = z.object({
 // Test the object against the schema
 export const checkFileFormat = (dmt) => {
   const parsed = mtSchema.safeParse(dmt);
-  console.log(parsed.error);
+
+  if (parsed.success) {
+    dmt.links.forEach((link) => {
+      link.rules.forEach((rule) => {
+        if (rule.label.length !== dmt.numTapes * 3) {
+          parsed.success = false;
+          parsed.error = {
+            message: "Número de fitas incompatível com o número de regras!",
+          };
+        }
+      });
+    });
+  }
+
+  if (parsed.error) console.log(parsed.error);
   return parsed;
 };
