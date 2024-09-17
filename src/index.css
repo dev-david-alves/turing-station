@@ -4,12 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts */
-@font-face {
-  font-family: "cmunbi";
-  src: url("../fonts/cmunbi.ttf") format("truetype");
-}
-
 /* Variables */
 :root {
   --shadow-low: rgba(23, 98, 163, 0.4);
