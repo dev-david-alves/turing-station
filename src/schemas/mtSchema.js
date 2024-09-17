@@ -43,6 +43,7 @@ const initialStateLinkSchema = z.object({
 
 // Define the main schema for dmt
 const mtSchema = z.object({
+  name: z.string().min(1),
   canvasScale: z.number().min(0.5).max(2.0),
   variant: z.union([z.literal("tm"), z.literal("ndtm"), z.literal("mttm")]),
   numTapes: z.number().positive(),

@@ -9,7 +9,7 @@ import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useMemo } from "react";
 import { useSimulator } from "../providers/simulator";
 import { createCanvasFromOBJ, createJSONExportObj } from "./utils/objectFunctions";
-import { exportAsJSON, exportAsPNG, handleInputFile } from "./utils/importAndExport";
+import { exportAsJSON, exportAsPNG, importJSONFile } from "./utils/importAndExport";
 import {
   simulationReset,
   simulationStepBack,
@@ -26,8 +26,16 @@ import { texMap } from "./utils/getTexMaps";
 import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanvas } from "./utils/touchInteractions";
 
 export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
-  const { getOne } = useSimulator();
-  const { focused, tm_variant, tm_num_tapes } = getOne(id);
+  const { getOne, setSimulatorInfo } = useSimulator();
+  const { focused, name, tm_variant, tm_num_tapes } = getOne(id);
+
+  const setInfo = ({ newName, newVariant, newNumTapes }) => {
+    setSimulatorInfo((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, name: newName, tm_variant: newVariant, tm_num_tapes: newNumTapes } : item,
+      ),
+    );
+  };
 
   const sketch = useMemo(
     () => (p5) => {
@@ -43,6 +51,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       p5.multiTestTabClasslist = false;
       p5.tm_variant = tm_variant;
       p5.tm_num_tapes = tm_num_tapes;
+      p5.tm_name = name;
       p5.multitestNumTests = -1;
       p5.prevDeviceOrientation = p5.deviceOrientation;
 
@@ -312,41 +321,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         // window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
-        // p5.states.push(new State(p5, p5.getNewStateId(), 200, 200));
-        // p5.states.push(new State(p5, p5.getNewStateId(), 400, 200));
-        // p5.states.push(new State(p5, p5.getNewStateId(), 600, 200));
-        // p5.states[2].isFinalState = true;
-        // p5.links.push(
-        //   new Link(p5, p5.states[0], p5.states[1], [
-        //     {
-        //       label: ["a", " ", "→", " ", "b", ", ", "D"],
-        //       width: 54.01171875,
-        //     },
-        //   ]),
-
-        //   new Link(p5, p5.states[1], p5.states[2], [
-        //     {
-        //       label: ["b", " ", "→", " ", "c", ", ", "D"],
-        //       width: 54.01171875,
-        //     },
-        //     {
-        //       label: ["☐", " ", "→", " ", "☐", ", ", "D"],
-        //       width: 54.01171875,
-        //     },
-        //   ]),
-
-        //   new SelfLink(p5, p5.states[1], true),
-        // );
-        // p5.links[2].transitionBox.rules = [
-        //   {
-        //     label: ["c", " ", "→", " ", "d", ", ", "D"],
-        //     width: 54.01171875,
-        //   },
-        // ];
-
         createCanvasFromOBJ(p5, test_mt);
-
-        p5.startLink = new StartLink(p5, p5.states[0], { x: 100, y: 200 });
         // End of testing
 
         // Set leftToolbar buttons mousePressed
@@ -364,7 +339,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.select(`#menu-zoomIn-${id}`).mousePressed(() => p5.setZoom(0.25));
         p5.select(`#menu-zoomOut-${id}`).mousePressed(() => p5.setZoom(-0.25));
         p5.select(`#import-mt-input-${id}`).changed(() =>
-          handleInputFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0]),
+          importJSONFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0], setInfo),
         );
         p5.select(`#export-mt-png-${id}`).mousePressed(() => exportAsPNG(p5));
         p5.select(`#export-mt-json-${id}`).mousePressed(() => exportAsJSON(p5));
@@ -1055,7 +1030,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         }
       };
     },
-    [id, focused, tm_variant, tm_num_tapes],
+    [id],
   );
 
   return <ReactP5Wrapper sketch={sketch} />;

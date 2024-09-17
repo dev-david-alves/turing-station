@@ -3,95 +3,12 @@ import Link from "../classes/link";
 import SelfLink from "../classes/selfLink";
 
 export const compareJSONObjects = (obj1, obj2) => {
-  if (obj1.canvasScale !== obj2.canvasScale) return false;
-  if (obj1.states.length !== obj2.states.length || obj1.links.length !== obj2.links.length) return false;
-
-  for (let i = 0; i < obj1.states.length; i++) {
-    if (
-      obj1.states[i].id !== obj2.states[i].id ||
-      obj1.states[i].x !== obj2.states[i].x ||
-      obj1.states[i].y !== obj2.states[i].y ||
-      obj1.states[i].isStartState !== obj2.states[i].isStartState ||
-      obj1.states[i].isFinalState !== obj2.states[i].isFinalState ||
-      obj1.states[i].label !== obj2.states[i].label
-    )
-      return false;
-  }
-
-  for (let i = 0; i < obj1.links.length; i++) {
-    if (obj1.links[i].isSelfLink !== obj2.links[i].isSelfLink) return false;
-
-    if (!obj1.links[i].isSelfLink) {
-      if (obj1.links[i].rules.length !== obj2.links[i].rules.length) return false;
-
-      let comparedRules = obj1.links[i].rules.every(
-        (rule, index) => JSON.stringify(rule.label) === JSON.stringify(obj2.links[i].rules[index].label),
-      );
-
-      if (
-        obj1.links[i].stateA !== obj2.links[i].stateA ||
-        obj1.links[i].stateB !== obj2.links[i].stateB ||
-        !comparedRules
-      )
-        return false;
-
-      if (obj1.links[i].hasCircle !== obj2.links[i].hasCircle) return false;
-
-      if (obj1.links[i].hasCircle) {
-        if (
-          obj1.links[i].startX !== obj2.links[i].startX ||
-          obj1.links[i].startY !== obj2.links[i].startY ||
-          obj1.links[i].endX !== obj2.links[i].endX ||
-          obj1.links[i].endY !== obj2.links[i].endY ||
-          obj1.links[i].circleX !== obj2.links[i].circleX ||
-          obj1.links[i].circleY !== obj2.links[i].circleY ||
-          obj1.links[i].circleR !== obj2.links[i].circleR ||
-          obj1.links[i].startAngle !== obj2.links[i].startAngle ||
-          obj1.links[i].endAngle !== obj2.links[i].endAngle
-        )
-          return false;
-      } else {
-        if (
-          obj1.links[i].startX !== obj2.links[i].startX ||
-          obj1.links[i].startY !== obj2.links[i].startY ||
-          obj1.links[i].endX !== obj2.links[i].endX ||
-          obj1.links[i].endY !== obj2.links[i].endY
-        )
-          return false;
-      }
-    } else {
-      if (obj1.links[i].rules.length !== obj2.links[i].rules.length) return false;
-
-      let comparedRules = obj1.links[i].rules.every(
-        (rule, index) => JSON.stringify(rule.label) === JSON.stringify(obj2.links[i].rules[index].label),
-      );
-
-      if (
-        obj1.links[i].state !== obj2.links[i].state ||
-        !comparedRules ||
-        obj1.links[i].anchorAngle !== obj2.links[i].anchorAngle
-      )
-        return false;
-    }
-  }
-
-  if ((obj1.initialStateLink && !obj2.initialStateLink) || (!obj1.initialStateLink && obj2.initialStateLink))
-    return false;
-
-  if (obj1.initialStateLink) {
-    if (
-      obj1.initialStateLink.state !== obj2.initialStateLink.state ||
-      obj1.initialStateLink.deltaX !== obj2.initialStateLink.deltaX ||
-      obj1.initialStateLink.deltaY !== obj2.initialStateLink.deltaY
-    )
-      return false;
-  }
-
-  return true;
+  return JSON.stringify(obj1) === JSON.stringify(obj2);
 };
 
 export const createJSONExportObj = (p5) => {
   let dmt = {
+    name: p5.tm_name,
     canvasScale: p5.canvasScale,
     variant: p5.tm_variant,
     numTapes: p5.tm_num_tapes,
@@ -103,8 +20,8 @@ export const createJSONExportObj = (p5) => {
   p5.states.forEach((state) => {
     dmt.states.push({
       id: state.id,
-      x: state.x / p5.canvasScale,
-      y: state.y / p5.canvasScale,
+      x: state.x / state.previusScale,
+      y: state.y / state.previusScale,
       isStartState: state.isStartState,
       isFinalState: state.isFinalState,
       label: state.input.allSubstrings.join(""),
@@ -118,9 +35,9 @@ export const createJSONExportObj = (p5) => {
         stateA: link.stateA.id,
         stateB: link.stateB.id,
         rules: link.transitionBox.getFormattedRules(),
-        parallelPart: link.parallelPart,
-        perpendicularPart: link.perpendicularPart,
-        lineAngleAdjust: link.lineAngleAdjust,
+        parallelPart: link.parallelPart / link.previusScale,
+        perpendicularPart: link.perpendicularPart / link.previusScale,
+        lineAngleAdjust: link.lineAngleAdjust / link.previusScale,
       });
     } else if (link instanceof SelfLink) {
       dmt.links.push({
@@ -135,8 +52,8 @@ export const createJSONExportObj = (p5) => {
   if (p5.startLink) {
     dmt.initialStateLink = {
       state: p5.startLink.state.id,
-      deltaX: p5.startLink.deltaX,
-      deltaY: p5.startLink.deltaY,
+      deltaX: p5.startLink.deltaX / p5.startLink.previusScale,
+      deltaY: p5.startLink.deltaY / p5.startLink.previusScale,
     };
   }
 
@@ -144,6 +61,7 @@ export const createJSONExportObj = (p5) => {
 };
 
 export const createCanvasFromOBJ = (p5, obj) => {
+  p5.tm_name = obj.name;
   p5.canvasScale = obj.canvasScale;
   p5.tm_variant = obj.variant;
   p5.tm_num_tapes = obj.numTapes;
@@ -152,7 +70,10 @@ export const createCanvasFromOBJ = (p5, obj) => {
   p5.startLink = null;
 
   obj.states.forEach((state) => {
-    let newState = new State(p5, state.id, state.x, state.y);
+    let newX = state.x * p5.canvasScale;
+    let newY = state.y * p5.canvasScale;
+
+    let newState = new State(p5, state.id, newX, newY);
     newState.isStartState = state.isStartState;
     newState.isFinalState = state.isFinalState;
     newState.input.input.value(state.label);
@@ -173,16 +94,21 @@ export const createCanvasFromOBJ = (p5, obj) => {
 
       let stateA = p5.states.find((state) => state.id === link.stateA);
       let stateB = p5.states.find((state) => state.id === link.stateB);
+
+      let newParallelPart = link.parallelPart * p5.canvasScale;
+      let newPerpendicularPart = link.perpendicularPart * p5.canvasScale;
+      let newLineAngleAdjust = link.lineAngleAdjust * p5.canvasScale;
+
       p5.links.push(
-        new Link(p5, stateA, stateB, link.rules, link.parallelPart, link.perpendicularPart, link.lineAngleAdjust),
+        new Link(p5, stateA, stateB, link.rules, newParallelPart, newPerpendicularPart, newLineAngleAdjust),
       );
     }
   });
 
   if (obj.initialStateLink) {
     p5.setInitialState(obj.initialStateLink.state, {
-      deltaX: obj.initialStateLink.deltaX,
-      deltaY: obj.initialStateLink.deltaY,
+      deltaX: obj.initialStateLink.deltaX * p5.canvasScale,
+      deltaY: obj.initialStateLink.deltaY * p5.canvasScale,
     });
 
     if (p5.startLink) p5.startLink.selected = false;

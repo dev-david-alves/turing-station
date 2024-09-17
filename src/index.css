@@ -142,3 +142,9 @@ input::-webkit-autocomplete-item:hover {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--dark-variant);
 }
+
+/* autofill chrome box */
+:-webkit-autofill {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: white !important;
+}

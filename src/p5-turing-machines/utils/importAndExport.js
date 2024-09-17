@@ -2,7 +2,7 @@ import { checkFileFormat } from "../../schemas/mtSchema";
 import { createHistory } from "./history";
 import { createCanvasFromOBJ, createJSONExportObj } from "./objectFunctions";
 
-export const handleInputFile = (p5, file) => {
+export const importJSONFile = (p5, file, callBack) => {
   if (!file) {
     alert("Erro: nenhum arquivo selecionado!");
     return;
@@ -24,10 +24,11 @@ export const handleInputFile = (p5, file) => {
       return;
     }
 
+    // If the file format is correct, create the canvas
     if (createCanvasFromOBJ(p5, parsed.data)) {
-      // If the file format is correct, create the canvas
-      console.log("Importação concluída com sucesso!");
       createHistory(p5);
+      const { name, variant, numTapes } = parsed.data;
+      callBack({ newName: name, newVariant: variant, newNumTapes: numTapes });
     }
   };
 
@@ -36,12 +37,23 @@ export const handleInputFile = (p5, file) => {
   p5.select(`#import-mt-input-${p5.canvasId}`);
 };
 
+const generateFileName = (p5, extension) => {
+  const name =
+    p5.tm_variant === "tm"
+      ? "turing-machine"
+      : p5.tm_variant === "ndtm"
+        ? "nondeterministic-turing-machine"
+        : "multitape-turing-machine";
+
+  return `${name}.${extension}`;
+};
+
 export const exportAsPNG = (p5) => {
   let img = p5.get();
-  img.save("turing-machine.png");
+  img.save(generateFileName(p5, "png"));
 };
 
 export const exportAsJSON = (p5) => {
   let dmt = createJSONExportObj(p5);
-  p5.saveJSON(dmt, "turing-machine.json");
+  p5.saveJSON(dmt, generateFileName(p5, "json"));
 };

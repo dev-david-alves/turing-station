@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Input } from "../Input";
 import { Button, buttonVariants } from "../Button";
 import { Icon } from "@iconify/react/dist/iconify.js";
@@ -35,6 +35,10 @@ function EditSimulatorModal({ id }) {
     renameRef.current.value = name;
     setIsRenaming(false);
   };
+
+  useEffect(() => {
+    renameRef.current.value = name;
+  }, [name]);
 
   // const handleToggleLeftToolbar = () => {
   //   setSimulatorInfo((prev) =>
