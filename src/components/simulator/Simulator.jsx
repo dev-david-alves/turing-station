@@ -34,8 +34,9 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
     let divR = document.getElementById(`bottom-drawer-${id}`);
     if (divR) setParentHeight(divR.offsetHeight);
 
-    if (size > MIN_BOTTOM_DRAWER_SIZE) setBottomDrawerOpen(true);
-    else setBottomDrawerOpen(false);
+    if (size > MIN_BOTTOM_DRAWER_SIZE)
+      setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: true } : item)));
+    else setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: false } : item)));
   };
 
   useEffect(() => {

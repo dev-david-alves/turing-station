@@ -138,7 +138,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       p5.closeBottomDrawer = (event) => {
         let bottomDrawer = p5.select(`#bottom-drawer-${id}`);
         if (!bottomDrawer.elt.contains(event.target)) {
-          setBottomDrawerOpen(false);
+          setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: false } : item)));
         }
       };
 

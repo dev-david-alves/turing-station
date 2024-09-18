@@ -143,13 +143,13 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
   const { getOne } = useSimulator();
   const { showTooltips } = getOne(id);
 
-  const handleClick = (id) => {
-    if (selectedTab === id) {
+  const handleClick = (buttonID) => {
+    if (selectedTab === buttonID) {
       setSelectedTab(undefined);
-      setBottomDrawerOpen(false);
+      setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: false } : item)));
     } else {
-      setSelectedTab(id);
-      setBottomDrawerOpen(true);
+      setSelectedTab(buttonID);
+      setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: true } : item)));
     }
   };
 

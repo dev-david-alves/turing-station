@@ -30,6 +30,18 @@ const SimulatorProvider = ({ children }) => {
       tm_num_tapes: 3, // Only for "mttm" variant
       data: undefined, // Last tm saved on the simulator history (same data) used to restore the simulator
     },
+    {
+      id: generateRandomId(),
+      name: "Custom MT 03",
+      open: false, // TM accordion open by default
+      fullScreen: false,
+      focused: false,
+      showLeftToolbar: true,
+      showTooltips: false,
+      tm_variant: "mttm", // Three possible values: "tm", "ndtm", "mttm"
+      tm_num_tapes: 3, // Only for "mttm" variant
+      data: undefined, // Last tm saved on the simulator history (same data) used to restore the simulator
+    },
   ]);
 
   const getOne = (id) => simulatorInfo.find((item) => item.id === id);
