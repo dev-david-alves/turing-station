@@ -18,27 +18,18 @@ const SimulatorProvider = ({ children }) => {
       tm_num_tapes: 3, // Only for "mttm" variant
       data: undefined, // Last tm saved on the simulator history (same data) used to restore the simulator
     },
-    // {
-    //   id: generateRandomId(),
-    //   name: "Custom MT 02",
-    //   open: false,
-    //   fullScreen: false,
-    //   focused: false,
-    //   showLeftToolbar: true,
-    //   showTooltips: true,
-    //   data: undefined,
-    // },
-
-    // {
-    //   id: generateRandomId(),
-    //   name: "Custom MT 03",
-    //   open: false,
-    //   fullScreen: false,
-    //   focused: false,
-    //   showLeftToolbar: true,
-    //   showTooltips: true,
-    //   data: undefined,
-    // },
+    {
+      id: generateRandomId(),
+      name: "Custom MT 02",
+      open: false, // TM accordion open by default
+      fullScreen: false,
+      focused: false,
+      showLeftToolbar: true,
+      showTooltips: false,
+      tm_variant: "mttm", // Three possible values: "tm", "ndtm", "mttm"
+      tm_num_tapes: 3, // Only for "mttm" variant
+      data: undefined, // Last tm saved on the simulator history (same data) used to restore the simulator
+    },
   ]);
 
   const getOne = (id) => simulatorInfo.find((item) => item.id === id);
@@ -50,7 +41,9 @@ const SimulatorProvider = ({ children }) => {
     if (simulator.focused === focused) return;
 
     setSimulatorInfo((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, focused: focused } : { ...item, focused: false })),
+      prev.map((item) =>
+        item.id === id ? { ...item, open: focused, focused: focused } : { ...item, open: false, focused: false },
+      ),
     );
   };
 

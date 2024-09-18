@@ -27,7 +27,7 @@ import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanva
 
 export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
   const { getOne, setSimulatorInfo } = useSimulator();
-  const { focused, name, tm_variant, tm_num_tapes } = getOne(id);
+  const { name, tm_variant, tm_num_tapes } = getOne(id);
 
   const setInfo = ({ newName, newVariant, newNumTapes }) => {
     setSimulatorInfo((prev) =>
@@ -41,6 +41,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
     () => (p5) => {
       // General global properties
       p5.canvasID = id;
+      p5.isFocused = false;
       p5.canvasOffset = { x: 0, y: 0 };
       p5.moveCanvasVelocity = 3;
       p5.canvasScale = 1.0;
@@ -290,7 +291,6 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         let leftToolbar = p5.select(`#left-toolbar-${id}`);
         if (!leftToolbar) return;
 
-        // console.log(p5.prevDeviceOrientation);
         if (p5.prevDeviceOrientation === "landscape") {
           leftToolbar.removeClass("items-center");
           leftToolbar.removeClass("flex-col");
@@ -313,10 +313,10 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         p5.cnv.doubleClicked(() => p5.doubleClickedInsideCanvas());
         p5.cnv.mouseWheel((event) => p5.mouseWheelInsideCanvas(event));
         p5.cnv.touchStarted((event) => {
-          if (focused) touchStartedInsideCanvas(p5, event);
+          if (p5.isFocused) touchStartedInsideCanvas(p5, event);
         });
         p5.cnv.touchMoved((event) => {
-          if (focused) touchMovedInsideCanvas(p5, event);
+          if (p5.isFocused) touchMovedInsideCanvas(p5, event);
         });
         // window.addEventListener("contextmenu", (e) => e.preventDefault());
 
@@ -375,7 +375,10 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       };
 
       p5.draw = () => {
-        if (!focused) return;
+        let simulatorDiv = p5.select(`#simulator-${id}`);
+        p5.isFocused = simulatorDiv.hasClass("shadow-high");
+
+        if (!p5.isFocused) return;
 
         p5.showErrors();
         p5.toggleTestTab();
@@ -845,7 +848,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       };
 
       p5.mousePressedInsideCanvas = () => {
-        if (!focused) return false;
+        if (!p5.isFocused) return false;
         if (p5.stateContextMenu) p5.stateContextMenu.hide();
         if (p5.checkAndCloseAllStateInputVisible()) createHistory(p5);
 
@@ -921,11 +924,11 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
           link.mouseReleased();
         });
 
-        if (!focused) return false;
+        if (!p5.isFocused) return true;
         // Outside canvas
         if (p5.isMouseOutsideCanvas()) {
           p5.currentLink = null;
-          return false;
+          return true;
         }
       };
 
@@ -943,7 +946,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
           link.mouseReleased();
         });
 
-        if (!focused) return true;
+        if (!p5.isFocused) return true;
         // Outside canvas
         if (p5.isMouseOutsideCanvas()) {
           p5.currentLink = null;
@@ -1000,7 +1003,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
 
       // Keyboard functions
       p5.keyPressed = () => {
-        if (!focused) return false;
+        if (!p5.isFocused) return true;
 
         if (p5.keyCode === p5.DELETE) p5.deleteObject();
 
@@ -1020,7 +1023,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       };
 
       p5.keyReleased = () => {
-        if (!focused) return false;
+        if (!p5.isFocused) return true;
 
         if (p5.keyCode === p5.SHIFT && p5.selectedLeftToolbarButton !== "addLink") {
           p5.currentLink = null;
