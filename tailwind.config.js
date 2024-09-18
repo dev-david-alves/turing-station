@@ -24,6 +24,7 @@ export default {
         disabledButton: "var(--disabled-button)",
         transparent: "rgba(0, 0, 0, 0)",
         darkenBlue: "var(--darken-blue)",
+        purpleMedium: "var(--purple-medium)",
       },
       boxShadow: {
         default: "0 0 1.6rem var(--color-background)",

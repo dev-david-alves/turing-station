@@ -73,6 +73,7 @@ export class MTNDTM {
     this.history = [];
   }
 
+  // Just for testing
   printBranchs() {
     console.log("\n-------------------------------");
     this.branchs.forEach((branch) => {
@@ -122,23 +123,10 @@ export class MTNDTM {
     this.history.push([...this.branchs]);
   }
 
-  // orderBranchs(newBranchs) {
-  //   if (!newBranchs || newBranchs.length === 0) return [];
-
-  //   newBranchs.sort((a, b) => {
-  //     if (a[2] && !b[2]) return 1;
-  //     if (!a[2] && b[2]) return -1;
-  //     return 0;
-  //   });
-
-  //   return newBranchs;
-  // }
-
   stepBack() {
     if (this.history.length === 0) return false;
 
     this.branchs = this.history.pop();
-    this.printBranchs();
     return true;
   }
 
@@ -153,6 +141,8 @@ export class MTNDTM {
       const tapesObj = branch[1];
 
       const currentSymbolsConfig = tapesObj.map((tape) => tape.getSymbol()).join("");
+
+      if (branch[2]) continue;
 
       if (!this.delta.hasOwnProperty(currentState)) {
         const newBranch = [currentState, tapesObj, true];
@@ -188,11 +178,9 @@ export class MTNDTM {
     this.branchs = auxBranchs;
 
     if (this.checkRejection()) {
-      console.log("Rejected");
       return { accepted: false, end: true };
     }
     if (this.checkAcceptance()) {
-      console.log("Accepted");
       return { accepted: true, end: true };
     }
 

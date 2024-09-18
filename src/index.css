@@ -26,6 +26,7 @@
   --white: #ffffff;
   --disabled-button: #4b4b4b;
   --darken-blue: #36404e;
+  --purple-medium: #8b008b;
 }
 
 .dark-mode-variables {
@@ -110,6 +111,15 @@ input::-webkit-autocomplete-item:hover {
 
 .tape-state {
   @apply mx-2 flex h-10 max-h-10 min-h-10 w-10 min-w-10 max-w-10 items-center justify-center truncate rounded-full border-2 border-white text-center font-semibold text-white;
+}
+
+/* Tape */
+.tape-container-class {
+  @apply opacity-100 transition-opacity delay-500 duration-1000 ease-out;
+}
+
+.tape-container-class.hide {
+  @apply opacity-0;
 }
 
 /* Scroll */

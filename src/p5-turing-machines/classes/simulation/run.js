@@ -170,7 +170,10 @@ export const updateTape = (p5) => {
     let tapeContainer = p5.createDiv("");
     let conditionToBorder = p5.mtCreated.branchs.length > 1 && p5.tm_variant === "mttm";
     tapeContainer.class(
-      cn("flex items-center justify-center w-full gap-1 rounded-md mb-2", conditionToBorder && "border border-white"),
+      cn(
+        "tape-container-class flex items-center justify-center w-full gap-1 rounded-md mb-2",
+        conditionToBorder && "border border-white",
+      ),
     );
     tapeContainer.parent(tapeDiv);
 
@@ -269,7 +272,7 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
   if (!tapeWrappers) return;
 
   tapeWrappers.forEach((tapeWrapper, index) => {
-    tapeStates[index].removeClass("bg-[#8B008B]");
+    tapeStates[index].removeClass("bg-purpleMedium");
     tapeStates[index].removeClass("bg-danger");
     tapeStates[index].removeClass("bg-lightGreen");
     tapeWrapper.removeClass("bg-lightGreen");
@@ -278,9 +281,16 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
     if (tapeWrapper.hasClass(`branchRejection-true`)) {
       tapeWrapper.addClass("bg-danger");
       tapeStates[index].addClass("bg-danger");
-    }
 
-    if (end) {
+      let isAllRejected = tapeWrappers.every((tw) => tw.hasClass("branchRejection-true"));
+      if (!isAllRejected) {
+        let parent = tapeWrapper.parent();
+        parent.classList.add("hide");
+        setTimeout(() => {
+          parent.remove();
+        }, 1300);
+      }
+    } else if (end) {
       if (accepted) {
         tapeWrapper.addClass("bg-lightGreen");
         tapeStates[index].addClass("bg-lightGreen");
@@ -289,7 +299,7 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
         tapeStates[index].addClass("bg-danger");
       }
     } else {
-      tapeStates[index].addClass("bg-[#8B008B]");
+      tapeStates[index].addClass("bg-purpleMedium");
       stepForward.removeAttribute("disabled");
       fastSimulation.removeAttribute("disabled");
     }

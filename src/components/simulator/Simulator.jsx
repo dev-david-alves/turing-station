@@ -45,7 +45,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
     const bottomPanel = bottomDrawerRef.current;
     if (bottomPanel) {
       if (bottomDrawerOpen) {
-        if (bottomPanel.getSize() == 9) bottomPanel.resize(40);
+        if (bottomPanel.getSize() == 9) bottomPanel.resize(60);
       } else {
         bottomPanel.resize(MIN_BOTTOM_DRAWER_SIZE);
       }
