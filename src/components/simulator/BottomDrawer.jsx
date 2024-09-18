@@ -15,7 +15,7 @@ const navButtons = [
   },
   {
     id: "multitest-tab",
-    icon: "hugeicons:test-tube-02",
+    icon: "fluent-mdl2:test-plan",
     tip: "Teste a máquina de turing com várias entradas",
   },
 ];
