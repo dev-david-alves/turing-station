@@ -26,7 +26,9 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
     // Handler to update full-screen state
     const handleFullScreenChange = () => {
       setSimulatorInfo((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, fullScreen: !!document.fullscreenElement } : item)),
+        prev.map((item) =>
+          item.id === id && item.focused ? { ...item, fullScreen: !!document.fullscreenElement } : item,
+        ),
       );
     };
 
