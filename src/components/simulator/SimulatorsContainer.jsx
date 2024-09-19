@@ -8,7 +8,7 @@ function SimulatorsContainer() {
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState(simulatorInfo.map((item) => ({ id: item.id, open: false })));
 
   return (
-    <div className="flex h-full w-full flex-col items-center gap-4">
+    <div className="flex h-full w-full flex-col items-center gap-4 px-8">
       {simulatorInfo.map((item, index) => (
         <Simulator
           key={item.id}

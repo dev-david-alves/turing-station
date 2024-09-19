@@ -8,6 +8,7 @@ export default {
         shadowHigh: "var(--shadow-high)",
         primary: "var(--primary)",
         primaryHover: "var(--primary-hover)",
+        secondaryBlue: "var(--secondary-blue)",
         danger: "var(--danger)",
         lightDanger: "var(--light-danger)",
         success: "var(--success)",

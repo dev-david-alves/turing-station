@@ -58,7 +58,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
       id={`simulator-${id}`}
       onClick={() => handleFocus(true, id)}
       className={cn(
-        "z-10 flex h-[31.8rem] w-full max-w-[45rem] flex-col items-center overflow-hidden rounded-lg bg-background shadow-default transition-all duration-75",
+        "z-10 flex h-[31.8rem] w-full flex-col items-center overflow-hidden rounded-lg bg-background shadow-default transition-all duration-75",
         !isOpen && "h-[3.5rem]",
         isFullScreen && "min-w-screen max-w-screen fixed left-0 top-0 z-[100] h-full min-h-full rounded-none",
         isFocused && "shadow-high",
@@ -81,7 +81,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
             minSize={100 - MAX_BOTTOM_DRAWER_SIZE}
             maxSize={100 - MIN_BOTTOM_DRAWER_SIZE}
           >
-            <div id={`playground-${id}`} className="h-full w-full rounded-br-xl bg-danger">
+            <div id={`playground-${id}`} className="h-full w-full rounded-br-xl">
               {children}
 
               <StateModal id={id} className="hidden" />

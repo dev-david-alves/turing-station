@@ -11,6 +11,7 @@
 
   --primary: #1762a3;
   --primary-hover: #11528c;
+  --secondary-blue: #6c9bcf;
   --danger: #e10000;
   --light-danger: #ff4d4d;
   --success: #1b9c85;
@@ -132,19 +133,18 @@ input::-webkit-autocomplete-item:hover {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: var(--background);
-  border-radius: 3px;
+  background: #181a1e;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: var(--dark);
+  background: #4c5960;
   border-radius: 3px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--dark-variant);
+  background: #3c474c;
 }
 
 /* autofill chrome box */
