@@ -4,18 +4,18 @@ import { cn } from "../../utils/cn";
 
 const links = [
   {
-    name: "Home",
+    name: "Simulador",
     to: "/",
-    icon: "bx:bx-home",
+    icon: "ph:graph-bold",
   },
   {
     name: "Instruções de uso",
     to: "/how-to-use",
-    icon: "bx:bx-info-circle",
+    icon: "carbon:machine-learning",
   },
 ];
 
-function SideBar({ isOpen, setIsOpen }) {
+function SideNavigation({ isOpen, setIsOpen }) {
   const location = useLocation();
 
   return (
@@ -101,4 +101,4 @@ function SideBar({ isOpen, setIsOpen }) {
   );
 }
 
-export default SideBar;
+export default SideNavigation;

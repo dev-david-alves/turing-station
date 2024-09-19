@@ -1,8 +1,9 @@
 import { Outlet } from "react-router-dom";
-import SideBar from "../components/navigation/SideBar";
 import { useState } from "react";
 import { cn } from "../utils/cn";
 import { useSimulator } from "../providers/simulator";
+import SideNavigation from "../components/navigation/SideNavigation";
+import TabNavitaion from "../components/navigation/TabNavigation";
 
 function Layout() {
   const [sidebarisOpen, setSidebarIsOpen] = useState(true);
@@ -11,8 +12,8 @@ function Layout() {
 
   return (
     <div className="dark-mode-variables relative flex min-h-screen w-full bg-background">
-      <div className={cn("full z-[25000]", isAnyFullScreen && "hidden")}>
-        <SideBar isOpen={sidebarisOpen} setIsOpen={setSidebarIsOpen} />
+      <div className={cn("full relative z-[25000] hidden sm:block", isAnyFullScreen && "hidden")}>
+        <SideNavigation isOpen={sidebarisOpen} setIsOpen={setSidebarIsOpen} />
         <div
           className={cn(
             "flex min-h-screen w-64 max-w-64 flex-col items-center justify-between bg-main py-8 shadow-xl transition-all duration-300",
@@ -21,7 +22,11 @@ function Layout() {
         ></div>
       </div>
 
-      <main className="flex h-full min-h-screen w-full flex-col items-center justify-center overflow-x-hidden bg-background px-[5px] py-10">
+      <div className={cn("full bottom-0 z-[25000] block bg-main sm:hidden", isAnyFullScreen && "hidden")}>
+        <TabNavitaion />
+      </div>
+
+      <main className="flex h-full min-h-screen w-full flex-col items-center justify-center overflow-x-hidden bg-background py-10">
         <Outlet />
       </main>
     </div>
