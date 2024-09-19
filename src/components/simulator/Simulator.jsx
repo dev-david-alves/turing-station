@@ -58,7 +58,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
       id={`simulator-${id}`}
       onClick={() => handleFocus(true, id)}
       className={cn(
-        "z-10 flex h-[31.8rem] w-full flex-col items-center overflow-hidden rounded-lg bg-background shadow-default transition-all duration-75",
+        "z-10 flex h-[31.8rem] w-full flex-col items-center overflow-hidden rounded-lg bg-background shadow-default transition-all duration-500",
         !isOpen && "h-[3.5rem]",
         isFullScreen && "min-w-screen max-w-screen fixed left-0 top-0 z-[100] h-full min-h-full rounded-none",
         isFocused && "shadow-high",
@@ -67,7 +67,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
       <TopBar id={id} isEditPopoverOpen={isEditPopoverOpen} setIsEditPopoverOpen={setIsEditPopoverOpen} />
       <div
         className={cn(
-          "relative flex h-[28.5rem] max-h-[40rem] w-full items-center border-b-[5px] border-r-[5px] border-main transition-all duration-300",
+          "relative flex h-[28.5rem] max-h-[40rem] w-full items-center border-b-[5px] border-r-[5px] border-main transition-all duration-500",
           !isOpen && "max-h-0 overflow-hidden",
           isFullScreen && "h-full max-h-full",
           !showLeftToolbar && "border-l-[5px]",

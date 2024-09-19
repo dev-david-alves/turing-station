@@ -52,11 +52,11 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
     }
   };
 
-  // const handleOpen = () => {
-  //   setSimulatorInfo((prev) =>
-  //     prev.map((item) => (item.id === id ? { ...item, open: !item.open } : { ...item, open: false })),
-  //   );
-  // };
+  const handleOpen = () => {
+    setSimulatorInfo((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, open: !item.open } : { ...item, open: false })),
+    );
+  };
 
   const handleResize = () => {
     setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, fullScreen: !item.fullScreen } : item)));
@@ -80,14 +80,14 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
   return (
     <div className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3")}>
       <div className="flex items-center gap-2">
-        {/* {!isFullScreen && (
+        {!isFullScreen && (
           <button className="rotate-0 border-none bg-none p-2 text-white" onClick={handleOpen}>
             <Icon
               icon="ep:arrow-down-bold"
               className={cn("icon h-4 w-4 transition-transform duration-300", !isOpen && "-rotate-90")}
             />
           </button>
-        )} */}
+        )}
         <button className="border-none bg-none text-sm font-semibold text-white">
           <p className="px-2 py-[.4rem] uppercase text-white">{simulator.name}</p>
         </button>
