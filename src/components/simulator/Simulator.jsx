@@ -10,10 +10,10 @@ import LinkModal from "./context-menu/LinkModal";
 import CanvasModal from "./context-menu/CanvasModal";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../Resizable";
 
-const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
+const Simulator = ({ id, children }) => {
   if (!id) throw new Error("Simulator component must have an id prop");
 
-  const { getOne, handleFocus } = useSimulator();
+  const { getOne, handleFocus, setSimulatorInfo } = useSimulator();
   const [isEditPopoverOpen, setIsEditPopoverOpen] = useState(false);
   const [parentHeight, setParentHeight] = useState(0);
 
@@ -25,6 +25,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
   const isFullScreen = simulator.fullScreen;
   const isFocused = simulator.focused;
   const showLeftToolbar = simulator.showLeftToolbar;
+  const bottomDrawerOpen = simulator.bottomDrawerOpen;
 
   const bottomDrawerRef = useRef(null);
   const MIN_BOTTOM_DRAWER_SIZE = 9;
@@ -35,8 +36,8 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
     if (divR) setParentHeight(divR.offsetHeight);
 
     if (size > MIN_BOTTOM_DRAWER_SIZE)
-      setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: true } : item)));
-    else setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: false } : item)));
+      setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, bottomDrawerOpen: true } : item)));
+    else setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, bottomDrawerOpen: false } : item)));
   };
 
   useEffect(() => {
@@ -100,12 +101,7 @@ const Simulator = ({ id, children, bottomDrawerOpen, setBottomDrawerOpen }) => {
             onResize={(size) => toggleBottomDrawerIsOpen(size)}
           >
             <div className="min-h-full overflow-hidden rounded-t-md bg-main">
-              <BottomDrawer
-                id={id}
-                setBottomDrawerOpen={setBottomDrawerOpen}
-                bottomDrawerOpen={bottomDrawerOpen}
-                parentHeight={parentHeight}
-              />
+              <BottomDrawer id={id} parentHeight={parentHeight} />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

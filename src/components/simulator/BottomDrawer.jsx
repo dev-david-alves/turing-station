@@ -139,17 +139,17 @@ function TestTab({ id, className }) {
   );
 }
 
-function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, bottomDrawerOpen }) {
-  const { getOne } = useSimulator();
-  const { showTooltips } = getOne(id);
+function Navgation({ id, selectedTab, setSelectedTab }) {
+  const { getOne, setSimulatorInfo } = useSimulator();
+  const { showTooltips, bottomDrawerOpen } = getOne(id);
 
   const handleClick = (buttonID) => {
     if (selectedTab === buttonID) {
       setSelectedTab(undefined);
-      setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: false } : item)));
+      setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, bottomDrawerOpen: false } : item)));
     } else {
       setSelectedTab(buttonID);
-      setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: true } : item)));
+      setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, bottomDrawerOpen: true } : item)));
     }
   };
 
@@ -197,7 +197,7 @@ function Navgation({ id, selectedTab, setSelectedTab, setBottomDrawerOpen, botto
   );
 }
 
-function BottomDrawer({ id, setBottomDrawerOpen, bottomDrawerOpen, parentHeight }) {
+function BottomDrawer({ id, parentHeight }) {
   const [selectedTab, setSelectedTab] = useState(undefined);
 
   useEffect(() => {
@@ -217,13 +217,7 @@ function BottomDrawer({ id, setBottomDrawerOpen, bottomDrawerOpen, parentHeight 
         "flex min-h-full w-full flex-col items-center gap-2 rounded-t-md bg-main pt-2 transition-all duration-200",
       )}
     >
-      <Navgation
-        id={id}
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-        setBottomDrawerOpen={setBottomDrawerOpen}
-        bottomDrawerOpen={bottomDrawerOpen}
-      />
+      <Navgation id={id} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
 
       <TestTab
         id={id}

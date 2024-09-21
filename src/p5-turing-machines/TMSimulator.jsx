@@ -25,9 +25,9 @@ import { texMap } from "./utils/getTexMaps";
 
 import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanvas } from "./utils/touchInteractions";
 
-export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
+export const TMSimulator = ({ id }) => {
   const { getOne, setSimulatorInfo } = useSimulator();
-  const { name, tm_variant, tm_num_tapes } = getOne(id);
+  const { name, tm_variant, tm_num_tapes, stayOption } = getOne(id);
 
   const setInfo = ({ newName, newVariant, newNumTapes }) => {
     setSimulatorInfo((prev) =>
@@ -53,6 +53,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       p5.tm_variant = tm_variant;
       p5.tm_num_tapes = tm_num_tapes;
       p5.tm_name = name;
+      p5.hasStayOption = stayOption;
       p5.multitestNumTests = -1;
       p5.prevDeviceOrientation = p5.deviceOrientation;
 
@@ -138,7 +139,9 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
       p5.closeBottomDrawer = (event) => {
         let bottomDrawer = p5.select(`#bottom-drawer-${id}`);
         if (!bottomDrawer.elt.contains(event.target)) {
-          setBottomDrawerOpen((prev) => prev.map((item) => (item.id === id ? { ...item, open: false } : item)));
+          setSimulatorInfo((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, bottomDrawerOpen: false } : item)),
+          );
         }
       };
 
@@ -321,7 +324,7 @@ export const TMSimulator = ({ id, setBottomDrawerOpen }) => {
         // window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
-        createCanvasFromOBJ(p5, test_mt);
+        // createCanvasFromOBJ(p5, test_mt);
         // End of testing
 
         // Set leftToolbar buttons mousePressed
