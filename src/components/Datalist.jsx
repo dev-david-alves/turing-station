@@ -78,14 +78,16 @@ const CustomDataList = ({ id, data, className, ...props }) => {
 
   return (
     <div className={cn("relative flex flex-col gap-2", className)} tabIndex={0}>
-      {isFocused && filteredData.length > 0 && (
-        <CustomOptions
-          data={filteredData}
-          className="absolute bottom-10 w-full"
-          setInputValue={setInputValue}
-          closeDropdown={closeDropdown}
-        />
-      )}
+      <CustomOptions
+        data={filteredData}
+        className={cn(
+          "absolute top-10 z-[40000] w-full bg-main",
+          isFocused && filteredData.length > 0 ? "flex" : "hidden",
+        )}
+        setInputValue={setInputValue}
+        closeDropdown={closeDropdown}
+      />
+
       <Input
         ref={inputRef}
         type="text"
