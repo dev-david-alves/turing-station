@@ -54,7 +54,9 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
 
   const handleOpen = () => {
     setSimulatorInfo((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, open: !item.open } : { ...item, open: false })),
+      prev.map((item) =>
+        item.id === id ? { ...item, open: !item.open, focused: item.open ? false : true } : { ...item, open: false },
+      ),
     );
   };
 

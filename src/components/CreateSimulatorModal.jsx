@@ -63,6 +63,7 @@ function CreateSimulatorModal() {
   useEffect(() => {
     setImportedFile(null);
     setUseImportExample(false);
+    setErros([]);
 
     if (example === "import-from-device") {
       setUseImportExample(true);
@@ -145,13 +146,17 @@ function CreateSimulatorModal() {
         },
       ]);
 
-      setModalOpen(false);
       setErros([]);
-      setUseExample(false);
       setName("");
       setStayOption(false);
       setVariant("tm");
       setNumTapes(1);
+
+      setUseExample(false);
+      setExample("import-from-device");
+      setUseImportExample(true);
+      setImportedFile(null);
+      setModalOpen(false);
     } else {
       setErros(result.error.errors);
     }
