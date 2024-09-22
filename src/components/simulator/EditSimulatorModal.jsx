@@ -9,8 +9,9 @@ import { cn } from "../../utils/cn";
 
 function EditSimulatorModal({ id }) {
   const renameRef = useRef(null);
-  const { getOne, setSimulatorInfo } = useSimulator();
+  const { simulatorInfo, getOne, setSimulatorInfo } = useSimulator();
   const [isRenaming, setIsRenaming] = useState(false);
+  const [renameErrors, setRenameErrors] = useState([]);
 
   const simulator = getOne(id);
 
@@ -22,8 +23,27 @@ function EditSimulatorModal({ id }) {
     e.preventDefault();
 
     const newName = e.target.rename.value;
-    if (!newName || newName === name) {
-      setIsRenaming(false);
+
+    if (!newName) {
+      setRenameErrors(["O nome do simulador não pode ser vazio"]);
+      return;
+    }
+
+    if (newName === name) return;
+
+    if (newName.length < 3) {
+      setRenameErrors(["Nome do simulador deve ter no mínimo 3 caracteres"]);
+      return;
+    }
+
+    if (newName.length > 50) {
+      setRenameErrors(["Nome do simulador deve ter no máximo 50 caracteres"]);
+      return;
+    }
+
+    const hasSimulator = simulatorInfo.find((item) => item.name.toLowerCase() === newName.toLowerCase());
+    if (hasSimulator) {
+      setRenameErrors(["Já existe um simulador com este nome"]);
       return;
     }
 
@@ -75,6 +95,7 @@ function EditSimulatorModal({ id }) {
             maxLength="50"
             defaultValue={name}
             disabled={!isRenaming}
+            onChange={() => setRenameErrors([])}
           />
 
           <Button
@@ -104,6 +125,14 @@ function EditSimulatorModal({ id }) {
             </Button>
           </div>
         </form>
+
+        {renameErrors.length > 0 && (
+          <div className="flex flex-col gap-1 text-xs text-danger">
+            {renameErrors.map((error, index) => (
+              <span key={index}>{error}</span>
+            ))}
+          </div>
+        )}
       </div>
 
       <hr className="border-darkenBlue border-opacity-10" />
