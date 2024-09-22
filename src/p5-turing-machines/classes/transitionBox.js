@@ -215,10 +215,12 @@ export default class TransitionBox {
       // Buttons
       let buttonDiv = this.p5.createDiv();
       buttonDiv.parent(this.auxInputButtonDiv);
-      buttonDiv.class("flex items-center justify-between");
+      buttonDiv.class(cn("flex items-center justify-between", this.p5.tm_num_tapes === 1 ? "w-full" : ""));
       this.directionButtonDiv = this.p5.createDiv();
       this.directionButtonDiv.parent(buttonDiv);
-      this.directionButtonDiv.class("flex items-center gap-[.4rem]");
+      this.directionButtonDiv.class(
+        cn("flex items-center gap-[.4rem]", this.p5.tm_num_tapes === 1 ? "w-full justify-between" : ""),
+      );
 
       let leftButton = this.p5.createButton("E");
       leftButton.parent(this.directionButtonDiv);
@@ -236,13 +238,15 @@ export default class TransitionBox {
       rightButton.attribute("data-selected", "false");
       rightButton.mousePressed(() => this.switchButtons(i, "right"));
 
-      let stayButton = this.p5.createButton("P");
-      stayButton.parent(this.directionButtonDiv);
-      stayButton.class(buttonClass);
-      stayButton.attribute("data-tape", i);
-      stayButton.attribute("data-direction", "stay");
-      leftButton.attribute("data-selected", "false");
-      stayButton.mousePressed(() => this.switchButtons(i, "stay"));
+      if (this.p5.stayOption) {
+        let stayButton = this.p5.createButton("P");
+        stayButton.parent(this.directionButtonDiv);
+        stayButton.class(buttonClass);
+        stayButton.attribute("data-tape", i);
+        stayButton.attribute("data-direction", "stay");
+        stayButton.attribute("data-selected", "false");
+        stayButton.mousePressed(() => this.switchButtons(i, "stay"));
+      }
     });
 
     this.confirmButtonDiv = this.p5.createDiv();
@@ -274,14 +278,14 @@ export default class TransitionBox {
     // Set data-selected to false for all buttons
     this.allLeftButtons[index].dataset.selected = "false";
     this.allRightButtons[index].dataset.selected = "false";
-    this.allStayButtons[index].dataset.selected = "false";
+    if (this.p5.stayOption) this.allStayButtons[index].dataset.selected = "false";
 
     if (direction === "left") {
       this.allLeftButtons[index].dataset.selected = "true";
     } else if (direction === "right") {
       this.allRightButtons[index].dataset.selected = "true";
     } else {
-      this.allStayButtons[index].dataset.selected = "true";
+      if (this.p5.stayOption) this.allStayButtons[index].dataset.selected = "true";
     }
 
     this.changeResultText();
@@ -367,7 +371,7 @@ export default class TransitionBox {
     for (let i = 0; i < this.allLeftButtons.length; i++) {
       this.allLeftButtons[i].dataset.selected = "true";
       this.allRightButtons[i].dataset.selected = "false";
-      this.allStayButtons[i].dataset.selected = "false";
+      if (this.p5.stayOption) this.allStayButtons[i].dataset.selected = "false";
     }
   }
 
@@ -614,7 +618,9 @@ export default class TransitionBox {
     for (let i = 0; i < this.allLeftButtons.length; i++) {
       let dataSelectedLeft = this.allLeftButtons[i].dataset.selected;
       let dataSelectedRight = this.allRightButtons[i].dataset.selected;
-      let dataSelectedStay = this.allStayButtons[i].dataset.selected;
+      let dataSelectedStay = null;
+
+      if (this.p5.stayOption) dataSelectedStay = this.allStayButtons[i].dataset.selected;
 
       if (dataSelectedLeft === "true") {
         this.allLeftButtons[i].classList.add("button-active");
@@ -628,10 +634,12 @@ export default class TransitionBox {
         this.allRightButtons[i].classList.remove("button-active");
       }
 
-      if (dataSelectedStay === "true") {
-        this.allStayButtons[i].classList.add("button-active");
-      } else {
-        this.allStayButtons[i].classList.remove("button-active");
+      if (this.p5.stayOption) {
+        if (dataSelectedStay === "true") {
+          this.allStayButtons[i].classList.add("button-active");
+        } else {
+          this.allStayButtons[i].classList.remove("button-active");
+        }
       }
     }
   }
