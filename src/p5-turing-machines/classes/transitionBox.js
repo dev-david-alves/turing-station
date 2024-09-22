@@ -63,27 +63,29 @@ export default class TransitionBox {
 
     this.allReadInputs.forEach((input) => {
       input.addEventListener("input", () => {
-        const { status, data } = this.getOptions(input);
-        if (status) {
-          this.customDataList(data, input, "left-0");
-        }
+        // Uncomment the code below to enable the options list
+        // const { status, data } = this.getOptions(input);
+        // if (status) {
+        //   this.customDataList(data, input, "left-0");
+        // }
         this.changeResultText();
       });
 
-      input.addEventListener("blur", () => this.options?.remove());
+      // input.addEventListener("blur", () => this.options?.remove());
     });
 
     this.allWriteInputs.forEach((input) => {
       input.addEventListener("input", () => {
-        const { status, data } = this.getOptions(input);
-        if (status) {
-          let positionX = p5.tm_num_tapes === 1 ? "right-0" : "right-16";
-          this.customDataList(data, input, positionX);
-        }
+        // Uncomment the code below to enable the options list
+        // const { status, data } = this.getOptions(input);
+        // if (status) {
+        //   let positionX = p5.tm_num_tapes === 1 ? "right-0" : "right-16";
+        //   this.customDataList(data, input, positionX);
+        // }
         this.changeResultText();
       });
 
-      input.addEventListener("blur", () => this.options?.remove());
+      // input.addEventListener("blur", () => this.options?.remove());
     });
 
     // Rules information
