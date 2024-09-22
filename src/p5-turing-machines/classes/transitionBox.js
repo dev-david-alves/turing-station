@@ -380,11 +380,11 @@ export default class TransitionBox {
     let fullInfo = this.changeResultText();
     let fullRules = [];
 
-    // let fullReadSubstrings = fullInfo.map((info) => info.allReadSubstrings.join(""));
-    // if (this.p5.tm_variant !== "ndtm" && this.checkNonDeterministic(fullReadSubstrings)) {
-    //   alert("Essa variante não aceita regras não determinísticas!");
-    //   return;
-    // }
+    let fullReadSubstrings = fullInfo.map((info) => info.allReadSubstrings.join(""));
+    if (this.p5.tm_variant !== "ndtm" && this.checkNonDeterministic(fullReadSubstrings)) {
+      alert("Essa variante não aceita regras não determinísticas!");
+      return;
+    }
 
     fullInfo.forEach((info) => {
       let allReadSubstrings = info.allReadSubstrings;
