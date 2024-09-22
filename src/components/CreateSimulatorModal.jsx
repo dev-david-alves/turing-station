@@ -123,7 +123,7 @@ function CreateSimulatorModal() {
     if (result.success) {
       const { name, variant, numTapes } = result.data;
 
-      let nameAreadyExists = simulatorInfo.some((simulator) => simulator.name === name);
+      let nameAreadyExists = simulatorInfo.some((simulator) => simulator.name.toLowerCase() === name.toLowerCase());
       if (nameAreadyExists) {
         setErros([{ message: "Nome do simulador já existe" }]);
         return;
