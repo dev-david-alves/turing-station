@@ -47,6 +47,7 @@ const mtSchema = z.object({
   canvasScale: z.number().min(0.5).max(2.0),
   variant: z.union([z.literal("tm"), z.literal("ndtm"), z.literal("mttm")]),
   numTapes: z.number().positive(),
+  stayOption: z.boolean(),
   states: z.array(stateSchema),
   links: z.array(
     z.union([

@@ -12,6 +12,7 @@ export const createJSONExportObj = (p5) => {
     canvasScale: p5.canvasScale,
     variant: p5.tm_variant,
     numTapes: p5.tm_num_tapes,
+    stayOption: p5.stayOption,
     states: [],
     links: [],
     initialStateLink: null,
@@ -65,6 +66,7 @@ export const createCanvasFromOBJ = (p5, obj) => {
   p5.canvasScale = obj.canvasScale;
   p5.tm_variant = obj.variant;
   p5.tm_num_tapes = obj.numTapes;
+  p5.stayOption = obj.stayOption;
   p5.states = [];
   p5.links = [];
   p5.startLink = null;

@@ -27,7 +27,7 @@ import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanva
 
 export const TMSimulator = ({ id }) => {
   const { getOne, setSimulatorInfo } = useSimulator();
-  const { name, tm_variant, tm_num_tapes, stayOption } = getOne(id);
+  const { name, tm_variant, tm_num_tapes, stayOption, data } = getOne(id);
 
   const setInfo = ({ newName, newVariant, newNumTapes }) => {
     setSimulatorInfo((prev) =>
@@ -53,7 +53,7 @@ export const TMSimulator = ({ id }) => {
       p5.tm_variant = tm_variant;
       p5.tm_num_tapes = tm_num_tapes;
       p5.tm_name = name;
-      p5.hasStayOption = stayOption;
+      p5.stayOption = stayOption;
       p5.multitestNumTests = -1;
       p5.prevDeviceOrientation = p5.deviceOrientation;
 
@@ -375,6 +375,10 @@ export const TMSimulator = ({ id }) => {
 
         p5.setMultiTestInputEvents();
         p5.multitestNumTests = p5.selectAll(`.multitest-input-${id}`).length;
+
+        if (data) {
+          createCanvasFromOBJ(p5, data);
+        }
       };
 
       p5.draw = () => {
