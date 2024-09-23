@@ -28,8 +28,8 @@ const CreateSimulatorModalSchema = z.object({
   numTapes: z
     .number()
     .int()
-    .min(1, "Número de fitas deve ser no mínimo 1")
-    .max(3, "Número de fitas deve ser no máximo 3"),
+    .min(2, "Número de fitas deve ser no mínimo 2")
+    .max(5, "Número de fitas deve ser no máximo 5"),
 });
 
 import {
@@ -54,7 +54,7 @@ function CreateSimulatorModal() {
   const [name, setName] = useState("");
   const [stayOption, setStayOption] = useState(false);
   const [variant, setVariant] = useState("tm");
-  const [numTapes, setNumTapes] = useState(1);
+  const [numTapes, setNumTapes] = useState(2);
   const [erros, setErros] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -157,7 +157,7 @@ function CreateSimulatorModal() {
       setName("");
       setStayOption(false);
       setVariant("tm");
-      setNumTapes(1);
+      setNumTapes(2);
 
       setUseExample(false);
       setExample("import-from-device");
