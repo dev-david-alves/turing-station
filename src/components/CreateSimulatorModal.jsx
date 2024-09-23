@@ -147,7 +147,7 @@ function CreateSimulatorModal() {
           showLeftToolbar: true,
           showTooltips: true,
           tm_variant: variant,
-          tm_num_tapes: numTapes,
+          tm_num_tapes: variant !== "mttm" ? 1 : numTapes,
           stayOption: stayOption,
           data: importedFile,
         },
