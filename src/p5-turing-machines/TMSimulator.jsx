@@ -24,17 +24,20 @@ import test_mt from "../../test-mts/turing-machine - nd 2.json";
 import { texMap } from "./utils/getTexMaps";
 
 import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanvas } from "./utils/touchInteractions";
+import { SuccessToast } from "../components/Toast";
 
 export const TMSimulator = ({ id }) => {
   const { getOne, setSimulatorInfo } = useSimulator();
   const { name, tm_variant, tm_num_tapes, stayOption, data } = getOne(id);
 
-  const setInfo = ({ newName, newVariant, newNumTapes }) => {
+  const setImportedInfo = ({ newName, newVariant, newNumTapes }) => {
     setSimulatorInfo((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, name: newName, tm_variant: newVariant, tm_num_tapes: newNumTapes } : item,
       ),
     );
+
+    SuccessToast("Importação realizada com sucesso!")();
   };
 
   const sketch = useMemo(
@@ -343,7 +346,7 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#menu-zoomIn-${id}`).mousePressed(() => p5.setZoom(0.25));
         p5.select(`#menu-zoomOut-${id}`).mousePressed(() => p5.setZoom(-0.25));
         p5.select(`#import-mt-input-${id}`).changed(() =>
-          importJSONFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0], setInfo),
+          importJSONFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0], setImportedInfo),
         );
         p5.select(`#export-mt-png-${id}`).mousePressed(() => exportAsPNG(p5));
         p5.select(`#export-mt-json-${id}`).mousePressed(() => exportAsJSON(p5));

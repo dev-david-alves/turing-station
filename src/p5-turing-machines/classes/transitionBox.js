@@ -1,4 +1,5 @@
 import { inputVariants } from "../../components/Input";
+import { ErrorToast } from "../../components/Toast";
 import { cn } from "../../utils/cn";
 import { calculateTextWidth, drawText } from "../utils/calculateAndDrawText";
 import { texMap } from "../utils/getTexMaps";
@@ -382,7 +383,7 @@ export default class TransitionBox {
 
     let fullReadSubstrings = fullInfo.map((info) => info.allReadSubstrings.join(""));
     if (this.p5.tm_variant !== "ndtm" && this.checkNonDeterministic(fullReadSubstrings)) {
-      alert("Essa variante não aceita regras não determinísticas!");
+      ErrorToast("Essa variante não aceita regras não determinísticas!")();
       return;
     }
 

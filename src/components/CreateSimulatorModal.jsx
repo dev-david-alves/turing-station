@@ -18,6 +18,7 @@ import { RadioGroup, RadioGroupItem } from "./RadioGroup";
 
 import { z } from "zod";
 import { useSimulator } from "../providers/simulator";
+import { SuccessToast } from "./Toast";
 
 const CreateSimulatorModalSchema = z.object({
   name: z
@@ -164,6 +165,8 @@ function CreateSimulatorModal() {
       setUseImportExample(true);
       setImportedFile(null);
       setModalOpen(false);
+
+      SuccessToast("Simulador criado com sucesso!")();
     } else {
       setErros(result.error.errors);
     }

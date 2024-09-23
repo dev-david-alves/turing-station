@@ -8,6 +8,7 @@ import { useState } from "react";
 import { cn } from "../../utils/cn";
 import { texMapMatch } from "../../p5-turing-machines/utils/transformInputText";
 import { texMap } from "../../p5-turing-machines/utils/getTexMaps";
+import { SuccessToast } from "../Toast";
 
 function EditSimulatorModal({ id }) {
   const renameRef = useRef(null);
@@ -57,6 +58,7 @@ function EditSimulatorModal({ id }) {
 
     setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, name: newName } : item)));
     setIsRenaming(false);
+    SuccessToast("Simulador renomeado com sucesso!")();
   };
 
   const handleCancelRename = () => {
@@ -85,6 +87,7 @@ function EditSimulatorModal({ id }) {
 
     if (!confirmDelete) return;
     setSimulatorInfo((prev) => prev.filter((item) => item.id !== id));
+    SuccessToast("Simulador deletado com sucesso!")();
   };
 
   return (

@@ -1,15 +1,16 @@
+import { ErrorToast, SuccessToast } from "../../components/Toast";
 import { checkFileFormat } from "../../schemas/mtSchema";
 import { createHistory } from "./history";
 import { createCanvasFromOBJ, createJSONExportObj } from "./objectFunctions";
 
 export const importJSONFile = (p5, file, callBack) => {
   if (!file) {
-    alert("Erro: nenhum arquivo selecionado!");
+    ErrorToast("Erro: nenhum arquivo selecionado!")();
     return;
   }
 
   if (file.type !== "application/json") {
-    alert("Erro: arquivo não é um JSON!");
+    ErrorToast("Erro: arquivo não é um JSON!")();
     return;
   }
 
@@ -20,7 +21,7 @@ export const importJSONFile = (p5, file, callBack) => {
 
     if (!parsed.success) {
       // If the file format is incorrect, show an error message
-      alert("Erro: arquivo não está no formato correto!");
+      ErrorToast("Erro: arquivo não está no formato correto!")();
       return;
     }
 
@@ -51,9 +52,11 @@ const generateFileName = (p5, extension) => {
 export const exportAsPNG = (p5) => {
   let img = p5.get();
   img.save(generateFileName(p5, "png"));
+  SuccessToast("Imagem da MT salva com sucesso!")();
 };
 
 export const exportAsJSON = (p5) => {
   let dmt = createJSONExportObj(p5);
   p5.saveJSON(dmt, generateFileName(p5, "json"));
+  SuccessToast("Arquivo da MT salvo com sucesso!")();
 };
