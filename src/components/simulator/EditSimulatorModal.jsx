@@ -6,6 +6,8 @@ import { Checkbox } from "../Checkbox";
 import { useSimulator } from "../../providers/simulator";
 import { useState } from "react";
 import { cn } from "../../utils/cn";
+import { texMapMatch } from "../../p5-turing-machines/utils/transformInputText";
+import { texMap } from "../../p5-turing-machines/utils/getTexMaps";
 
 function EditSimulatorModal({ id }) {
   const renameRef = useRef(null);
@@ -18,6 +20,12 @@ function EditSimulatorModal({ id }) {
   if (!simulator) return null;
 
   const { name, showLeftToolbar, showTooltips } = simulator;
+
+  const handleChange = (e) => {
+    setRenameErrors([]);
+    let value = texMapMatch([e.target.value], texMap)[0];
+    e.target.value = value;
+  };
 
   const handleRename = (e) => {
     e.preventDefault();
@@ -95,7 +103,7 @@ function EditSimulatorModal({ id }) {
             maxLength="50"
             defaultValue={name}
             disabled={!isRenaming}
-            onChange={() => setRenameErrors([])}
+            onChange={handleChange}
           />
 
           <Button

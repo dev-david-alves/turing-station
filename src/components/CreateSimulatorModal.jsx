@@ -38,6 +38,8 @@ import {
   multitapeExample01,
 } from "../p5-turing-machines/utils/examples";
 import { checkFileFormat } from "../schemas/mtSchema";
+import { texMapMatch } from "../p5-turing-machines/utils/transformInputText";
+import { texMap } from "../p5-turing-machines/utils/getTexMaps";
 
 const examples = {
   "0^n1^n": deterministicExample01,
@@ -113,6 +115,11 @@ function CreateSimulatorModal() {
     reader.readAsText(file);
   };
 
+  const handleChange = (e) => {
+    let value = texMapMatch([e.target.value], texMap)[0];
+    setName(value);
+  };
+
   const handleSubmit = () => {
     const result = CreateSimulatorModalSchema.safeParse({
       name,
@@ -170,6 +177,9 @@ function CreateSimulatorModal() {
       <DialogContent className="dark-mode-variables z-[30000] w-[90%] bg-main sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-left text-white">Criar novo simulador</DialogTitle>
+          <DialogDescription className="sr-only text-white">
+            Crie um novo simulador de máquina de Turing com base em um exemplo ou do zero.
+          </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col justify-center">
           <div className="mb-2 flex w-full flex-col items-center gap-2 border-y border-gray-700 py-2 text-white">
@@ -242,13 +252,7 @@ function CreateSimulatorModal() {
             <label htmlFor="name" className="text-md font-semibold text-white">
               Name
             </label>
-            <Input
-              id="name"
-              placeholder="Nomear simulador"
-              maxLength="50"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Input id="name" placeholder="Nomear simulador" maxLength="50" value={name} onChange={handleChange} />
           </div>
 
           <div className="mb-2 flex items-center gap-2 border-b border-gray-700 pb-2">

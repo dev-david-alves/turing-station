@@ -73,6 +73,17 @@ export class MTNDTM {
     this.history = [];
   }
 
+  symbolMatch = (word) => {
+    let newTape = word;
+
+    for (let key in texMap) {
+      let regex = new RegExp(`\\${key}`, "g");
+      newTape = newTape.replace(regex, texMap[key]);
+    }
+
+    return newTape;
+  };
+
   // Just for testing
   printBranchs() {
     console.log("\n-------------------------------");
@@ -97,6 +108,7 @@ export class MTNDTM {
   }
 
   setComputedWord(word) {
+    word = this.symbolMatch(word.trim());
     let tapeContent = word.length === 0 ? [BLANK] : [...word.split("")];
     this.branchs = [this.createDefaultBranchs(this.initialState, tapeContent)];
     this.history = [];

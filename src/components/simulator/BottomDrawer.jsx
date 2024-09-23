@@ -6,6 +6,7 @@ import { useSimulator } from "../../providers/simulator";
 import { useEffect, useRef, useState } from "react";
 import { texMap } from "../../p5-turing-machines/utils/getTexMaps";
 import { Button } from "../Button";
+import { texMapMatch } from "../../p5-turing-machines/utils/transformInputText";
 
 const navButtons = [
   {
@@ -42,6 +43,7 @@ const simulationButtons = [
 function MultiTestTab({ id, className }) {
   const generateRandomId = () => Math.random().toString(36).substring(7);
   const [testInputs, setTestInputs] = useState([generateRandomId(), generateRandomId(), generateRandomId()]);
+  const [inputValues, setInputValues] = useState({});
 
   return (
     <div id={`multitest-tab-${id}`} className={cn("w-full", className)}>
@@ -70,6 +72,11 @@ function MultiTestTab({ id, className }) {
             placeholder={texMap["\\Blank"]}
             className={cn(`multitest-input-${id} min-h-full w-full py-1.5 outline-none focus-visible:ring-0`)}
             data-randomid={value}
+            value={inputValues.hasOwnProperty(value) ? inputValues[value] : ""}
+            onChange={(e) => {
+              let value = texMapMatch([e.target.value], texMap)[0];
+              setInputValues((prev) => ({ ...prev, [e.target.dataset.randomid]: value }));
+            }}
           />
           <Button
             id={`delete-multitest-input-${value}-${id}`}
@@ -104,11 +111,25 @@ function MultiTestTab({ id, className }) {
 }
 
 function TestTab({ id, className }) {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleInputChange = (e) => {
+    let value = texMapMatch([e.target.value], texMap)[0];
+    setInputValue(value);
+  };
+
   return (
     <div id={`test-tab-${id}`} className={cn("w-full px-4", className)}>
       <div className="flex w-full max-w-full flex-col gap-1 sm:flex-row sm:items-center">
         <p className="font-semibold text-white">Entrada</p>
-        <Input type="text" placeholder="0101..." id={`simulation-input-${id}`} className="flex-grow" />
+        <Input
+          type="text"
+          placeholder="0101..."
+          id={`simulation-input-${id}`}
+          className="flex-grow"
+          value={inputValue}
+          onChange={handleInputChange}
+        />
         <div className="flex items-center justify-center gap-1">
           {simulationButtons.map((button, index) => (
             <button
