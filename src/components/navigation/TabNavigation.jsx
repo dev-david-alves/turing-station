@@ -10,8 +10,18 @@ const links = [
   },
   {
     name: "Instruções de uso",
-    to: "/how-to-use",
+    to: "/como-utilizar",
     icon: "carbon:machine-learning",
+  },
+  {
+    name: "Aprenda sobre MTS",
+    to: "/aprenda-sobre-mts",
+    icon: "hugeicons:knowledge-01",
+  },
+  {
+    name: "Teste de conhecimento",
+    to: "/teste-de-conhecimento",
+    icon: "iconoir:learning",
   },
 ];
 
@@ -44,7 +54,7 @@ function TabNavigation() {
                 )}
                 <div className="flex items-center justify-center gap-2">
                   <Icon icon={link.icon} className="min-w-fit text-xl" />
-                  <span className="max-[370px]:hidden">{link.name}</span>
+                  {/* <span className="max-[370px]:hidden">{link.name}</span> */}
                 </div>
               </Link>
             </li>
