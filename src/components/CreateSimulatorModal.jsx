@@ -73,7 +73,7 @@ function CreateSimulatorModal() {
       setName(examples[example].name);
       setStayOption(examples[example].stayOption);
       setVariant(examples[example].variant);
-      setNumTapes(examples[example].numTapes);
+      setNumTapes((prev) => (examples[example].variant === "mttm" ? examples[example].numTapes : prev));
 
       setImportedFile(examples[example]);
     }
@@ -108,7 +108,7 @@ function CreateSimulatorModal() {
         setName(parsed.data.name);
         setStayOption(parsed.data.stayOption);
         setVariant(parsed.data.variant);
-        setNumTapes(parsed.data.numTapes);
+        setNumTapes((prev) => (parsed.data.variant === "mttm" ? parsed.data.numTapes : prev));
       }
     };
 
