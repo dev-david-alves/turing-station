@@ -27,8 +27,10 @@ function SimulatorsContainer() {
         ))
       ) : (
         <div className="flex min-h-full w-full flex-grow flex-col items-center justify-center gap-6">
-          <p className="text-center text-2xl font-semibold text-darkVariant">Você ainda não criou um simulador!</p>
-          <img src={Empty} alt="Empty" className="w-1/4 min-w-40 max-w-64" />
+          <p className="text-center text-lg font-semibold text-darkVariant sm:text-2xl">
+            Você ainda não criou um simulador!
+          </p>
+          <img src={Empty} alt="No simulators created yet." className="w-1/4 min-w-40 max-w-64" />
         </div>
       )}
     </div>
