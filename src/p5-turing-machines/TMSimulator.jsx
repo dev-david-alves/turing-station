@@ -55,6 +55,7 @@ export const TMSimulator = ({ id }) => {
       p5.tm_name = name;
       p5.stayOption = stayOption;
       p5.multitestNumTests = -1;
+      p5.setDataFunction = setSimulatorInfo;
       p5.prevDeviceOrientation = p5.deviceOrientation;
 
       // History
@@ -321,7 +322,7 @@ export const TMSimulator = ({ id }) => {
         p5.cnv.touchMoved((event) => {
           if (p5.isFocused) touchMovedInsideCanvas(p5, event);
         });
-        // window.addEventListener("contextmenu", (e) => e.preventDefault());
+        window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
         // createCanvasFromOBJ(p5, test_mt);

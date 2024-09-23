@@ -15,6 +15,10 @@ export const createHistory = (p5) => {
 
     p5.history.push(currentState);
     p5.currentHistoryIndex++;
+
+    p5.setDataFunction((prev) =>
+      prev.map((item) => (item.id === p5.canvasID ? { ...item, data: currentState } : item)),
+    );
   }
 };
 
