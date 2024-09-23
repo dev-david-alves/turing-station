@@ -26,7 +26,7 @@ function Layout() {
         <TabNavitaion />
       </div>
 
-      <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden bg-background py-10">
+      <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden bg-background pb-20 pt-10 sm:pb-10">
         <Outlet />
       </main>
     </div>
