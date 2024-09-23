@@ -41,15 +41,21 @@ const Simulator = ({ id, children }) => {
   };
 
   useEffect(() => {
-    let divR = document.getElementById(`bottom-drawer-${id}`);
-    if (divR) setParentHeight(divR.offsetHeight);
-
     const bottomPanel = bottomDrawerRef.current;
     if (bottomPanel) {
       if (bottomDrawerOpen) {
         if (bottomPanel.getSize() == 9) bottomPanel.resize(60);
+
+        let divR = document.getElementById(`bottom-drawer-${id}`);
+        if (divR) {
+          setTimeout(() => {
+            setParentHeight(divR.offsetHeight);
+          }, 200);
+        }
       } else {
         bottomPanel.resize(MIN_BOTTOM_DRAWER_SIZE);
+        let divR = document.getElementById(`bottom-drawer-${id}`);
+        if (divR) setParentHeight(divR.offsetHeight);
       }
     }
   }, [bottomDrawerOpen]);
