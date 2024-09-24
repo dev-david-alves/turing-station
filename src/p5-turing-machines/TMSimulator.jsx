@@ -345,6 +345,8 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#menu-redo-${id}`).mousePressed(() => redo());
         p5.select(`#menu-zoomIn-${id}`).mousePressed(() => p5.setZoom(0.25));
         p5.select(`#menu-zoomOut-${id}`).mousePressed(() => p5.setZoom(-0.25));
+
+        // Set import and export buttons
         p5.select(`#import-mt-input-${id}`).changed(() =>
           importJSONFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0], setImportedInfo),
         );
@@ -366,6 +368,8 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#simulation-fast-simulation-${id}`).mousePressed(() => simulationFastResult(p5));
         p5.select(`#erros-container-${id}`).show();
 
+        if (data) createCanvasFromOBJ(p5, data);
+
         // First save on history
         p5.history.push(createJSONExportObj(p5));
 
@@ -379,10 +383,6 @@ export const TMSimulator = ({ id }) => {
 
         p5.setMultiTestInputEvents();
         p5.multitestNumTests = p5.selectAll(`.multitest-input-${id}`).length;
-
-        if (data) {
-          createCanvasFromOBJ(p5, data);
-        }
       };
 
       p5.draw = () => {
