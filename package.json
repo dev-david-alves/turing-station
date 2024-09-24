@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@p5-wrapper/react": "^4.4.2",
+    "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-popover": "^1.1.1",

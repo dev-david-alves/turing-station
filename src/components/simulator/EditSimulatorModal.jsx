@@ -9,6 +9,17 @@ import { cn } from "../../utils/cn";
 import { texMapMatch } from "../../p5-turing-machines/utils/transformInputText";
 import { texMap } from "../../p5-turing-machines/utils/getTexMaps";
 import { SuccessToast } from "../Toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../AlertDialog";
 
 function EditSimulatorModal({ id }) {
   const renameRef = useRef(null);
@@ -83,9 +94,6 @@ function EditSimulatorModal({ id }) {
   };
 
   const handleDeleteSimulator = () => {
-    let confirmDelete = window.confirm("Tem certeza que deseja deletar este simulador?");
-
-    if (!confirmDelete) return;
     setSimulatorInfo((prev) => prev.filter((item) => item.id !== id));
     SuccessToast("Simulador deletado com sucesso!")();
   };
@@ -185,15 +193,28 @@ function EditSimulatorModal({ id }) {
 
       <hr className="border-darkenBlue border-opacity-10" />
 
-      <Button
-        variant="popoverMenu"
-        size="sm"
-        className="text-sm text-danger hover:bg-danger hover:text-white"
-        onClick={handleDeleteSimulator}
-      >
-        <Icon icon="mdi:trash" className="icon h-4 w-4" />
-        Deletar Simulador
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="popoverMenu" size="sm" className="text-sm text-danger hover:bg-danger hover:text-white">
+            <Icon icon="mdi:trash" className="icon h-4 w-4" />
+            Deletar Simulador
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="dark-mode-variables text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Este simulador será deletado permanentemente.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-danger" onClick={handleDeleteSimulator}>
+              Continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
