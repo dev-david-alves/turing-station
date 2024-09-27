@@ -2,7 +2,7 @@
   "name": "turing-station",
   "homepage": "https://dev-david-alves.github.io/turing-station",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.5.0",
   "type": "module",
   "author": "David Alves",
   "scripts": {
@@ -53,6 +53,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.10",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-pwa": "^0.20.5"
   }
 }
