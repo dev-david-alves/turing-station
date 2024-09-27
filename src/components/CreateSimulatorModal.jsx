@@ -177,7 +177,7 @@ function CreateSimulatorModal() {
       <DialogTrigger asChild>
         <Button className="text-white">Adicionar MT</Button>
       </DialogTrigger>
-      <DialogContent className="dark-mode-variables z-[30000] w-[90%] bg-main sm:max-w-[425px]">
+      <DialogContent className="dark-mode-variables w-[90%] bg-main sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-left text-white">Criar novo simulador</DialogTitle>
           <DialogDescription className="sr-only text-white">
@@ -210,7 +210,7 @@ function CreateSimulatorModal() {
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione um exemplo" />
                   </SelectTrigger>
-                  <SelectContent className="dark-mode-variables z-[30010]">
+                  <SelectContent className="dark-mode-variables z-[50010]">
                     <SelectGroup>
                       <SelectItem value="import-from-device">Importar deste dispositivo</SelectItem>
                       <SelectLabel>Determinísticas</SelectLabel>
@@ -285,7 +285,7 @@ function CreateSimulatorModal() {
                   <SelectTrigger className="w-full">
                     <SelectValue id="variant-type" placeholder="Selecione uma variante" />
                   </SelectTrigger>
-                  <SelectContent className="dark-mode-variables z-[30010]">
+                  <SelectContent className="dark-mode-variables z-[50010]">
                     <SelectGroup>
                       <SelectItem value="tm">Determinística</SelectItem>
                       <SelectItem value="ndtm">Não determinística</SelectItem>
