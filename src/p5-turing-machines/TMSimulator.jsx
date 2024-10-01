@@ -383,6 +383,15 @@ export const TMSimulator = ({ id }) => {
 
         p5.setMultiTestInputEvents();
         p5.multitestNumTests = p5.selectAll(`.multitest-input-${id}`).length;
+
+        // Initializate the ruleSibling for each link
+        p5.links.forEach((link) => {
+          if (link instanceof Link) {
+            link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(link.stateA);
+          } else {
+            link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(link.state);
+          }
+        });
       };
 
       p5.draw = () => {

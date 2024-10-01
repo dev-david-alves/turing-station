@@ -608,6 +608,7 @@ export default class TransitionBox {
       this.mainDiv.hide();
       this.mainDiv.position(-1000, -1000);
       this.options?.remove();
+      this.selectedRuleIndex = -1;
 
       this.resetAllInputsAndButtons();
     }
