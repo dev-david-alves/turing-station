@@ -61,7 +61,7 @@ function EditSimulatorModal({ id }) {
       return;
     }
 
-    const hasSimulator = simulatorInfo.find((item) => item.name.toLowerCase() === newName.toLowerCase());
+    const hasSimulator = simulatorInfo.find((item) => item.name === newName);
     if (hasSimulator) {
       setRenameErrors(["Já existe um simulador com este nome"]);
       return;
