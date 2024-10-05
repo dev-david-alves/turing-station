@@ -395,6 +395,9 @@ export const TMSimulator = ({ id }) => {
       };
 
       p5.draw = () => {
+        // Updating the tm_name by doom because I can't access the update "name"
+        p5.tm_name = p5.select(`#simulator-name-${id}`).elt.innerText;
+
         let simulatorDiv = p5.select(`#simulator-${id}`);
         p5.isFocused = simulatorDiv.hasClass("shadow-high");
 

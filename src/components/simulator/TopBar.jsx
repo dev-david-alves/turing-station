@@ -91,7 +91,9 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
           </button>
         )}
         <button className="border-none bg-none text-sm font-semibold text-white">
-          <p className="px-2 py-[.4rem] uppercase text-white">{simulator.name}</p>
+          <p id={`simulator-name-${id}`} className="px-2 py-[.4rem] uppercase text-white">
+            {simulator.name}
+          </p>
         </button>
       </div>
 
