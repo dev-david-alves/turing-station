@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { texMap } from "../../p5-turing-machines/utils/getTexMaps";
 import { Button } from "../Button";
 import { texMapMatch } from "../../p5-turing-machines/utils/transformInputText";
+import { useQuestionSimulator } from "../../providers/question";
 
 const navButtons = [
   {
@@ -160,8 +161,8 @@ function TestTab({ id, className }) {
   );
 }
 
-function Navgation({ id, selectedTab, setSelectedTab }) {
-  const { getOne, setSimulatorInfo } = useSimulator();
+function Navgation({ id, selectedTab, setSelectedTab, whichProvider = "simulator" }) {
+  const { getOne, setSimulatorInfo } = whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
   const { showTooltips, bottomDrawerOpen } = getOne(id);
 
   const handleClick = (buttonID) => {
@@ -218,7 +219,7 @@ function Navgation({ id, selectedTab, setSelectedTab }) {
   );
 }
 
-function BottomDrawer({ id, parentHeight }) {
+function BottomDrawer({ id, parentHeight, whichProvider = "simulator" }) {
   const [selectedTab, setSelectedTab] = useState(undefined);
 
   useEffect(() => {
@@ -238,7 +239,7 @@ function BottomDrawer({ id, parentHeight }) {
         "flex min-h-full w-full flex-col items-center gap-2 rounded-t-md bg-main pt-2 transition-all duration-200",
       )}
     >
-      <Navgation id={id} selectedTab={selectedTab} setSelectedTab={setSelectedTab} />
+      <Navgation id={id} selectedTab={selectedTab} setSelectedTab={setSelectedTab} whichProvider={whichProvider} />
 
       <TestTab
         id={id}

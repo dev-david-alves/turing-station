@@ -1,12 +1,16 @@
-import UnderConstruction from "/assets/under-construction.svg";
+import { cn } from "../utils/cn";
+import { Outlet } from "react-router";
+import { QuestionSimulatorProvider } from "../providers/question";
 
 function KnowledgeTest() {
   return (
-    <div className="flex min-h-full w-full flex-grow flex-col items-center justify-center gap-6">
-      <p className="text-center text-lg font-semibold text-darkVariant sm:text-2xl">
-        Página em construção, volte mais tarde!
-      </p>
-      <img src={UnderConstruction} alt="Under Construction" className="w-1/2 min-w-40 max-w-96" />
+    <div className={cn("flex min-h-full w-full flex-grow flex-col gap-4 px-4 sm:px-8")}>
+      <div className="flex w-full items-center px-4 sm:px-0">
+        <h1 className="text-center text-3xl font-bold text-white">Teste de conhecimento</h1>
+      </div>
+      <QuestionSimulatorProvider>
+        <Outlet />
+      </QuestionSimulatorProvider>
     </div>
   );
 }

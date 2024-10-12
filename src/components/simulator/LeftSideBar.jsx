@@ -4,6 +4,7 @@ import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../Tooltip";
 import { useSimulator } from "../../providers/simulator";
+import { useQuestionSimulator } from "../../providers/question";
 
 const topButtons = [
   {
@@ -77,8 +78,8 @@ const bottomButtons = [
   },
 ];
 
-function LeftSideBar({ id, className }) {
-  const { getOne } = useSimulator();
+function LeftSideBar({ id, className, whichProvider = "simulator" }) {
+  const { getOne } = whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
 
   const simulator = getOne(id);
 

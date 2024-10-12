@@ -9,11 +9,13 @@ import StateModal from "./context-menu/StateModal";
 import LinkModal from "./context-menu/LinkModal";
 import CanvasModal from "./context-menu/CanvasModal";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "../Resizable";
+import { useQuestionSimulator } from "../../providers/question";
 
-const Simulator = ({ id, children }) => {
+const Simulator = ({ id, children, whichProvider = "simulator" }) => {
   if (!id) throw new Error("Simulator component must have an id prop");
 
-  const { getOne, handleFocus, setSimulatorInfo } = useSimulator();
+  const { getOne, handleFocus, setSimulatorInfo } =
+    whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
   const [isEditPopoverOpen, setIsEditPopoverOpen] = useState(false);
   const [parentHeight, setParentHeight] = useState(0);
 
@@ -68,10 +70,15 @@ const Simulator = ({ id, children }) => {
         "z-10 flex h-[31.8rem] w-full flex-col items-center overflow-hidden rounded-lg bg-background shadow-default transition-all duration-500",
         !isOpen && "h-[3.5rem]",
         isFullScreen && "min-w-screen max-w-screen fixed left-0 top-0 z-[100] h-full min-h-full rounded-none",
-        isFocused && "shadow-high",
+        isFocused && whichProvider === "simulator" ? "shadow-high" : "shadow-question",
       )}
     >
-      <TopBar id={id} isEditPopoverOpen={isEditPopoverOpen} setIsEditPopoverOpen={setIsEditPopoverOpen} />
+      <TopBar
+        id={id}
+        isEditPopoverOpen={isEditPopoverOpen}
+        setIsEditPopoverOpen={setIsEditPopoverOpen}
+        whichProvider={whichProvider}
+      />
       <div
         className={cn(
           "relative flex h-[28.5rem] max-h-[40rem] w-full items-center border-b-[5px] border-r-[5px] border-main transition-all duration-500",
@@ -80,7 +87,7 @@ const Simulator = ({ id, children }) => {
           !showLeftToolbar && "border-l-[5px]",
         )}
       >
-        <LeftSideBar id={id} />
+        <LeftSideBar id={id} whichProvider={whichProvider} />
 
         <ResizablePanelGroup direction="vertical">
           <ResizablePanel
@@ -107,7 +114,7 @@ const Simulator = ({ id, children }) => {
             onResize={(size) => toggleBottomDrawerIsOpen(size)}
           >
             <div className="min-h-full overflow-hidden rounded-t-md bg-main">
-              <BottomDrawer id={id} parentHeight={parentHeight} />
+              <BottomDrawer id={id} parentHeight={parentHeight} whichProvider={whichProvider} />
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

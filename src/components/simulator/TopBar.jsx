@@ -4,9 +4,10 @@ import { useSimulator } from "../../providers/simulator";
 import { cn } from "../../utils/cn";
 import EditSimulatorModal from "./EditSimulatorModal";
 import { useClickOuside } from "../../hooks/useClickDetection";
+import { useQuestionSimulator } from "../../providers/question";
 
-function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
-  const { setSimulatorInfo, getOne } = useSimulator();
+function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen, whichProvider = "simulator", className }) {
+  const { setSimulatorInfo, getOne } = whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -80,9 +81,11 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
   }, [isFullScreen]);
 
   return (
-    <div className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3")}>
+    <div
+      className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3", className)}
+    >
       <div className="flex items-center gap-2">
-        {!isFullScreen && (
+        {!isFullScreen && whichProvider === "simulator" && (
           <button className="rotate-0 border-none bg-none p-2 text-white" onClick={handleOpen}>
             <Icon
               icon="ep:arrow-down-bold"
@@ -98,7 +101,7 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="relative" ref={modalRef}>
+        <div className={cn("relative", whichProvider !== "simulator" && "hidden")} ref={modalRef}>
           <button
             className="border-none bg-none p-2 text-white"
             onClick={() => setIsEditPopoverOpen(!isEditPopoverOpen)}
@@ -107,7 +110,7 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen }) {
           </button>
 
           <div className={cn("absolute -right-5 z-[2000] mt-1", !isEditPopoverOpen && "invisible absolute -z-50")}>
-            <EditSimulatorModal id={id} />
+            <EditSimulatorModal id={id} whichProvider={whichProvider} />
           </div>
         </div>
 

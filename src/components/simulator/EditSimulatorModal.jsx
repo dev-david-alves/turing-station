@@ -20,10 +20,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../AlertDialog";
+import { useQuestionSimulator } from "../../providers/question";
 
-function EditSimulatorModal({ id }) {
+function EditSimulatorModal({ id, whichProvider = "simulator" }) {
   const renameRef = useRef(null);
-  const { simulatorInfo, getOne, setSimulatorInfo } = useSimulator();
+  const { simulatorInfo, getOne, setSimulatorInfo } =
+    whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameErrors, setRenameErrors] = useState([]);
 

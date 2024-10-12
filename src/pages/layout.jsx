@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "../utils/cn";
-import { useSimulator } from "../providers/simulator";
 import SideNavigation from "../components/navigation/SideNavigation";
 import TabNavitaion from "../components/navigation/TabNavigation";
 import { ToastContainer } from "react-toastify";
@@ -9,8 +8,37 @@ import "react-toastify/dist/ReactToastify.css";
 
 function Layout() {
   const [sidebarisOpen, setSidebarIsOpen] = useState(true);
-  const { simulatorInfo } = useSimulator();
-  const isAnyFullScreen = simulatorInfo.some((item) => item.fullScreen);
+  const [isAnyFullScreen, setIsAnyFullScreen] = useState(false);
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      // Check if any element is currently in fullscreen
+      if (
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      ) {
+        setIsAnyFullScreen(true);
+      } else {
+        setIsAnyFullScreen(false);
+      }
+    };
+
+    // Add event listeners for fullscreen changes
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+    document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+    document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+    // Cleanup event listeners on component unmount
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+      document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+      document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+    };
+  }, []);
 
   return (
     <>

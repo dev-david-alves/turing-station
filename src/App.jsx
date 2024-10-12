@@ -9,6 +9,8 @@ import LearnAboutTM from "./pages/learnAboutTM";
 import KnowledgeTest from "./pages/KnowledgeTest";
 import NotFound from "./pages/not-found";
 import ErrorPage from "./pages/error-page";
+import Question from "./pages/question";
+import ViewQuestions from "./pages/viewQuestions";
 
 // Define routes using createBrowserRouter
 const router = createBrowserRouter(
@@ -25,7 +27,20 @@ const router = createBrowserRouter(
         { index: true, element: <Home /> },
         { path: "/como-utilizar", element: <HowToUse /> },
         { path: "/aprenda-sobre-mts", element: <LearnAboutTM /> },
-        { path: "/teste-de-conhecimento", element: <KnowledgeTest /> },
+        {
+          path: "/teste-de-conhecimento",
+          element: <KnowledgeTest />,
+          children: [
+            {
+              index: true,
+              element: <ViewQuestions />,
+            },
+            {
+              path: ":id",
+              element: <Question />,
+            },
+          ],
+        },
         { path: "*", element: <NotFound /> }, // Catch-all route
       ],
     },

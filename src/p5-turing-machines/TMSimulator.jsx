@@ -25,9 +25,10 @@ import { texMap } from "./utils/getTexMaps";
 
 import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanvas } from "./utils/touchInteractions";
 import { SuccessToast } from "../components/Toast";
+import { useQuestionSimulator } from "../providers/question";
 
-export const TMSimulator = ({ id }) => {
-  const { getOne, setSimulatorInfo } = useSimulator();
+export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
+  const { getOne, setSimulatorInfo } = whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
   const { name, tm_variant, tm_num_tapes, stayOption, data } = getOne(id);
 
   const setImportedInfo = ({ newName, newVariant, newNumTapes }) => {
@@ -399,7 +400,7 @@ export const TMSimulator = ({ id }) => {
         p5.tm_name = p5.select(`#simulator-name-${id}`).elt.innerText;
 
         let simulatorDiv = p5.select(`#simulator-${id}`);
-        p5.isFocused = simulatorDiv.hasClass("shadow-high");
+        p5.isFocused = simulatorDiv.hasClass("shadow-high") || simulatorDiv.hasClass("shadow-question");
 
         if (!p5.isFocused) return;
 
@@ -1012,6 +1013,9 @@ export const TMSimulator = ({ id }) => {
         if (newIndex !== p5.currentHistoryIndex) {
           p5.currentHistoryIndex = newIndex;
           createCanvasFromOBJ(p5, p5.history[newIndex]);
+          p5.setDataFunction((prev) =>
+            prev.map((item) => (item.id === p5.canvasID ? { ...item, data: p5.history[newIndex] } : item)),
+          );
         }
       };
 
@@ -1021,6 +1025,9 @@ export const TMSimulator = ({ id }) => {
         if (newIndex !== p5.currentHistoryIndex) {
           p5.currentHistoryIndex = newIndex;
           createCanvasFromOBJ(p5, p5.history[newIndex]);
+          p5.setDataFunction((prev) =>
+            prev.map((item) => (item.id === p5.canvasID ? { ...item, data: p5.history[newIndex] } : item)),
+          );
         }
       };
 
