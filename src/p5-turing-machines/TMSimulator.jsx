@@ -567,10 +567,12 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
           // Unset the start state for all states
           p5.states.forEach((state) => {
             state.isStartState = false;
+            state.selected = false;
           });
 
           // Set the selected state as the start state
           selectedState.isStartState = true;
+          createHistory(p5);
         } else {
           const state = p5.states.find((state) => state.id === stateID);
           if (state) {
@@ -591,10 +593,12 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
             // Unset the start state for all states
             p5.states.forEach((state) => {
               state.isStartState = false;
+              state.selected = false;
             });
 
             // Set the specified state as the start state
             state.isStartState = true;
+            createHistory(p5);
           }
         }
 
@@ -608,6 +612,8 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
 
         const selectedState = p5.selectedObject.object;
         selectedState.isFinalState = !selectedState.isFinalState;
+
+        createHistory(p5);
 
         // Hide the context menu
         if (p5.stateContextMenu) p5.stateContextMenu.hide();

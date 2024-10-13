@@ -106,7 +106,7 @@ function Question() {
   const params = useParams();
   const questionId = params.id;
 
-  const { getOne, setSimulatorInfo } = useQuestionSimulator();
+  const { simulatorInfo, getOne, setSimulatorInfo } = useQuestionSimulator();
   const data = getOne(questionId);
 
   if (!data) {
@@ -131,9 +131,20 @@ function Question() {
       return accepted;
     });
 
-    const solved = answersChecked.every((answer) => answer);
-    setSimulatorInfo((prev) => prev.map((item) => (item.id === questionId ? { ...item, solved: solved } : item)));
+    const solved = answersChecked.every((answer, index) => answer === question.testCases[index].output);
+    let backup = [...simulatorInfo];
+    backup = backup.map((item) => {
+      if (item.id === questionId) {
+        let newItem = { ...item };
+        newItem.question.solved = solved;
+        console.log(newItem);
+        return newItem;
+      }
 
+      return item;
+    });
+
+    setSimulatorInfo(backup);
     setAnswers(answersChecked);
   };
 
