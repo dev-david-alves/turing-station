@@ -353,11 +353,11 @@ export default class TransitionBox {
     return false;
   }
 
-  checkNonDeterministic(fullReadSub) {
-    for (let i = 0; i < this.siblingRules.length; i++) {
+  checkNonDeterministic(fullReadSub, siblingRules) {
+    for (let i = 0; i < siblingRules.length; i++) {
       let allReadSubstrings = [];
-      for (let j = 0; j < this.siblingRules[i].length; j++) {
-        allReadSubstrings.push(this.siblingRules[i][j].label.split("→")[0].trim());
+      for (let j = 0; j < siblingRules[i].length; j++) {
+        allReadSubstrings.push(siblingRules[i][j].label.split("→")[0].trim());
       }
 
       if (JSON.stringify(fullReadSub) === JSON.stringify(allReadSubstrings)) return true;
@@ -381,12 +381,6 @@ export default class TransitionBox {
     let fullInfo = this.changeResultText();
     let fullRules = [];
 
-    let fullReadSubstrings = fullInfo.map((info) => info.allReadSubstrings.join(""));
-    if (this.p5.tm_variant !== "ndtm" && this.checkNonDeterministic(fullReadSubstrings)) {
-      ErrorToast("Essa variante não aceita regras não determinísticas!")();
-      return;
-    }
-
     fullInfo.forEach((info) => {
       let allReadSubstrings = info.allReadSubstrings;
       let allWriteSubstrings = info.allWriteSubstrings;
@@ -397,6 +391,12 @@ export default class TransitionBox {
     });
 
     if (!this.ruleAlreadyExists(fullRules) && this.selectedRuleIndex === -1) {
+      let fullReadSubstrings = fullInfo.map((info) => info.allReadSubstrings.join(""));
+      if (this.p5.tm_variant !== "ndtm" && this.checkNonDeterministic(fullReadSubstrings, this.siblingRules)) {
+        ErrorToast("Essa variante não aceita regras não determinísticas!")();
+        return;
+      }
+
       this.rules.push([]);
       fullRules.forEach((rule) => {
         let lastIndex = this.rules.length - 1;
@@ -405,8 +405,27 @@ export default class TransitionBox {
           width: calculateTextWidth(this.p5, -1000, -1000, rule, this.ruleFontSize),
         });
       });
+
+      createHistory(this.p5);
     } else {
       if (this.selectedRuleIndex !== -1) {
+        const didChange = this.rules[this.selectedRuleIndex].some((rule, index) => {
+          return rule.label !== fullRules[index];
+        });
+
+        let auxSiblingRules = this.siblingRules.filter((rule) => {
+          let fRule = rule.map((r) => r.label);
+          let sRule = this.rules[this.selectedRuleIndex].map((r) => r.label);
+
+          return JSON.stringify(fRule) !== JSON.stringify(sRule);
+        });
+
+        let fullReadSubstrings = fullInfo.map((info) => info.allReadSubstrings.join(""));
+        if (this.p5.tm_variant !== "ndtm" && this.checkNonDeterministic(fullReadSubstrings, auxSiblingRules)) {
+          ErrorToast("Essa variante não aceita regras não determinísticas!")();
+          return;
+        }
+
         fullRules.forEach((rule, index) => {
           this.rules[this.selectedRuleIndex][index].label = rule;
           this.rules[this.selectedRuleIndex][index].width = calculateTextWidth(
@@ -417,14 +436,14 @@ export default class TransitionBox {
             this.ruleFontSize,
           );
         });
+
+        if (didChange) createHistory(this.p5);
       }
     }
 
     this.resetAllInputsAndButtons();
     this.selectedRuleIndex = -1;
     this.selected = false;
-
-    createHistory(this.p5);
   }
 
   getFormattedRules() {
@@ -469,8 +488,8 @@ export default class TransitionBox {
         // Remove the last character (direction)
         write = write.substring(0, write.length - 3);
 
-        this.allReadInputs[i].value = read;
-        this.allWriteInputs[i].value = write;
+        this.allReadInputs[i].value = read === texMap["\\blank"] ? "" : read;
+        this.allWriteInputs[i].value = write === texMap["\\blank"] ? "" : write;
 
         if (allSubstrings.includes(", E")) {
           this.switchButtons(i, "left");
