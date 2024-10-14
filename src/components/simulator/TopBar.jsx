@@ -89,7 +89,7 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen, whichProvider = "
       className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3", className)}
     >
       <div className="flex items-center gap-2">
-        {!isFullScreen && whichProvider === "simulator" && (
+        {!isFullScreen && (
           <button className="rotate-0 border-none bg-none p-2 text-white" onClick={handleOpen}>
             <Icon
               icon="ep:arrow-down-bold"
