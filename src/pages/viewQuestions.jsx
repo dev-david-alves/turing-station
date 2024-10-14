@@ -7,8 +7,8 @@ const QuestionSection = ({ currentQuestion, question, questionId }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex w-full flex-col gap-4 rounded-md bg-main p-4 shadow-lg">
-      <h2 className="text-2xl font-bold text-white">
+    <div className="flex w-full flex-col gap-2 rounded-md bg-main p-4 shadow-lg md:gap-4">
+      <h2 className="text-xl font-bold text-white md:text-2xl">
         {currentQuestion}. {question.title}
       </h2>
       <div className="flex w-full flex-col gap-2">

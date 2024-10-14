@@ -73,21 +73,21 @@ function TestCase({ testCase, answer, showTestIcons }) {
             <Icon icon="icon-park-outline:close-one" className="icon h-8 min-h-8 w-8 min-w-8 text-lightDanger" />
           )}
         </>
-      ) : (
-        <div className="min-w-8"></div>
-      )}
+      ) : null}
 
-      <p className="w-[calc(100%/3)] rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white">{testCase.input}</p>
-      <p
+      <p className="w-full max-w-full truncate rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white">
+        {testCase.input}
+      </p>
+      {/* <p
         className={cn(
-          "w-[calc(100%/3)] rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white",
+          "w-full max-w-28 truncate rounded-md bg-darkenBlue px-6 py-2 text-center font-semibold text-white",
           answer && "text-lightGreen",
           !answer && "text-lightDanger",
         )}
       >
         {answer ? "Aceita" : "Rejeita"}
-      </p>
-      <p
+      </p> */}
+      {/* <p
         className={cn(
           "w-[calc(100%/3)] rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white",
           testCase.output && "text-lightGreen",
@@ -95,7 +95,7 @@ function TestCase({ testCase, answer, showTestIcons }) {
         )}
       >
         {testCase.output ? "Aceita" : "Rejeita"}
-      </p>
+      </p> */}
     </li>
   );
 }
@@ -177,10 +177,15 @@ function Question() {
 
   return (
     <div className="flex w-full flex-col gap-4 rounded-md bg-main py-4 shadow-lg">
-      <div className="flex w-full flex-col gap-4 rounded-md bg-main px-4">
-        <div className="flex w-full items-center justify-between gap-2">
-          <h2 className="text-2xl font-bold text-white">{question.title}</h2>
-          <span className={cn("inline text-lg font-bold", question.solved ? "text-lightGreen" : "text-lightDanger")}>
+      <div className="flex w-full flex-col gap-2 rounded-md bg-main px-4 md:gap-4">
+        <div className="flex w-full justify-between gap-6">
+          <h2 className="text-xl font-bold text-white md:text-2xl">{question.title}</h2>
+          <span
+            className={cn(
+              "text-md inline text-nowrap font-bold sm:text-lg",
+              question.solved ? "text-lightGreen" : "text-lightDanger",
+            )}
+          >
             {question.solved ? "Resolvido" : "Não resolvido"}
           </span>
         </div>
@@ -205,8 +210,8 @@ function Question() {
 
       {showTests && (
         <div className="flex w-full flex-col gap-2 px-4">
-          <div className="flex w-full items-center justify-between gap-2">
-            <p className="ml-10 text-lg font-semibold text-white">Casos de teste</p>
+          <div className="flex w-full items-center justify-between gap-4">
+            <p className="text-lg font-semibold text-white">Casos de teste</p>
             <p
               className={cn(
                 "text-md font-semibold text-white",
@@ -219,13 +224,13 @@ function Question() {
               )}
             >
               {answers &&
-                `${answers.numTestCasesPassed + answers.numHiddenTestCasesPassed}/${question.testCases.length + question.hiddenTestCases.length} casos de teste passados`}
+                `${answers.numTestCasesPassed + answers.numHiddenTestCasesPassed}/${question.testCases.length + question.hiddenTestCases.length} casos de teste`}
             </p>
           </div>
-          <div className="ml-10 flex items-center justify-between gap-2">
-            <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Palavras: </p>
-            <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Resultados: </p>
-            <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Resultados esperados: </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="w-full text-left font-semibold text-darkVariant">Palavras</p>
+            {/* <p className="w-28 text-left font-semibold text-darkVariant">Resultados</p> */}
+            {/* <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Resultados esperados</p> */}
           </div>
           <ul className="flex w-full list-disc flex-col gap-2 text-white">
             {question.testCases.map((testCase, index) => (
@@ -245,8 +250,13 @@ function Question() {
         </div>
       )}
 
-      <div className="flex w-full items-center justify-end gap-2 px-4">
-        <Button variant="default" className="bg-zinc-700 text-white" onClick={() => setShowTests(false)}>
+      <div className="flex w-full items-center justify-center gap-2 px-4 sm:justify-end">
+        <Button
+          variant="default"
+          className="bg-zinc-700 text-white"
+          disabled={!showTests}
+          onClick={() => setShowTests(false)}
+        >
           Esconder testes
         </Button>
         <Button variant="default" className="text-white" onClick={handleCheckAnswer}>

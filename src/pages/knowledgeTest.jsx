@@ -12,7 +12,7 @@ function KnowledgeTest() {
   return (
     <div className={cn("flex min-h-full w-full flex-grow flex-col gap-4 px-4 sm:px-8")}>
       <div className="flex w-full items-center justify-between px-4 sm:px-0">
-        <h1 className="text-center text-3xl font-bold text-white">Teste de conhecimento</h1>
+        <h1 className="text-left text-2xl font-bold text-white sm:text-3xl">Teste de conhecimento</h1>
         {questionId && (
           <Button
             className="items-center gap-1 bg-zinc-700 text-sm text-white"

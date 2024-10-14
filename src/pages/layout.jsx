@@ -43,7 +43,7 @@ function Layout() {
   return (
     <>
       <div className="dark-mode-variables relative flex min-h-screen w-full bg-background">
-        <div className={cn("full relative z-[25000] hidden sm:block", isAnyFullScreen && "hidden sm:hidden")}>
+        <div className={cn("full relative z-[25000] hidden md:block", isAnyFullScreen && "hidden md:hidden")}>
           <SideNavigation isOpen={sidebarisOpen} setIsOpen={setSidebarIsOpen} />
           <div
             className={cn(
@@ -53,11 +53,11 @@ function Layout() {
           ></div>
         </div>
 
-        <div className={cn("full bottom-0 z-[25000] block bg-main sm:hidden", isAnyFullScreen && "hidden")}>
+        <div className={cn("full bottom-0 z-[25000] block bg-main md:hidden", isAnyFullScreen && "hidden")}>
           <TabNavitaion />
         </div>
 
-        <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden bg-background pb-20 pt-10 sm:pb-10">
+        <main className="flex h-full min-h-screen w-full flex-col items-center overflow-x-hidden bg-background pb-20 pt-10 md:pb-10">
           <Outlet />
         </main>
       </div>
