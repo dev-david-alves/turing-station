@@ -116,8 +116,8 @@ const QuestionSimulatorProvider = ({ children }) => {
         descriptionItems: ["0s e 1s podem estar em qualquer ordem na palavra.", "A palavra vazia (ε) é aceita."],
         testCases: [
           {
-            input: "ababb",
-            output: false,
+            input: "abababab",
+            output: true,
           },
           {
             input: "abbaab",
@@ -127,23 +127,11 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "bbbaabaa",
             output: true,
           },
-          {
-            input: "babb",
-            output: false,
-          },
         ],
         hiddenTestCases: [
           {
-            input: "abbabbaab",
-            output: false,
-          },
-          {
-            input: "a",
-            output: false,
-          },
-          {
-            input: "b",
-            output: false,
+            input: "abab",
+            output: true,
           },
           {
             input: "",
@@ -332,10 +320,6 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema, você deve criar uma máquina de Turing que aceita palavras que possuem o mesmo número de 1s e 0s. A máquina deve aceitar a palavra se o número de 1s for igual ao número de 0s e rejeitar caso contrário.",
         descriptionItems: ["0s e 1s podem estar em qualquer ordem na palavra.", "A palavra vazia (ε) é aceita."],
         testCases: [
-          {
-            input: "1001",
-            output: false,
-          },
           {
             input: "00011",
             output: false,
@@ -576,16 +560,16 @@ const QuestionSimulatorProvider = ({ children }) => {
     );
   };
 
-  // useEffect(() => {
-  //   const data = localStorage.getItem("questionsInfo");
-  //   if (data) {
-  //     setQuestionSimulatorInfo(JSON.parse(data));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const data = localStorage.getItem("questionsInfo");
+    if (data) {
+      setQuestionSimulatorInfo(JSON.parse(data));
+    }
+  }, []);
 
-  // useEffect(() => {
-  //   localStorage.setItem("questionsInfo", JSON.stringify(questionSimulatorInfo));
-  // }, [questionSimulatorInfo]);
+  useEffect(() => {
+    localStorage.setItem("questionsInfo", JSON.stringify(questionSimulatorInfo));
+  }, [questionSimulatorInfo]);
 
   return (
     <QuestionSimulatorContext.Provider
