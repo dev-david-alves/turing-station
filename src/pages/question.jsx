@@ -117,27 +117,40 @@ function Question() {
 
   const [showTests, setShowTests] = useState(false);
   const [showTestIcons, setShowTestIcons] = useState(false);
+  const [showCasesMessage, setShowCasesMessage] = useState(false);
   const [tm, setTM] = useState(null);
 
   const handleCheckAnswer = () => {
     setShowTestIcons(true);
+    setShowCasesMessage(true);
     setShowTests(true);
 
     if (!tm) return;
 
-    let answersChecked = question.testCases.map((testCase) => {
+    let testCases = question.testCases.map((testCase) => {
       tm.setComputedWord(testCase.input);
       let { accepted } = tm.fastForward();
       return accepted;
     });
 
-    const solved = answersChecked.every((answer, index) => answer === question.testCases[index].output);
+    let hiddenTestCases = question.hiddenTestCases.map((testCase) => {
+      tm.setComputedWord(testCase.input);
+      let { accepted } = tm.fastForward();
+      return accepted;
+    });
+
+    let testPassed = testCases.filter((answer, index) => answer === question.testCases[index].output);
+    let hiddenTestPassed = hiddenTestCases.filter((answer, index) => answer === question.hiddenTestCases[index].output);
+
+    const solved =
+      testPassed.length + hiddenTestPassed.length === question.testCases.length + question.hiddenTestCases.length;
+
     let backup = [...simulatorInfo];
     backup = backup.map((item) => {
       if (item.id === questionId) {
         let newItem = { ...item };
         newItem.question.solved = solved;
-        console.log(newItem);
+
         return newItem;
       }
 
@@ -145,7 +158,12 @@ function Question() {
     });
 
     setSimulatorInfo(backup);
-    setAnswers(answersChecked);
+    setAnswers({
+      testCases,
+      numTestCasesPassed: testPassed.length,
+      hiddenTestCases,
+      numHiddenTestCasesPassed: hiddenTestPassed.length,
+    });
   };
 
   useEffect(() => {
@@ -154,18 +172,24 @@ function Question() {
 
   useEffect(() => {
     setShowTestIcons(false);
+    setShowCasesMessage(false);
   }, [data.data]);
 
   return (
     <div className="flex w-full flex-col gap-4 rounded-md bg-main py-4 shadow-lg">
       <div className="flex w-full flex-col gap-4 rounded-md bg-main px-4">
-        <h2 className="text-2xl font-bold text-white">{question.title}</h2>
+        <div className="flex w-full items-center justify-between gap-2">
+          <h2 className="text-2xl font-bold text-white">{question.title}</h2>
+          <span className={cn("inline text-lg font-bold", question.solved ? "text-lightGreen" : "text-lightDanger")}>
+            {question.solved ? "Resolvido" : "Não resolvido"}
+          </span>
+        </div>
         <div className="flex w-full flex-col gap-2">
-          <p className="text-sm font-semibold text-white">Descrição</p>
-          <p className="text-xs text-white">{question.description}</p>
+          <p className="text-md font-semibold text-white">Descrição</p>
+          <p className="text-sm text-white">{question.description}</p>
           <ul className="w-full px-4 text-white">
             {question.descriptionItems.map((item, index) => (
-              <li key={index} className="list-disc text-xs">
+              <li key={index} className="list-disc text-sm">
                 {item}
               </li>
             ))}
@@ -180,8 +204,24 @@ function Question() {
       </div>
 
       {showTests && (
-        <div className="flex flex-col gap-2 px-4">
-          <p className="ml-10 text-lg font-semibold text-white">Casos de teste</p>
+        <div className="flex w-full flex-col gap-2 px-4">
+          <div className="flex w-full items-center justify-between gap-2">
+            <p className="ml-10 text-lg font-semibold text-white">Casos de teste</p>
+            <p
+              className={cn(
+                "text-md font-semibold text-white",
+                answers.numTestCasesPassed + answers.numHiddenTestCasesPassed ===
+                  question.testCases.length + question.hiddenTestCases.length
+                  ? "text-lightGreen"
+                  : "text-lightDanger",
+
+                !showCasesMessage && "hidden",
+              )}
+            >
+              {answers &&
+                `${answers.numTestCasesPassed + answers.numHiddenTestCasesPassed}/${question.testCases.length + question.hiddenTestCases.length} casos de teste passados`}
+            </p>
+          </div>
           <div className="ml-10 flex items-center justify-between gap-2">
             <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Palavras: </p>
             <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Resultados: </p>
@@ -192,11 +232,16 @@ function Question() {
               <TestCase
                 key={index}
                 testCase={testCase}
-                answer={answers ? answers[index] : null}
+                answer={answers ? answers.testCases[index] : null}
                 showTestIcons={showTestIcons}
               />
             ))}
           </ul>
+
+          <div className="mt-2 flex w-full items-center justify-center gap-2 text-white">
+            <Icon icon="material-symbols:lock-outline" className="icon h-5 w-5 text-white" />
+            <p className="text-lg font-semibold">{question.hiddenTestCases.length} casos de teste ocultos</p>
+          </div>
         </div>
       )}
 

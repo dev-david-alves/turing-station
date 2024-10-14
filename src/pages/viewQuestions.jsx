@@ -12,11 +12,11 @@ const QuestionSection = ({ currentQuestion, question, questionId }) => {
         {currentQuestion}. {question.title}
       </h2>
       <div className="flex w-full flex-col gap-2">
-        <p className="text-sm font-semibold text-white">Descrição</p>
-        <p className="text-xs text-white">{question.description}</p>
+        <p className="text-md font-semibold text-white">Descrição</p>
+        <p className="text-sm text-white">{question.description}</p>
         <ul className="w-full px-4 text-white">
           {question.descriptionItems.map((item, index) => (
-            <li key={index} className="list-disc text-xs">
+            <li key={index} className="list-disc text-sm">
               {item}
             </li>
           ))}
