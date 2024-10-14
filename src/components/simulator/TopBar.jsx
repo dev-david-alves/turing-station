@@ -80,6 +80,10 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen, whichProvider = "
     toggleFullScreen({ fullScreen: isFullScreen });
   }, [isFullScreen]);
 
+  useEffect(() => {
+    if (!isOpen) setIsEditPopoverOpen(false);
+  }, [isOpen]);
+
   return (
     <div
       className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3", className)}
@@ -94,14 +98,14 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen, whichProvider = "
           </button>
         )}
         <button className="border-none bg-none text-sm font-semibold text-white">
-          <p id={`simulator-name-${id}`} className="px-2 py-[.4rem] text-white">
+          <p id={`simulator-name-${id}`} className="max-w-52 truncate px-2 py-[.4rem] text-left text-white">
             {simulator.name}
           </p>
         </button>
       </div>
 
       <div className="flex items-center gap-2">
-        <div className={cn("relative", whichProvider !== "simulator" && "hidden")} ref={modalRef}>
+        <div className="relative" ref={modalRef}>
           <button
             className="border-none bg-none p-2 text-white"
             onClick={() => setIsEditPopoverOpen(!isEditPopoverOpen)}

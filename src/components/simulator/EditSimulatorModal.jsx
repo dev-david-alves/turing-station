@@ -100,10 +100,26 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
     SuccessToast("Simulador deletado com sucesso!")();
   };
 
+  const handleDuplicateSimulator = () => {
+    // Create a new simulator with the same data, but with a new id and name and open: true
+    const newSimulator = {
+      ...simulator,
+      id: Date.now(),
+      name: `${name} ${Date.now()}`,
+    };
+
+    // Reset the simulator to open: false, focused: false, and fullScreen: false
+    setSimulatorInfo((prev) => [
+      ...prev.map((item) => (item.id === id ? { ...item, open: false, focused: false, fullScreen: false } : item)),
+      newSimulator,
+    ]);
+    SuccessToast("Simulador duplicado com sucesso!")();
+  };
+
   return (
     <div className="flex w-full max-w-80 flex-col justify-center gap-2 rounded-md bg-main p-4 px-0 text-white shadow-4xl">
       <p className="text-center">Informações do simulador</p>
-      <div className="flex w-full flex-col gap-2 px-4">
+      <div className={cn("flex w-full flex-col gap-2 px-4", whichProvider !== "simulator" && "hidden")}>
         <label htmlFor="rename" className="text-sm font-medium">
           Renomear simulador
         </label>
@@ -172,11 +188,15 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
         </label>
       </div>
 
-      <hr className="border-darkenBlue border-opacity-10" />
+      <hr className={cn("border-darkenBlue border-opacity-10", whichProvider !== "simulator" && "hidden")} />
 
       <label
         htmlFor={`import-mt-input-${id}`}
-        className={cn(buttonVariants({ variant: "popoverMenu", size: "sm" }), "cursor-pointer justify-start")}
+        className={cn(
+          buttonVariants({ variant: "popoverMenu", size: "sm" }),
+          "cursor-pointer justify-start",
+          whichProvider !== "simulator" && "hidden",
+        )}
       >
         <Icon icon="bxs:file-import" className="icon h-4 w-4" /> Importar MT
       </label>
@@ -193,13 +213,31 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
         </Button>
       </div>
 
-      <hr className="border-darkenBlue border-opacity-10" />
+      <hr className={cn("border-darkenBlue border-opacity-10", whichProvider !== "simulator" && "hidden")} />
+
+      <Button
+        variant="popoverMenu"
+        size="sm"
+        className={cn("text-sm", whichProvider !== "simulator" && "hidden")}
+        onClick={handleDuplicateSimulator}
+      >
+        <Icon icon="bx:duplicate" className="icon h-4 w-4" /> Duplicar simulador
+      </Button>
+
+      <hr className={cn("border-darkenBlue border-opacity-10", whichProvider !== "simulator" && "hidden")} />
 
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="popoverMenu" size="sm" className="text-sm text-danger hover:bg-danger hover:text-white">
+          <Button
+            variant="popoverMenu"
+            size="sm"
+            className={cn(
+              "text-sm text-danger hover:bg-danger hover:text-white",
+              whichProvider !== "simulator" && "hidden",
+            )}
+          >
             <Icon icon="mdi:trash" className="icon h-4 w-4" />
-            Deletar Simulador
+            Deletar simulador
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent className="dark-mode-variables text-white">
