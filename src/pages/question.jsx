@@ -8,6 +8,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button } from "../components/Button";
 import { MTNDTM } from "../p5-turing-machines/classes/simulation/multitape-nondeterministic";
 import { cn } from "../utils/cn";
+import { ErrorToast, SuccessToast } from "../components/Toast";
 
 const createTM = ({ data }) => {
   let q = new Set(data.states.map((state) => state.id));
@@ -144,6 +145,9 @@ function Question() {
 
     const solved =
       testPassed.length + hiddenTestPassed.length === question.testCases.length + question.hiddenTestCases.length;
+
+    if (solved) SuccessToast("Parabéns! Você resolveu esta questão!")();
+    else ErrorToast("Ops! Parece que algo não está certo. Tente novamente!")();
 
     let backup = [...simulatorInfo];
     backup = backup.map((item) => {
