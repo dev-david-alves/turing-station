@@ -14,7 +14,11 @@ function Filters() {
       <label htmlFor="filter" className="text-nowrap text-sm text-white">
         Filtrar por:
       </label>
-      <Select onValueChange={handleFilterChange} defaultValue={searchParams ? searchParams.get("filterBy") : "all"}>
+      <Select
+        onValueChange={handleFilterChange}
+        value={searchParams.get("filterBy")}
+        defaultValue={searchParams ? searchParams.get("filterBy") : "all"}
+      >
         <SelectTrigger className="h-8 w-56 min-w-56 max-w-56" id="filter">
           <SelectValue placeholder="Filtro" />
         </SelectTrigger>
