@@ -106,6 +106,8 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
       ...simulator,
       id: Date.now(),
       name: `${name} ${Date.now()}`,
+      createdAt: new Date(),
+      lastModified: new Date(),
     };
 
     // Reset the simulator to open: false, focused: false, and fullScreen: false

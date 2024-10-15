@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/Button";
 import { useQuestionSimulator } from "../providers/question";
+import { useQuestionFilters } from "../providers/questionFilters";
+import NoData from "/assets/no-data.svg";
 
 const QuestionSection = ({ currentQuestion, question, questionId }) => {
   const navigate = useNavigate();
@@ -40,11 +42,42 @@ const QuestionSection = ({ currentQuestion, question, questionId }) => {
 function ViewQuestion() {
   const { simulatorInfo } = useQuestionSimulator();
 
+  const { filterBy } = useQuestionFilters();
+  const [finalData, setFinalData] = useState([]);
+
+  useEffect(() => {
+    let data = [...simulatorInfo];
+    if (simulatorInfo.length > 0) {
+      if (filterBy !== "all") {
+        if (filterBy === "tm" || filterBy === "ndtm" || filterBy === "mttm") {
+          data = data.filter((item) => item.tm_variant === filterBy);
+        } else if (filterBy === "solved") {
+          data = data.filter((item) => item.question.solved);
+        } else if (filterBy === "unsolved") {
+          data = data.filter((item) => !item.question.solved);
+        }
+      }
+    }
+
+    setFinalData(data);
+  }, [filterBy, simulatorInfo]);
+
   return (
     <>
-      {simulatorInfo.map((item, index) => (
-        <QuestionSection key={index} currentQuestion={index + 1} question={item.question} questionId={item.id} />
-      ))}
+      {finalData.length > 0 ? (
+        <>
+          {finalData.map((item, index) => (
+            <QuestionSection key={index} currentQuestion={index + 1} question={item.question} questionId={item.id} />
+          ))}
+        </>
+      ) : (
+        <div className="flex min-h-full w-full flex-grow flex-col items-center justify-center gap-6">
+          <p className="text-center text-lg font-semibold text-darkVariant sm:text-2xl">
+            Oops, não conseguimos encontrar questões com os filtros aplicados!
+          </p>
+          <img src={NoData} alt="No Data" className="w-1/2 min-w-40 max-w-96" />
+        </div>
+      )}
     </>
   );
 }

@@ -141,6 +141,8 @@ function CreateSimulatorModal() {
         ...prev.map((simulator) => ({ ...simulator, open: false, fullScreen: false, focused: false })),
         {
           id: generateRandomId(),
+          createdAt: new Date(),
+          lastModified: new Date(),
           name,
           open: true,
           fullScreen: false,

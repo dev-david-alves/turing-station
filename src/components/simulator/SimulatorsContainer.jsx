@@ -4,23 +4,64 @@ import Simulator from "./Simulator";
 import Empty from "/assets/empty.svg";
 import { cn } from "../../utils/cn";
 import CreateSimulatorModal from "../CreateSimulatorModal";
+import { useSimulatorFilters } from "../../providers/simulatorFilters";
+import { useEffect, useState } from "react";
+import DialogFilter from "../filters/dialogFilter";
 
 function SimulatorsContainer() {
   const { simulatorInfo } = useSimulator();
+  const { filterBy, sortBy, direction } = useSimulatorFilters();
+  const [finalData, setFinalData] = useState([]);
+
+  useEffect(() => {
+    let data = [];
+    if (simulatorInfo.length > 0) {
+      data = [...simulatorInfo].sort((a, b) => {
+        if (sortBy === "name") {
+          if (direction) {
+            return a.name.localeCompare(b.name);
+          } else {
+            return b.name.localeCompare(a.name);
+          }
+        } else if (sortBy === "createdAt") {
+          if (direction) {
+            return new Date(a.createdAt) - new Date(b.createdAt);
+          } else {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          }
+        } else {
+          if (direction) {
+            return new Date(a.lastModified) - new Date(b.lastModified);
+          } else {
+            return new Date(b.lastModified) - new Date(a.lastModified);
+          }
+        }
+      });
+
+      if (filterBy !== "all") {
+        data = data.filter((item) => item.tm_variant === filterBy);
+      }
+    }
+
+    setFinalData(data);
+  }, [filterBy, sortBy, direction, simulatorInfo]);
 
   return (
     <div
-      className={cn(
-        "flex min-h-full w-full flex-grow flex-col gap-4 px-1 sm:px-8",
-        simulatorInfo.length === 0 && "px-4",
-      )}
+      className={cn("flex min-h-full w-full flex-grow flex-col gap-4 px-1 sm:px-8", finalData.length === 0 && "px-4")}
     >
-      <div className="flex w-full items-center justify-between px-4 sm:px-0">
-        <h1 className="text-left text-2xl font-bold text-white sm:text-3xl">Simulador</h1>
-        <CreateSimulatorModal />
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full justify-between px-4 sm:px-0">
+          <div className="flex flex-col">
+            <h1 className="text-left text-2xl font-bold text-white sm:text-3xl">Simulador</h1>
+            <DialogFilter />
+          </div>
+          <CreateSimulatorModal />
+        </div>
       </div>
-      {simulatorInfo.length > 0 ? (
-        simulatorInfo.map((item, index) => (
+
+      {finalData.length > 0 ? (
+        finalData.map((item) => (
           <Simulator key={item.id} id={item.id}>
             <TMSimulator id={item.id} />
           </Simulator>

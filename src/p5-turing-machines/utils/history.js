@@ -17,7 +17,7 @@ export const createHistory = (p5) => {
     p5.currentHistoryIndex++;
 
     p5.setDataFunction((prev) =>
-      prev.map((item) => (item.id === p5.canvasID ? { ...item, data: currentState } : item)),
+      prev.map((item) => (item.id === p5.canvasID ? { ...item, lastModified: new Date(), data: currentState } : item)),
     );
   }
 };
