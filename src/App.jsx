@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import { RouterProvider } from "react-router";
-import { SimulatorProvider } from "./providers/simulator";
 
 import Layout from "./pages/layout";
 import Home from "./pages/home";
@@ -17,11 +16,7 @@ const router = createBrowserRouter(
   [
     {
       path: "/",
-      element: (
-        <SimulatorProvider>
-          <Layout />
-        </SimulatorProvider>
-      ),
+      element: <Layout />,
       errorElement: <ErrorPage />, // Use an error boundary for the layout
       children: [
         { index: true, element: <Home /> },
