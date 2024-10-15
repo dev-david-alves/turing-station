@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { Button } from "../components/Button";
 import { useQuestionSimulator } from "../providers/question";
-import { useQuestionFilters } from "../providers/questionFilters";
+import { useSearchParams } from "react-router-dom";
 import NoData from "/assets/no-data.svg";
 
 const QuestionSection = ({ currentQuestion, question, questionId }) => {
@@ -42,10 +42,12 @@ const QuestionSection = ({ currentQuestion, question, questionId }) => {
 function ViewQuestion() {
   const { simulatorInfo } = useQuestionSimulator();
 
-  const { filterBy } = useQuestionFilters();
+  const [searchParams] = useSearchParams();
   const [finalData, setFinalData] = useState([]);
 
   useEffect(() => {
+    const filterBy = searchParams.get("filterBy") || "all";
+
     let data = [...simulatorInfo];
     if (simulatorInfo.length > 0) {
       if (filterBy !== "all") {
@@ -60,7 +62,7 @@ function ViewQuestion() {
     }
 
     setFinalData(data);
-  }, [filterBy, simulatorInfo]);
+  }, [searchParams, simulatorInfo]);
 
   return (
     <>

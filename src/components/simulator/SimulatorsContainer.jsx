@@ -4,16 +4,20 @@ import Simulator from "./Simulator";
 import Empty from "/assets/empty.svg";
 import { cn } from "../../utils/cn";
 import CreateSimulatorModal from "../CreateSimulatorModal";
-import { useSimulatorFilters } from "../../providers/simulatorFilters";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import DialogFilter from "../filters/dialogFilter";
 
 function SimulatorsContainer() {
   const { simulatorInfo } = useSimulator();
-  const { filterBy, sortBy, direction } = useSimulatorFilters();
+  const [searchParams] = useSearchParams();
   const [finalData, setFinalData] = useState([]);
 
   useEffect(() => {
+    const filterBy = searchParams.get("filterBy") || "all";
+    const sortBy = searchParams.get("sortBy") || "name";
+    const direction = searchParams.get("direction") === "asc";
+
     let data = [];
     if (simulatorInfo.length > 0) {
       data = [...simulatorInfo].sort((a, b) => {
@@ -44,7 +48,7 @@ function SimulatorsContainer() {
     }
 
     setFinalData(data);
-  }, [filterBy, sortBy, direction, simulatorInfo]);
+  }, [searchParams, simulatorInfo]);
 
   return (
     <div

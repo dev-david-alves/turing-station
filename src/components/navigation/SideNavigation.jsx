@@ -5,7 +5,7 @@ import { cn } from "../../utils/cn";
 const links = [
   {
     name: "Simulador",
-    to: "/",
+    to: "/?filterBy=all&sortBy=name&direction=asc",
     icon: "ph:graph-bold",
   },
   {
@@ -20,7 +20,7 @@ const links = [
   },
   {
     name: "Teste de conhecimento",
-    to: "/teste-de-conhecimento",
+    to: "/teste-de-conhecimento/?filterBy=all",
     icon: "iconoir:learning",
   },
 ];

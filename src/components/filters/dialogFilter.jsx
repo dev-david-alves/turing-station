@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../Button";
 import { Checkbox } from "../Checkbox";
 import { Icon } from "@iconify/react/dist/iconify.js";
@@ -12,21 +12,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../Dialog";
-import { useSimulatorFilters } from "../../providers/simulatorFilters";
+import { useSearchParams } from "react-router-dom";
 
 function DialogFilter() {
   const [modalOpen, setModalOpen] = useState(false);
-  const { setFilterBy, filterBy, setSortBy, sortBy, setDirection, direction } = useSimulatorFilters();
-  const [localFilterBy, setLocalFilterBy] = useState(filterBy);
-  const [localSortBy, setLocalSortBy] = useState(sortBy);
-  const [localDirection, setLocalDirection] = useState(direction);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [localFilterBy, setLocalFilterBy] = useState(searchParams.get("filterBy") || "all");
+  const [localSortBy, setLocalSortBy] = useState(searchParams.get("sortBy") || "name");
+  const [localDirection, setLocalDirection] = useState(searchParams.get("direction") === "asc");
 
   const handleApplyFilter = () => {
-    setFilterBy(localFilterBy);
-    setSortBy(localSortBy);
-    setDirection(localDirection);
+    searchParams.set("filterBy", localFilterBy);
+    searchParams.set("sortBy", localSortBy);
+    searchParams.set("direction", localDirection ? "asc" : "desc");
+    setSearchParams(searchParams);
     setModalOpen(false);
   };
+
+  useEffect(() => {
+    setLocalFilterBy(searchParams.get("filterBy") || "all");
+    setLocalSortBy(searchParams.get("sortBy") || "name");
+    setLocalDirection(searchParams.get("direction") === "asc");
+  }, [searchParams]);
 
   return (
     <Dialog open={modalOpen} onOpenChange={setModalOpen}>

@@ -11,7 +11,6 @@ import NotFound from "./pages/not-found";
 import ErrorPage from "./pages/error-page";
 import Question from "./pages/question";
 import ViewQuestions from "./pages/viewQuestions";
-import { QuestionFilterProvider } from "./providers/questionFilters";
 
 // Define routes using createBrowserRouter
 const router = createBrowserRouter(
@@ -30,11 +29,7 @@ const router = createBrowserRouter(
         { path: "/aprenda-sobre-mts", element: <LearnAboutTM /> },
         {
           path: "/teste-de-conhecimento",
-          element: (
-            <QuestionFilterProvider>
-              <KnowledgeTest />
-            </QuestionFilterProvider>
-          ),
+          element: <KnowledgeTest />,
           children: [
             {
               index: true,

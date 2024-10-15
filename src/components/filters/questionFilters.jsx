@@ -1,16 +1,20 @@
-import React from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../Select";
-import { useQuestionFilters } from "../../providers/questionFilters";
+import { useSearchParams } from "react-router-dom";
 
 function Filters() {
-  const { setFilterBy } = useQuestionFilters();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const handleFilterChange = (value) => {
+    searchParams.set("filterBy", value);
+    setSearchParams(searchParams);
+  };
 
   return (
     <div className="flex w-full flex-wrap items-center gap-2">
       <label htmlFor="filter" className="text-nowrap text-sm text-white">
         Filtrar por:
       </label>
-      <Select onValueChange={(value) => setFilterBy(value)} defaultValue="all">
+      <Select onValueChange={handleFilterChange} defaultValue={searchParams ? searchParams.get("filterBy") : "all"}>
         <SelectTrigger className="h-8 w-56 min-w-56 max-w-56" id="filter">
           <SelectValue placeholder="Filtro" />
         </SelectTrigger>
