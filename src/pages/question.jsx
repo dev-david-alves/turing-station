@@ -9,6 +9,7 @@ import { Button } from "../components/Button";
 import { MTNDTM } from "../p5-turing-machines/classes/simulation/multitape-nondeterministic";
 import { cn } from "../utils/cn";
 import { ErrorToast, SuccessToast } from "../components/Toast";
+import { texMap } from "../p5-turing-machines/utils/getTexMaps";
 
 const createTM = ({ data }) => {
   let q = new Set(data.states.map((state) => state.id));
@@ -63,7 +64,18 @@ const createTM = ({ data }) => {
   return new MTNDTM(q, sigma, gamma, delta, startState, finalStates, data.numTapes);
 };
 
-function TestCase({ testCase, answer, showTestIcons }) {
+function TestCase({ testCase, answer, showTestIcons, tapeInTheEnd = [] }) {
+  const [tapes, setTapes] = useState([]);
+
+  useEffect(() => {
+    let aux = "";
+    tapeInTheEnd.forEach((tape) => {
+      aux += tape === texMap["\\Blank"] ? "ε" : tape;
+    });
+
+    setTapes(aux);
+  }, [tapeInTheEnd]);
+
   return (
     <li className="flex w-full items-center justify-between gap-2">
       {showTestIcons ? (
@@ -76,27 +88,36 @@ function TestCase({ testCase, answer, showTestIcons }) {
         </>
       ) : null}
 
-      <p className="w-full max-w-full truncate rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white">
+      <p
+        className={cn(
+          "h-10 w-full max-w-full truncate rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white",
+          typeof testCase.output !== "boolean" && "w-[calc(100%/3)]",
+        )}
+      >
         {testCase.input}
       </p>
-      {/* <p
-        className={cn(
-          "w-full max-w-28 truncate rounded-md bg-darkenBlue px-6 py-2 text-center font-semibold text-white",
-          answer && "text-lightGreen",
-          !answer && "text-lightDanger",
-        )}
-      >
-        {answer ? "Aceita" : "Rejeita"}
-      </p> */}
-      {/* <p
-        className={cn(
-          "w-[calc(100%/3)] rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white",
-          testCase.output && "text-lightGreen",
-          !testCase.output && "text-lightDanger",
-        )}
-      >
-        {testCase.output ? "Aceita" : "Rejeita"}
-      </p> */}
+
+      {typeof testCase.output !== "boolean" && (
+        <>
+          <p
+            className={cn(
+              "h-10 w-[calc(100%/3)] truncate rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white",
+              tapes === testCase.output && "text-lightGreen",
+              tapes !== testCase.output && "text-lightDanger",
+            )}
+          >
+            {tapes}
+          </p>
+          <p
+            className={cn(
+              "h-10 w-[calc(100%/3)] truncate rounded-md bg-darkenBlue px-4 py-2 font-semibold text-white",
+              testCase.output && "text-lightGreen",
+            )}
+          >
+            {testCase.output}
+          </p>{" "}
+        </>
+      )}
     </li>
   );
 }
@@ -120,6 +141,7 @@ function Question() {
   const [showTestIcons, setShowTestIcons] = useState(false);
   const [showCasesMessage, setShowCasesMessage] = useState(false);
   const [tm, setTM] = useState(null);
+  const [tapeInTheEnd, setTapeInTheEnd] = useState([]);
 
   const handleCheckAnswer = () => {
     setShowTestIcons(true);
@@ -131,12 +153,30 @@ function Question() {
     let testCases = question.testCases.map((testCase) => {
       tm.setComputedWord(testCase.input);
       let { accepted } = tm.fastForward();
+
+      let aux = [];
+      tm.branchs.forEach((branch) => {
+        branch[1].forEach((tape) => {
+          aux.push(tape.getTape().join(""));
+        });
+      });
+      setTapeInTheEnd(aux);
+
       return accepted;
     });
 
     let hiddenTestCases = question.hiddenTestCases.map((testCase) => {
       tm.setComputedWord(testCase.input);
       let { accepted } = tm.fastForward();
+
+      let aux = [];
+      tm.branchs.forEach((branch) => {
+        branch[1].forEach((tape) => {
+          aux.push(tape.getTape().join(""));
+        });
+      });
+      setTapeInTheEnd(aux);
+
       return accepted;
     });
 
@@ -162,6 +202,7 @@ function Question() {
     });
 
     setSimulatorInfo(backup);
+
     setAnswers({
       testCases,
       numTestCasesPassed: testPassed.length,
@@ -194,7 +235,23 @@ function Question() {
           </span>
         </div>
         <div className="flex w-full flex-col gap-2">
-          <p className="text-md font-semibold text-white">Descrição</p>
+          <div className="flex items-center gap-4">
+            <p className="text-md font-semibold text-white">Descrição</p>
+            <div
+              className={cn(
+                "truncate px-2 py-0.5 font-semibold",
+                data.tm_variant === "tm" && "bg-secondaryBlue",
+                data.tm_variant === "ndtm" && "bg-warning",
+                data.tm_variant === "mttm" && "bg-purpleMedium text-white",
+              )}
+            >
+              {data.tm_variant === "tm"
+                ? "Determinística"
+                : data.tm_variant === "ndtm"
+                  ? "Não determinística"
+                  : "Multifitas"}
+            </div>
+          </div>
           <p className="text-sm text-white">{question.description}</p>
           <ul className="w-full px-4 text-white">
             {question.descriptionItems.map((item, index) => (
@@ -231,10 +288,24 @@ function Question() {
                 `${answers.numTestCasesPassed + answers.numHiddenTestCasesPassed}/${question.testCases.length + question.hiddenTestCases.length} casos de teste`}
             </p>
           </div>
-          <div className="flex items-center justify-between gap-2">
-            <p className="w-full text-left font-semibold text-darkVariant">Palavras</p>
-            {/* <p className="w-28 text-left font-semibold text-darkVariant">Resultados</p> */}
-            {/* <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Resultados esperados</p> */}
+          <div className={cn("flex items-center justify-between gap-2", showTestIcons && "ml-10")}>
+            <p
+              className={cn(
+                "text-left font-semibold text-darkVariant",
+                question && question.testCases && typeof question.testCases[0].output !== "boolean"
+                  ? "w-[calc(100%/3)]"
+                  : "w-full",
+              )}
+            >
+              Palavras
+            </p>
+
+            {question && question.testCases && typeof question.testCases[0].output !== "boolean" ? (
+              <>
+                <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Resultados</p>
+                <p className="w-[calc(100%/3)] text-left font-semibold text-darkVariant">Resultados esperados</p>
+              </>
+            ) : null}
           </div>
           <ul className="flex w-full list-disc flex-col gap-2 text-white">
             {question.testCases.map((testCase, index) => (
@@ -243,6 +314,7 @@ function Question() {
                 testCase={testCase}
                 answer={answers ? answers.testCases[index] : null}
                 showTestIcons={showTestIcons}
+                tapeInTheEnd={tapeInTheEnd}
               />
             ))}
           </ul>

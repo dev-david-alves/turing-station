@@ -4,8 +4,9 @@ import { Button } from "../components/Button";
 import { useQuestionSimulator } from "../providers/question";
 import { useSearchParams } from "react-router-dom";
 import NoData from "/assets/no-data.svg";
+import { cn } from "../utils/cn";
 
-const QuestionSection = ({ currentQuestion, question, questionId }) => {
+const QuestionSection = ({ currentQuestion, question, questionId, tmVariant }) => {
   const navigate = useNavigate();
 
   return (
@@ -14,7 +15,19 @@ const QuestionSection = ({ currentQuestion, question, questionId }) => {
         {currentQuestion}. {question.title}
       </h2>
       <div className="flex w-full flex-col gap-2">
-        <p className="text-md font-semibold text-white">Descrição</p>
+        <div className="flex items-center gap-4">
+          <p className="text-md font-semibold text-white">Descrição</p>
+          <div
+            className={cn(
+              "truncate px-2 py-0.5 font-semibold",
+              tmVariant === "tm" && "bg-secondaryBlue",
+              tmVariant === "ndtm" && "bg-warning",
+              tmVariant === "mttm" && "bg-purpleMedium text-white",
+            )}
+          >
+            {tmVariant === "tm" ? "Determinística" : tmVariant === "ndtm" ? "Não determinística" : "Multifitas"}
+          </div>
+        </div>
         <p className="text-sm text-white">{question.description}</p>
         <ul className="w-full px-4 text-white">
           {question.descriptionItems.map((item, index) => (
@@ -69,7 +82,13 @@ function ViewQuestion() {
       {finalData.length > 0 ? (
         <>
           {finalData.map((item, index) => (
-            <QuestionSection key={index} currentQuestion={index + 1} question={item.question} questionId={item.id} />
+            <QuestionSection
+              key={index}
+              currentQuestion={index + 1}
+              question={item.question}
+              questionId={item.id}
+              tmVariant={item.tm_variant}
+            />
           ))}
         </>
       ) : (

@@ -29,7 +29,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Número de a's é igual ao dobro do número de b's.",
+        title: "Número de a's é igual ao dobro do número de b's",
         description:
           "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número de a's igual ao dobro do número de b's. Ex: aab, aaaabb...",
         descriptionItems: [
@@ -70,7 +70,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "P4vt2KLWxiXdhNp9UvWe",
-      name: "Número de a's é par e o número de b's é ímpar.",
+      name: "Número de a's é par e o número de b's é ímpar",
       open: true,
       fullScreen: false,
       focused: true,
@@ -81,7 +81,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Número de a's é par e o número de b's é ímpar.",
+        name: "Número de a's é par e o número de b's é ímpar",
         canvasScale: 1,
         variant: "tm",
         numTapes: 1,
@@ -92,7 +92,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Número de a's é par e o número de b's é ímpar.",
+        title: "Número de a's é par e o número de b's é ímpar",
         description:
           "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número de a's par (|a*| % 2 = 0) e o número de b's ímpar (|b*| % 2 = 1). Ex: aab, abaabab...",
         descriptionItems: [
@@ -137,7 +137,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "y7RvIp5P8eCsGvgXM6mj",
-      name: "Duplicar uma palavra.",
+      name: "Duplicar uma palavra",
       open: true,
       fullScreen: false,
       focused: true,
@@ -148,7 +148,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Duplicar uma palavra.",
+        name: "Duplicar uma palavra",
         canvasScale: 1,
         variant: "tm",
         numTapes: 1,
@@ -159,7 +159,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Duplicar uma palavra.",
+        title: "Duplicar uma palavra",
         description:
           "Neste problema você deve criar uma máquina de Turing capaz de duplicar qualquer palavra, cujo alfabeto de entrada é (a, b, c). Ex: acab se tornará acabacab, cabcac se tornará cabcaccabcac...",
         descriptionItems: [
@@ -200,7 +200,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "K7hzz66zXgWitSHmu9uu",
-      name: "Número de a's é igual ou menor que o número de b's.",
+      name: "Número de a's é igual ou menor que o número de b's",
       open: true,
       fullScreen: false,
       focused: true,
@@ -211,7 +211,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Número de a's é igual ou menor que o número de b's.",
+        name: "Número de a's é igual ou menor que o número de b's",
         canvasScale: 1,
         variant: "tm",
         numTapes: 1,
@@ -222,7 +222,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Número de a's é igual ou menor que o número de b's.",
+        title: "Número de a's é igual ou menor que o número de b's",
         description:
           "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número de a's igual ou menor que o número de b's (|a*| <= |b*|). Ex: baab, bbababb...",
         descriptionItems: [
@@ -271,7 +271,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "E0BndlSHCPRyzTqNZT5d",
-      name: "Palíndromos compostos por 0 ou 1.",
+      name: "Palíndromos compostos por 0 ou 1",
       open: true,
       fullScreen: false,
       focused: true,
@@ -282,7 +282,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Palíndromos compostos por 0 ou 1.",
+        name: "Palíndromos compostos por 0 ou 1",
         canvasScale: 1,
         variant: "tm",
         numTapes: 1,
@@ -293,7 +293,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Palíndromos compostos por 0 ou 1.",
+        title: "Palíndromos compostos por 0 ou 1",
         description:
           'Neste problema você deve criar uma máquina de Turing que aceita palavras que são palíndromos compostos por 0 ou 1. Diz se que uma palavra é um palíndromo se permanecer igual quando lida de trás para frente (exemplo comum no português é "arara"). Exemplo: 010, 111, 0...',
         descriptionItems: [
@@ -342,7 +342,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "WvABF6EkLmOwKKUpfIWI",
-      name: "Inverter palavras compostas por 0 ou 1.",
+      name: "Inverter palavras compostas por 0 ou 1",
       open: true,
       fullScreen: false,
       focused: true,
@@ -353,7 +353,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Inverter palavras compostas por 0 ou 1.",
+        name: "Inverter palavras compostas por 0 ou 1",
         canvasScale: 1,
         variant: "tm",
         numTapes: 1,
@@ -364,7 +364,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Inverter palavras compostas por 0 ou 1.",
+        title: "Inverter palavras compostas por 0 ou 1",
         description:
           "Neste problema você deve criar uma máquina de Turing que recebe uma palavra composta por 0 ou 1 e inverte a ordem dos símbolos. Exemplo: 0100 se torna 0010, 0111 se torna 1110...",
         descriptionItems: [
@@ -409,7 +409,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "CSubqpBYLzrddsNHiGMx",
-      name: "Palavras que possuem uma substring (pedaço de palavra) de tamanho 3 que se repete em algum lugar da palavra.",
+      name: "Palavras que possuem uma substring (pedaço de palavra) de tamanho 3 que se repete em algum lugar da palavra",
       open: true,
       fullScreen: false,
       focused: true,
@@ -420,7 +420,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Palavras que possuem uma substring (pedaço de palavra) de tamanho 3 que se repete em algum lugar da palavra.",
+        name: "Palavras que possuem uma substring (pedaço de palavra) de tamanho 3 que se repete em algum lugar da palavra",
         canvasScale: 1,
         variant: "ndtm",
         numTapes: 1,
@@ -432,7 +432,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       question: {
         solved: false,
         title:
-          "Palavras que possuem uma substring (pedaço de palavra) de tamanho 3 que se repete em algum lugar da palavra.",
+          "Palavras que possuem uma substring (pedaço de palavra) de tamanho 3 que se repete em algum lugar da palavra",
         description:
           "Neste problema você deve criar uma máquina de Turing que aceita palavras compostas por apenas 0's e 1's e que possuam uma substring de tamanho 3 que se repete, pelo menos uma vez, em algum lugar da palavra. Exemplo: 010001000 (000 se repete), 101101 (101 se repete)...",
         descriptionItems: [
@@ -477,7 +477,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "PBzlf7AU3rZqAfyzUaKo",
-      name: "Palavras que possuem uma substring seguida pelo o inverso dela.",
+      name: "Palavras que possuem uma substring seguida pelo seu inverso",
       open: true,
       fullScreen: false,
       focused: true,
@@ -488,7 +488,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Palavras que possuem uma substring seguida pelo o inverso dela.",
+        name: "Palavras que possuem uma substring seguida pelo seu inverso",
         canvasScale: 1,
         variant: "ndtm",
         numTapes: 1,
@@ -499,7 +499,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Palavras que possuem uma substring seguida pelo o inverso dela.",
+        title: "Palavras que possuem uma substring seguida pelo seu inverso",
         description:
           "Neste problema você deve criar uma máquina de Turing que aceita palavras compostas por apenas 0's e 1's e são formadas por uma substring qualquer seguida por ela mesmo invertida. Seja x uma substring de w e y = inverso(x), w = xy. Exemplo: 001100 (001 é a substring e 100 é o inverso dela), 1001001001 (10010 é a substring e 01001 é o inverso dela)...",
         descriptionItems: [
@@ -540,7 +540,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "2CCJIubpwoxiRdhXM5tR",
-      name: "Palavras que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's.",
+      name: "Palavras que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's",
       open: true,
       fullScreen: false,
       focused: true,
@@ -551,7 +551,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Palavras que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's.",
+        name: "Palavras que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's",
         canvasScale: 1,
         variant: "mttm",
         numTapes: 2,
@@ -563,7 +563,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       question: {
         solved: false,
         title:
-          "Palavras que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's.",
+          "Palavras que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's",
         description:
           "Neste problema você deve criar uma máquina de Turing, utilizando 2 (duas) fitas, que aceita palavras compostas por apenas a's, b's e c's e que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's. Exemplo: abc, aabbcc, aaabbbccc...",
         descriptionItems: [
@@ -604,7 +604,7 @@ const QuestionSimulatorProvider = ({ children }) => {
     // Done
     {
       id: "o3fqhuX21Dff9JO1mNMo",
-      name: "Palavras que possuem uma substring seguida por ela mesmo repetida.",
+      name: "Palavras que possuem uma substring seguida por ela mesmo repetida",
       open: true,
       fullScreen: false,
       focused: true,
@@ -615,7 +615,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       bottomDrawerOpen: false,
       stayOption: true,
       data: {
-        name: "Palavras que possuem uma substring seguida por ela mesmo repetida.",
+        name: "Palavras que possuem uma substring seguida por ela mesmo repetida",
         canvasScale: 1,
         variant: "mttm",
         numTapes: 2,
@@ -626,7 +626,7 @@ const QuestionSimulatorProvider = ({ children }) => {
       },
       question: {
         solved: false,
-        title: "Palavras que possuem uma substring seguida por ela mesmo repetida.",
+        title: "Palavras que possuem uma substring seguida por ela mesmo repetida",
         description:
           "Neste problema você deve criar uma máquina de Turing, utilizando 2 (duas) fitas, que aceita palavras que possuem apenas a's, b's e c's e que sejam compostas por uma substring qualquer seguida por ela mesmo repetida. Seja x uma substring de w, w = xx. Exemplo: abcabc, aabbccaabbcc, aaabbbcccaaabbbccc...",
         descriptionItems: [
@@ -711,16 +711,16 @@ const QuestionSimulatorProvider = ({ children }) => {
     );
   };
 
-  // useEffect(() => {
-  //   const data = localStorage.getItem("questionsInfo");
-  //   if (data) {
-  //     setQuestionSimulatorInfo(JSON.parse(data));
-  //   }
-  // }, []);
+  useEffect(() => {
+    const data = localStorage.getItem("questionsInfo");
+    if (data) {
+      setQuestionSimulatorInfo(JSON.parse(data));
+    }
+  }, []);
 
-  // useEffect(() => {
-  //   localStorage.setItem("questionsInfo", JSON.stringify(questionSimulatorInfo));
-  // }, [questionSimulatorInfo]);
+  useEffect(() => {
+    localStorage.setItem("questionsInfo", JSON.stringify(questionSimulatorInfo));
+  }, [questionSimulatorInfo]);
 
   return (
     <QuestionSimulatorContext.Provider
