@@ -460,6 +460,10 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
           p5.states[i].draw();
         }
 
+        // Do not allow to create a link from a final state
+        if (p5.lastSelectedState && p5.lastSelectedState.isFinalState) p5.currentLink = null;
+
+        // Draw the current link
         if (p5.currentLink) p5.currentLink.draw();
 
         // To prevent states from overlapping
