@@ -1,6 +1,6 @@
 export const multitapeExample01 = {
   name: "Número de a's é igual ao número de b's",
-  canvasScale: 1,
+  canvasScale: 1.25,
   variant: "mttm",
   numTapes: 3,
   stayOption: true,
