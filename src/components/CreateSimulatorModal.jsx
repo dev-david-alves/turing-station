@@ -44,7 +44,7 @@ import { texMap } from "../p5-turing-machines/utils/getTexMaps";
 
 const examples = {
   "0^n1^n": deterministicExample01,
-  "010|00*1": nonDeterministicExample01,
+  ww: nonDeterministicExample01,
   "a^nb^n_qualquer_order": multitapeExample01,
 };
 
@@ -216,11 +216,11 @@ function CreateSimulatorModal() {
                     <SelectGroup>
                       <SelectItem value="import-from-device">Importar deste dispositivo</SelectItem>
                       <SelectLabel>Determinísticas</SelectLabel>
-                      <SelectItem value="0^n1^n">0^n1^n</SelectItem>
+                      <SelectItem value="0^n1^n">Número de 0's é igual ao número de 1's</SelectItem>
                       <SelectLabel>Não determinísticas</SelectLabel>
-                      <SelectItem value="010|00*1">010|00*1</SelectItem>
+                      <SelectItem value="ww">W = xx onde x é uma substring de W</SelectItem>
                       <SelectLabel>Multifitas</SelectLabel>
-                      <SelectItem value="a^nb^n_qualquer_order">a^nb^n_qualquer_order</SelectItem>
+                      <SelectItem value="a^nb^n_qualquer_order">Número de a's é igual ao número de b's</SelectItem>
                     </SelectGroup>
                   </SelectContent>
                 </Select>

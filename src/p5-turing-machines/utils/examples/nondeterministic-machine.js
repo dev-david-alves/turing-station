@@ -1,6 +1,6 @@
 export const nonDeterministicExample01 = {
-  name: "a|ac*|ab|adt|adtefy",
-  canvasScale: 0.75,
+  name: "W = xx onde x é uma substring de W",
+  canvasScale: 1,
   variant: "ndtm",
   numTapes: 1,
   stayOption: true,

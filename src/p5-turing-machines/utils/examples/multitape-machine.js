@@ -1,5 +1,5 @@
 export const multitapeExample01 = {
-  name: "a^nb^n",
+  name: "Número de a's é igual ao número de b's",
   canvasScale: 1,
   variant: "mttm",
   numTapes: 3,
