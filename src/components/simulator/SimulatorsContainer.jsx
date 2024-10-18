@@ -65,11 +65,17 @@ function SimulatorsContainer() {
       </div>
 
       {finalData.length > 0 ? (
-        finalData.map((item) => (
-          <Simulator key={item.id} id={item.id}>
-            <TMSimulator id={item.id} />
-          </Simulator>
-        ))
+        finalData.map((item) => {
+          if (simulatorInfo.some((simulator) => simulator.id === item.id)) {
+            return (
+              <Simulator key={item.id} id={item.id}>
+                <TMSimulator id={item.id} />
+              </Simulator>
+            );
+          }
+
+          return null;
+        })
       ) : (
         <div className="flex min-h-full w-full flex-grow flex-col items-center justify-center gap-6">
           <p className="text-center text-lg font-semibold text-darkVariant sm:text-2xl">
