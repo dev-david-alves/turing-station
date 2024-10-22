@@ -21,7 +21,7 @@ const router = createBrowserRouter(
       children: [
         { index: true, element: <Home /> },
         { path: "/como-utilizar", element: <HowToUse /> },
-        { path: "/aprenda-sobre-mts", element: <LearnAboutTM /> },
+        // { path: "/aprenda-sobre-mts", element: <LearnAboutTM /> },
         {
           path: "/teste-de-conhecimento",
           element: <KnowledgeTest />,

@@ -13,11 +13,11 @@ const links = [
     to: "/como-utilizar",
     icon: "carbon:machine-learning",
   },
-  {
-    name: "Aprenda sobre MTS",
-    to: "/aprenda-sobre-mts",
-    icon: "hugeicons:knowledge-01",
-  },
+  // {
+  //   name: "Aprenda sobre MTS",
+  //   to: "/aprenda-sobre-mts",
+  //   icon: "hugeicons:knowledge-01",
+  // },
   {
     name: "Teste de conhecimento",
     to: "/teste-de-conhecimento/?filterBy=all",
