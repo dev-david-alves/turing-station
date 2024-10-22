@@ -1,8 +1,16 @@
+import { useEffect } from "react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../Select";
 import { useSearchParams } from "react-router-dom";
 
 function Filters() {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (!searchParams.get("filterBy")) {
+      searchParams.set("filterBy", "all");
+      setSearchParams(searchParams);
+    }
+  }, [searchParams]);
 
   const handleFilterChange = (value) => {
     searchParams.set("filterBy", value);

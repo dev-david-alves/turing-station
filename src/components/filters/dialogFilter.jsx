@@ -30,8 +30,23 @@ function DialogFilter() {
   };
 
   useEffect(() => {
-    setLocalFilterBy(searchParams.get("filterBy") || "all");
-    setLocalSortBy(searchParams.get("sortBy") || "name");
+    if (!searchParams.get("filterBy")) {
+      searchParams.set("filterBy", "all");
+      setSearchParams(searchParams);
+    }
+    setLocalFilterBy(searchParams.get("filterBy"));
+
+    if (!searchParams.get("sortBy")) {
+      searchParams.set("sortBy", "name");
+      setSearchParams(searchParams);
+    }
+    setLocalSortBy(searchParams.get("sortBy"));
+
+    if (!searchParams.get("direction")) {
+      searchParams.set("direction", "asc");
+      setSearchParams(searchParams);
+    }
+
     setLocalDirection(searchParams.get("direction") === "asc");
   }, [searchParams]);
 
