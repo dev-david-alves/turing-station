@@ -34,6 +34,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número um 'a' seguido de zero ou mais 'b's. Ex: a, ab, abb...",
         descriptionItems: [
           "A ordem deve ser ab* (onde * significa 0 ou mais ocorrências), ou seja, 'a' antes de todos os b's.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) é aceita.",
         ],
@@ -121,6 +122,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número de a's igual ao dobro do número de b's. Ex: aab, aaaabb...",
         descriptionItems: [
           "A ordem deve ser a*b* (onde * significa 0 ou mais ocorrências), ou seja, todos os a's antes de todos os b's.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) é aceita.",
         ],
@@ -184,6 +186,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número de a's par (|a*| % 2 = 0) e o número de b's ímpar (|b*| % 2 = 1). Ex: aab, abaabab...",
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) não é aceita.",
         ],
@@ -251,9 +254,10 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing capaz de duplicar qualquer palavra, cujo alfabeto de entrada é (a, b, c). Ex: acab se tornará acabacab, cabcac se tornará cabcaccabcac...",
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
-          "Neste problema é avaliado o conteúdo da fita para cada teste, desconsiderando os espaços em branco depois da palavra.",
-          "A palavra deve ter tamanho maior do que 1.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
+          "Neste problema é avaliado o conteúdo da fita para cada teste, desconsiderando os espaços em branco antes e depois da palavra.",
           "A palavra duplicada deve aparecer logo após um # que separa a palavra original da duplicada.",
+          "A palavra deve ter tamanho maior do que 1.",
         ],
         testCases: [
           {
@@ -315,6 +319,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número de a's igual ou menor que o número de b's (|a*| <= |b*|). Ex: baab, bbababb...",
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) é aceita.",
         ],
@@ -386,6 +391,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           'Neste problema você deve criar uma máquina de Turing que aceita palavras que são palíndromos compostos por 0 ou 1. Diz se que uma palavra é um palíndromo se permanecer igual quando lida de trás para frente (exemplo comum no português é "arara"). Exemplo: 010, 111, 0...',
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) é aceita.",
         ],
@@ -457,7 +463,8 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing que recebe uma palavra composta por 0 ou 1 e inverte a ordem dos símbolos. Exemplo: 0100 se torna 0010, 0111 se torna 1110...",
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
-          "Neste problema é avaliado o conteúdo da fita para cada teste, desconsiderando os espaços em branco depois da palavra.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
+          "Neste problema é avaliado o conteúdo da fita para cada teste, desconsiderando os espaços em branco antes e depois da palavra.",
           "A palavra vazia (ε) é aceita.",
         ],
         testCases: [
@@ -525,6 +532,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing que aceita palavras compostas por apenas 0's e 1's e que possuam uma substring de tamanho 3 que se repete, pelo menos uma vez, em algum lugar da palavra. Exemplo: 010001000 (000 se repete), 101101 (101 se repete)...",
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) não é aceita.",
         ],
@@ -592,6 +600,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing que aceita palavras compostas por apenas 0's e 1's e são formadas por uma substring qualquer seguida por ela mesmo invertida. Seja x uma substring de w e y = inverso(x), w = xy. Exemplo: 001100 (001 é a substring e 100 é o inverso dela), 1001001001 (10010 é a substring e 01001 é o inverso dela)...",
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) é aceita.",
         ],
@@ -656,6 +665,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing, utilizando 2 (duas) fitas, que aceita palavras compostas por apenas a's, b's e c's e que possuem um número de a's seguido pelo mesmo número de b's seguido pelo mesmo número de c's. Exemplo: abc, aabbcc, aaabbbccc...",
         descriptionItems: [
           "Os símbolos devem seguir a ordem exata de a's, b's e c's.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra vazia (ε) é aceita.",
         ],
@@ -719,6 +729,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Neste problema você deve criar uma máquina de Turing, utilizando 2 (duas) fitas, que aceita palavras que possuem apenas a's, b's e c's e que sejam compostas por uma substring qualquer seguida por ela mesmo repetida. Seja x uma substring de w, w = xx. Exemplo: abcabc, aabbccaabbcc, aaabbbcccaaabbbccc...",
         descriptionItems: [
           "Os símbolos podem estar em qualquer ordem na palavra.",
+          "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
           "A palavra deve conter pelo menos 1 (um) a, 1 (um) b e 1 (um) c.",
         ],
