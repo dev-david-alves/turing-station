@@ -6,6 +6,93 @@ const QuestionSimulatorProvider = ({ children }) => {
   const [questionSimulatorInfo, setQuestionSimulatorInfo] = useState([
     // Done
     {
+      id: "ae3pcyreYDxXPUBTmiZx",
+      name: "Aceita 'a' seguido de zero ou mais 'b' (ab*)",
+      open: true,
+      fullScreen: false,
+      focused: true,
+      showLeftToolbar: true,
+      showTooltips: false,
+      tm_variant: "tm",
+      tm_num_tapes: 1,
+      bottomDrawerOpen: false,
+      stayOption: true,
+      data: {
+        name: "Aceita 'a' seguido de zero ou mais 'b' (ab*)",
+        canvasScale: 1,
+        variant: "tm",
+        numTapes: 1,
+        stayOption: true,
+        states: [],
+        links: [],
+        initialStateLink: null,
+      },
+      question: {
+        solved: false,
+        title: "Aceita 'a' seguido de zero ou mais 'b' (ab*)",
+        description:
+          "Neste problema você deve criar uma máquina de Turing que aceita palavras que possuem o número um 'a' seguido de zero ou mais 'b's. Ex: a, ab, abb...",
+        descriptionItems: [
+          "A ordem deve ser ab* (onde * significa 0 ou mais ocorrências), ou seja, 'a' antes de todos os b's.",
+          "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
+          "A palavra vazia (ε) é aceita.",
+        ],
+        testCases: [
+          {
+            input: "a",
+            output: true,
+          },
+          {
+            input: "ab",
+            output: true,
+          },
+          {
+            input: "abbb",
+            output: true,
+          },
+          {
+            input: "b",
+            output: false,
+          },
+          {
+            input: "ba",
+            output: false,
+          },
+          {
+            input: "baa",
+            output: false,
+          },
+        ],
+        hiddenTestCases: [
+          {
+            input: "abbbbbbbbbb",
+            output: true,
+          },
+          {
+            input: "abbbbbbbbbbbbbbbbbbb",
+            output: true,
+          },
+          {
+            input: "",
+            output: true,
+          },
+          {
+            input: "bb",
+            output: false,
+          },
+          {
+            input: "baaaaaaaaaaaaaaaaaaaa",
+            output: false,
+          },
+          {
+            input: "baaaaaaaaa",
+            output: false,
+          },
+        ],
+      },
+    },
+    // Done
+    {
       id: "fe3pcXreYDzXPUBtmiZx",
       name: "Número de a's é igual ao dobro do número de b's",
       open: true,
@@ -166,33 +253,34 @@ const QuestionSimulatorProvider = ({ children }) => {
           "Os símbolos podem estar em qualquer ordem na palavra.",
           "Neste problema é avaliado o conteúdo da fita para cada teste, desconsiderando os espaços em branco depois da palavra.",
           "A palavra deve ter tamanho maior do que 1.",
+          "A palavra duplicada deve aparecer logo após um # que separa a palavra original da duplicada.",
         ],
         testCases: [
           {
             input: "acab",
-            output: "acabacab",
+            output: "acab#acab",
           },
           {
             input: "cabcac",
-            output: "cabcaccabcac",
+            output: "cabcac#cabcac",
           },
           {
             input: "bacccababaa",
-            output: "bacccababaabacccababaa",
+            output: "bacccababaa#bacccababaa",
           },
         ],
         hiddenTestCases: [
           {
             input: "cababaabc",
-            output: "cababaabccababaabc",
+            output: "cababaabc#cababaabc",
           },
           {
             input: "c",
-            output: "cc",
+            output: "c#c",
           },
           {
             input: "bbcc",
-            output: "bbccbbcc",
+            output: "bbcc#bbcc",
           },
         ],
       },
