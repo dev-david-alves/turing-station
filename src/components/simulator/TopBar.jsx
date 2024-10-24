@@ -116,7 +116,14 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen, whichProvider = "
             <Icon icon="ic:round-settings" className="icon h-4 w-4" />
           </button>
 
-          <div className={cn("absolute -right-5 z-[2000] mt-1", !isEditPopoverOpen && "invisible absolute -z-50")}>
+          <div
+            id={`edit-simulator-modal-${id}`}
+            className={cn(
+              "absolute -right-5 z-[2000] mt-1",
+              !isEditPopoverOpen && "invisible absolute -z-50",
+              isEditPopoverOpen && "editPopoverOpen",
+            )}
+          >
             <EditSimulatorModal id={id} whichProvider={whichProvider} />
           </div>
         </div>

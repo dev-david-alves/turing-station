@@ -396,6 +396,13 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       };
 
       p5.draw = () => {
+        let editModal = p5.select(`#edit-simulator-modal-${id}`);
+
+        if (editModal && editModal.hasClass("editPopoverOpen")) {
+          p5.states.forEach((state) => (state.input.visible = false));
+          p5.links.forEach((link) => (link.transitionBox.selected = false));
+        }
+
         // Updating the tm_name by doom because I can't access the update "name"
         p5.tm_name = p5.select(`#simulator-name-${id}`).elt.innerText;
 
