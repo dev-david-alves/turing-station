@@ -85,26 +85,29 @@ function TopBar({ id, isEditPopoverOpen, setIsEditPopoverOpen, whichProvider = "
   }, [isOpen]);
 
   return (
-    <div
-      className={cn("flex w-full items-center justify-between bg-main px-3 pb-2 pt-3", !isOpen && "py-3", className)}
-    >
-      <div className="flex items-center gap-2">
-        {!isFullScreen && (
-          <button className="rotate-0 border-none bg-none p-2 text-white" onClick={handleOpen}>
-            <Icon
-              icon="ep:arrow-down-bold"
-              className={cn("icon h-4 w-4 transition-transform duration-300", !isOpen && "-rotate-90")}
-            />
-          </button>
-        )}
-        <button className="border-none bg-none text-sm font-semibold text-white">
-          <p id={`simulator-name-${id}`} className="max-w-52 truncate px-2 py-[.4rem] text-left text-white">
-            {simulator.name}
-          </p>
+    <div className={cn("flex w-full max-w-full items-center bg-main px-3 pb-2 pt-3", !isOpen && "py-3", className)}>
+      {!isFullScreen && (
+        <button className="rotate-0 border-none bg-none p-2 text-white" onClick={handleOpen}>
+          <Icon
+            icon="ep:arrow-down-bold"
+            className={cn("icon h-4 w-4 transition-transform duration-300", !isOpen && "-rotate-90")}
+          />
         </button>
-      </div>
+      )}
+      <p id={`simulator-name-${id}`} className="self-start truncate px-2 py-[.4rem] text-left text-white">
+        {simulator.name}{" "}
+        <span className="font-semibold">
+          (
+          {simulator.tm_variant === "tm"
+            ? "Determinística"
+            : simulator.tm_variant === "ndtm"
+              ? "Não determinística"
+              : "Multifitas"}
+          )
+        </span>
+      </p>
 
-      <div className="flex items-center gap-2">
+      <div className="ml-auto flex items-center gap-2">
         <div className="relative" ref={modalRef}>
           <button
             className="border-none bg-none p-2 text-white"
