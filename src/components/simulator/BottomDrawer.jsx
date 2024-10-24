@@ -25,19 +25,19 @@ const navButtons = [
 const simulationButtons = [
   {
     id: "fast-reset",
-    icon: "ri:skip-back-fill",
+    icon: "ant-design:fast-backward-outlined",
   },
   {
     id: "step-back",
-    icon: "ion:chevron-back-outline",
+    icon: "ri:skip-back-fill",
   },
   {
     id: "step-forward",
-    icon: "ion:chevron-forward-outline",
+    icon: "ri:skip-forward-fill",
   },
   {
     id: "fast-simulation",
-    icon: "ri:skip-forward-fill",
+    icon: "ant-design:fast-forward-outlined",
   },
 ];
 
