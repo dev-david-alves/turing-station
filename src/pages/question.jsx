@@ -148,8 +148,9 @@ function Question() {
 
   const handleCheckAnswer = () => {
     if (!tm) return ErrorToast("Erro ao criar a máquina de Turing!")();
-    if (!tm.initialState) return ErrorToast("Defina um estado inicial para a MT antes de testar a solução!")();
-    if (!tm.finalStates.size)
+    if (tm.initialState == null && tm.initialState == undefined)
+      return ErrorToast("Defina um estado inicial para a MT antes de testar a solução!")();
+    if (!tm.finalStates.size > 0)
       return ErrorToast("Defina ao menos um estado final para a MT antes de testar a solução!")();
 
     setShowTestIcons(true);
@@ -358,12 +359,7 @@ function Question() {
         <Button variant="default" className="bg-zinc-700 text-white" onClick={() => setShowTests((prev) => !prev)}>
           {showTests ? "Esconder casos de teste" : "Mostrar casos de teste"}
         </Button>
-        <Button
-          variant="default"
-          className="text-white"
-          onClick={handleCheckAnswer}
-          disabled={!tm || !tm.initialState || !tm.finalStates.size}
-        >
+        <Button variant="default" className="text-white" onClick={handleCheckAnswer}>
           Testar solução
         </Button>
       </div>
