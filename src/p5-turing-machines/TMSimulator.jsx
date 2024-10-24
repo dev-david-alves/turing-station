@@ -214,6 +214,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
               state.input.visible = false;
               state.simulating = false;
             });
+            p5.links.forEach((link) => (link.transitionBox.selected = false));
           } else {
             p5.selectedBottomTab = undefined;
           }
