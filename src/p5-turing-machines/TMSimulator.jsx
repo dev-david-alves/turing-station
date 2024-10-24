@@ -89,7 +89,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       };
 
       p5.getNewStateId = () => {
-        let maxId = 0;
+        let maxId = -1;
         for (let i = 0; i < p5.states.length; i++) if (p5.states[i].id > maxId) maxId = p5.states[i].id;
 
         return maxId + 1;
