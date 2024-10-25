@@ -36,7 +36,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "A ordem deve ser ab* (onde * significa 0 ou mais ocorrências), ou seja, 'a' antes de todos os b's.",
           "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
-          "A palavra vazia (ε) é aceita.",
+          "A palavra precisa conter pelo menos um 'a'.",
         ],
         testCases: [
           {
@@ -56,7 +56,7 @@ const QuestionSimulatorProvider = ({ children }) => {
             output: false,
           },
           {
-            input: "ba",
+            input: "aba",
             output: false,
           },
           {
@@ -74,11 +74,15 @@ const QuestionSimulatorProvider = ({ children }) => {
             output: true,
           },
           {
-            input: "",
+            input: "abb",
             output: true,
           },
           {
             input: "bb",
+            output: false,
+          },
+          {
+            input: "",
             output: false,
           },
           {
@@ -124,7 +128,7 @@ const QuestionSimulatorProvider = ({ children }) => {
           "A ordem deve ser a*b* (onde * significa 0 ou mais ocorrências), ou seja, todos os a's antes de todos os b's.",
           "Esta é uma máquina de Turing com fita infinita para os dois lados.",
           "Neste problema apenas é avaliado se a palavra é aceita ou não, o conteúdo da fita ao final não é avaliado.",
-          "A palavra vazia (ε) é aceita.",
+          "A palavra deve conter pelo menos 2 (dois) a's e 1 (um) b.",
         ],
         testCases: [
           {
@@ -139,6 +143,18 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "aaaaaaaabbbb",
             output: true,
           },
+          {
+            input: "aabb",
+            output: false,
+          },
+          {
+            input: "baa",
+            output: false,
+          },
+          {
+            input: "",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -150,8 +166,20 @@ const QuestionSimulatorProvider = ({ children }) => {
             output: true,
           },
           {
-            input: "",
-            output: true,
+            input: "a",
+            output: false,
+          },
+          {
+            input: "ab",
+            output: false,
+          },
+          {
+            input: "aaab",
+            output: false,
+          },
+          {
+            input: "aaabb",
+            output: false,
           },
         ],
       },
@@ -203,6 +231,14 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "baaababababaabb",
             output: true,
           },
+          {
+            input: "abaaab",
+            output: false,
+          },
+          {
+            input: "bbaaa",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -216,6 +252,14 @@ const QuestionSimulatorProvider = ({ children }) => {
           {
             input: "b",
             output: true,
+          },
+          {
+            input: "bbbaaaabaa",
+            output: false,
+          },
+          {
+            input: "ba",
+            output: false,
           },
           {
             input: "",
@@ -271,6 +315,10 @@ const QuestionSimulatorProvider = ({ children }) => {
           {
             input: "bacccababaa",
             output: "bacccababaa#bacccababaa",
+          },
+          {
+            input: "aaa",
+            output: "aaa#aaa",
           },
         ],
         hiddenTestCases: [
@@ -340,6 +388,18 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "bbaabab",
             output: true,
           },
+          {
+            input: "babbaaa",
+            output: false,
+          },
+          {
+            input: "baababaa",
+            output: false,
+          },
+          {
+            input: "bbaababaaaaa",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -348,6 +408,10 @@ const QuestionSimulatorProvider = ({ children }) => {
           },
           {
             input: "a",
+            output: false,
+          },
+          {
+            input: "aaaaaaa",
             output: false,
           },
           {
@@ -416,6 +480,18 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "10001010001",
             output: true,
           },
+          {
+            input: "01",
+            output: false,
+          },
+          {
+            input: "10",
+            output: false,
+          },
+          {
+            input: "001",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -429,6 +505,14 @@ const QuestionSimulatorProvider = ({ children }) => {
           {
             input: "",
             output: true,
+          },
+          {
+            input: "00010",
+            output: false,
+          },
+          {
+            input: "110",
+            output: false,
           },
         ],
       },
@@ -549,6 +633,18 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "000000",
             output: true,
           },
+          {
+            input: "00000",
+            output: false,
+          },
+          {
+            input: "101110",
+            output: false,
+          },
+          {
+            input: "001100",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -617,6 +713,18 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "000000",
             output: true,
           },
+          {
+            input: "00110",
+            output: false,
+          },
+          {
+            input: "1001001",
+            output: false,
+          },
+          {
+            input: "1000",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -682,6 +790,18 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "aaabbbccc",
             output: true,
           },
+          {
+            input: "abcc",
+            output: false,
+          },
+          {
+            input: "aabbbcc",
+            output: false,
+          },
+          {
+            input: "aaaaabbbccc",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -691,6 +811,14 @@ const QuestionSimulatorProvider = ({ children }) => {
           {
             input: "aaaabbbbcccc",
             output: true,
+          },
+          {
+            input: "bca",
+            output: false,
+          },
+          {
+            input: "aaccbb",
+            output: false,
           },
           {
             input: "",
@@ -746,6 +874,18 @@ const QuestionSimulatorProvider = ({ children }) => {
             input: "aaabbbcccaaabbbccc",
             output: true,
           },
+          {
+            input: "aab",
+            output: false,
+          },
+          {
+            input: "ab",
+            output: false,
+          },
+          {
+            input: "acccc",
+            output: false,
+          },
         ],
         hiddenTestCases: [
           {
@@ -755,18 +895,6 @@ const QuestionSimulatorProvider = ({ children }) => {
           {
             input: "aaaabbbbcaaaabbbbc",
             output: true,
-          },
-          {
-            input: "a",
-            output: false,
-          },
-          {
-            input: "ab",
-            output: false,
-          },
-          {
-            input: "ac",
-            output: false,
           },
           {
             input: "b",
