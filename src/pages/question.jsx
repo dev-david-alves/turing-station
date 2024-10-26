@@ -261,6 +261,10 @@ function Question() {
     setShowCasesMessage(false);
   }, [data.data]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="flex w-full flex-col gap-4 rounded-md bg-main py-4 shadow-lg">
       <div className="flex w-full flex-col gap-2 rounded-md bg-main px-4 md:gap-4">
