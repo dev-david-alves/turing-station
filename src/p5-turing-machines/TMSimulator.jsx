@@ -476,6 +476,16 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
 
         // To prevent states from overlapping
         p5.stateRepulse();
+
+        // Change cursor
+        if (
+          (p5.startLink && p5.startLink.hovering) ||
+          p5.states.some((state) => state.hovering) ||
+          p5.links.some((link) => link.hovering) ||
+          p5.links.some((link) => link.transitionBox.ruleContainsPoint(p5.mouseX, p5.mouseY) != -1)
+        )
+          p5.cursor("pointer");
+        else p5.cursor("default");
       };
 
       p5.findAllLinkSiblingRules = (originState) => {
@@ -919,9 +929,13 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
             p5.deleteObject();
 
             p5.links.forEach((link) => {
-              link.transitionBox.mousePressed();
+              link.transitionBox.deleteRule();
             });
           }
+
+          p5.links.forEach((link) => {
+            link.transitionBox.mousePressed();
+          });
 
           if (p5.selectedLeftToolbarButton === "selectObject" && p5.selectedObject) {
             p5.selectedObject.object.mousePressed();

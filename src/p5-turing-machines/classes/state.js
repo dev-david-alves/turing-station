@@ -113,6 +113,7 @@ export default class State {
     this.p5.fill("#1762A3");
     this.p5.stroke("#ffffff");
 
+    if (this.hovering) this.p5.fill("#156cb9");
     if (this.selected) this.p5.fill("#11528C");
 
     if (this.simulating !== "none") {

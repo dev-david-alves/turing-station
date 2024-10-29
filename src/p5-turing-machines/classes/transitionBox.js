@@ -570,13 +570,17 @@ export default class TransitionBox {
     return fullInfo;
   }
 
-  // Mouse events
-  mousePressed() {
+  deleteRule() {
     this.selectedRuleIndex = this.ruleContainsPoint();
 
     if (this.selectedRuleIndex !== -1 && this.p5.selectedLeftToolbarButton === "deleteObject") {
       this.removeRule();
     }
+  }
+
+  // Mouse events
+  mousePressed() {
+    this.selectedRuleIndex = this.ruleContainsPoint();
   }
 
   doubleClick() {
@@ -627,7 +631,7 @@ export default class TransitionBox {
       this.mainDiv.hide();
       this.mainDiv.position(-1000, -1000);
       this.options?.remove();
-      this.selectedRuleIndex = -1;
+      // this.selectedRuleIndex = -1;
 
       this.resetAllInputsAndButtons();
     }
@@ -681,8 +685,8 @@ export default class TransitionBox {
 
       this.p5.push();
       this.p5.fill("#ffffff");
-      if (this.ruleContainsPoint(this.p5.mouseX, this.p5.mouseY) === i) this.p5.fill("red");
-      if (this.selectedRuleIndex === i) this.p5.fill("#E4E4E4");
+      if (this.ruleContainsPoint(this.p5.mouseX, this.p5.mouseY) === i) this.p5.fill("#6c9bcf");
+      if (this.selectedRuleIndex === i) this.p5.fill("#6c9bcf");
 
       drawText(this.p5, xx, yy, fullLabel, this.ruleFontSize);
       this.p5.pop();

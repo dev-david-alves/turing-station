@@ -123,8 +123,8 @@ export default class SelfLink {
     this.p5.strokeWeight(2 * this.previusScale);
 
     if (this.hovering) {
-      this.p5.stroke("#E4E4E4");
-      this.p5.fill("#E4E4E4");
+      this.p5.stroke("#6c9bcf");
+      this.p5.fill("#6c9bcf");
     }
 
     if (this.selected) {
