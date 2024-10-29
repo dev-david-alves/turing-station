@@ -8,7 +8,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button } from "../components/Button";
 import { MTNDTM } from "../p5-turing-machines/classes/simulation/multitape-nondeterministic";
 import { cn } from "../utils/cn";
-import { ErrorToast, SuccessToast } from "../components/Toast";
+import { WarnToast, SuccessToast } from "../components/Toast";
 import { texMap } from "../p5-turing-machines/utils/getTexMaps";
 
 const createTM = ({ data }) => {
@@ -147,11 +147,11 @@ function Question() {
   const [tapeInTheEndHidden, setTapeInTheEndHidden] = useState([]);
 
   const handleCheckAnswer = () => {
-    if (!tm) return ErrorToast("Erro ao criar a máquina de Turing!")();
+    if (!tm) return WarnToast("Erro ao criar a máquina de Turing!")();
     if (tm.initialState == null && tm.initialState == undefined)
-      return ErrorToast("Defina um estado inicial para a MT antes de testar a solução!")();
+      return WarnToast("Defina um estado inicial para a MT antes de testar a solução!")();
     if (!tm.finalStates.size > 0)
-      return ErrorToast("Defina ao menos um estado final para a MT antes de testar a solução!")();
+      return WarnToast("Defina ao menos um estado final para a MT antes de testar a solução!")();
 
     setShowTestIcons(true);
     setShowCasesMessage(true);
@@ -228,7 +228,7 @@ function Question() {
       testPassed.length + hiddenTestPassed.length === question.testCases.length + question.hiddenTestCases.length;
 
     if (solved) SuccessToast("Parabéns! Você resolveu esta questão!")();
-    else ErrorToast("Está MT não resolveu todos os casos de teste! Modifique-a e tente novamente!")();
+    else WarnToast("Está MT não resolveu todos os casos de teste! Modifique-a e tente novamente!")();
 
     let backup = [...simulatorInfo];
     backup = backup.map((item) => {

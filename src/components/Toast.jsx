@@ -18,3 +18,8 @@ export const ErrorToast = (message = "") => {
   options.autoClose = 3000;
   return () => toast.error(message, options);
 };
+
+export const WarnToast = (message = "") => {
+  options.autoClose = 3000;
+  return () => toast.warn(message, options);
+};
