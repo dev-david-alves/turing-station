@@ -57,7 +57,9 @@ function SimulatorsContainer() {
       <div className="flex w-full flex-col gap-2">
         <div className="flex w-full justify-between px-4 sm:px-0">
           <div className="flex flex-col">
-            <h1 className="text-left text-2xl font-bold text-white sm:text-3xl">Simulador</h1>
+            <h1 className="text-left text-2xl font-bold text-white sm:text-3xl">
+              Simulador <span className="text-secondaryBlue opacity-85">(Beta)</span>
+            </h1>
             <DialogFilter />
           </div>
           <CreateSimulatorModal />
