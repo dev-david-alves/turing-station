@@ -176,8 +176,10 @@ export default class Link {
     if (this.p5.selectedLeftToolbarButton === "addLink") return;
 
     if (!this.selected) return;
+    if (this.p5.selectedLeftToolbarButton !== "selectObject") return;
+    if (!this.containsPoint(this.p5.mouseX, this.p5.mouseY)) return;
 
-    this.dragging = this.p5.selectedLeftToolbarButton === "selectObject";
+    this.dragging = true;
   }
 
   mouseReleased() {
@@ -192,12 +194,7 @@ export default class Link {
   }
 
   update() {
-    if (this.previusScale !== this.p5.canvasScale) {
-      this.parallelPart = (this.parallelPart / this.previusScale) * this.p5.canvasScale;
-      this.perpendicularPart = (this.perpendicularPart / this.previusScale) * this.p5.canvasScale;
-      this.lineAngleAdjust = (this.lineAngleAdjust / this.previusScale) * this.p5.canvasScale;
-      this.previusScale = this.p5.canvasScale;
-    }
+    this.previusScale = this.p5.canvasScale;
 
     if (this.selected && this.dragging) this.setAnchorPoint(this.p5.mouseX, this.p5.mouseY);
 
@@ -234,8 +231,8 @@ export default class Link {
     this.p5.strokeWeight(2 * this.previusScale);
 
     if (this.hovering) {
-      this.p5.stroke("#E4E4E4");
-      this.p5.fill("#E4E4E4");
+      this.p5.stroke("#6c9bcf");
+      this.p5.fill("#6c9bcf");
     }
 
     if (this.selected) {

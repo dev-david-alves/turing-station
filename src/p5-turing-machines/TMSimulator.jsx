@@ -9,21 +9,58 @@ import { ReactP5Wrapper } from "@p5-wrapper/react";
 import { useMemo } from "react";
 import { useSimulator } from "../providers/simulator";
 import { createCanvasFromOBJ, createJSONExportObj } from "./utils/objectFunctions";
-import { exportAsJSON, exportAsPNG, handleInputFile } from "./utils/importAndExport";
+import { exportAsJSON, exportAsPNG, importJSONFile } from "./utils/importAndExport";
+import {
+  simulationReset,
+  simulationStepBack,
+  simulationStepForward,
+  simulationFastResult,
+  createMT,
+  updateTape,
+  updateUIWhenSimulating,
+} from "./classes/simulation/run";
 
-export const TMSimulator = ({ id }) => {
-  const { getOne } = useSimulator();
-  const { fullScreen, focused, showLeftToolbar } = getOne(id);
+import test_mt from "../../test-mts/turing-machine - nd 2.json";
+import { texMap } from "./utils/getTexMaps";
+
+import { touchStartedInsideCanvas, touchMovedInsideCanvas, touchEndedInsideCanvas } from "./utils/touchInteractions";
+import { SuccessToast } from "../components/Toast";
+import { useQuestionSimulator } from "../providers/question";
+
+export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
+  const { getOne, setSimulatorInfo } = whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
+  const { name, tm_variant, tm_num_tapes, stayOption, data } = getOne(id);
+
+  const setImportedInfo = ({ newName, newVariant, newNumTapes }) => {
+    setSimulatorInfo((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, name: newName, tm_variant: newVariant, tm_num_tapes: newNumTapes } : item,
+      ),
+    );
+
+    SuccessToast("Importação realizada com sucesso!")();
+  };
 
   const sketch = useMemo(
     () => (p5) => {
       // General global properties
       p5.canvasID = id;
+      p5.isFocused = false;
       p5.canvasOffset = { x: 0, y: 0 };
       p5.moveCanvasVelocity = 3;
       p5.canvasScale = 1.0;
       p5.mtCreated = null;
       p5.selectedLeftToolbarButton = null;
+      p5.selectedBottomTab = undefined;
+      p5.testTabClasslist = false;
+      p5.multiTestTabClasslist = false;
+      p5.tm_variant = tm_variant;
+      p5.tm_num_tapes = tm_num_tapes;
+      p5.tm_name = name;
+      p5.stayOption = stayOption;
+      p5.multitestNumTests = -1;
+      p5.setDataFunction = setSimulatorInfo;
+      p5.prevDeviceOrientation = p5.deviceOrientation;
 
       // History
       p5.history = [];
@@ -48,10 +85,11 @@ export const TMSimulator = ({ id }) => {
         const playground = p5.select(`#playground-${id}`);
         if (!playground) return;
         p5.resizeCanvas(playground.width, playground.height);
+        p5.rotateScreen();
       };
 
       p5.getNewStateId = () => {
-        let maxId = 0;
+        let maxId = -1;
         for (let i = 0; i < p5.states.length; i++) if (p5.states[i].id > maxId) maxId = p5.states[i].id;
 
         return maxId + 1;
@@ -62,7 +100,7 @@ export const TMSimulator = ({ id }) => {
 
         p5.selectedLeftToolbarButton = buttonId.split("-")[1];
 
-        const getAllButtons = p5.selectAll(".toolbar-action-buttons");
+        const getAllButtons = p5.selectAll(`.toolbar-action-buttons-${id}`);
         getAllButtons.forEach((button) => {
           if (button.elt.id === buttonId) button.addClass("selected-button");
           else button.removeClass("selected-button");
@@ -92,40 +130,216 @@ export const TMSimulator = ({ id }) => {
         }
       };
 
+      p5.abstractCreateMT = () => {
+        const { success, mt } = createMT(p5);
+        if (success) {
+          p5.mtCreated = mt;
+          let input = p5.select(`#simulation-input-${id}`).value();
+          p5.mtCreated.setComputedWord(input);
+          updateTape(p5);
+          updateUIWhenSimulating(p5, false, false, true);
+        }
+      };
+
+      p5.closeBottomDrawer = (event) => {
+        let bottomDrawer = p5.select(`#bottom-drawer-${id}`);
+        if (!bottomDrawer.elt.contains(event.target)) {
+          setSimulatorInfo((prev) =>
+            prev.map((item) => (item.id === id ? { ...item, bottomDrawerOpen: false } : item)),
+          );
+        }
+      };
+
+      p5.closeLabTab = () => {
+        p5.selectedBottomTab = undefined;
+
+        updateUIWhenSimulating(p5, false, false, false);
+
+        p5.states.forEach((state) => {
+          state.simulating = false;
+          state.input.visible = false;
+        });
+      };
+
+      p5.openLabTab = () => {
+        p5.unSelectAllObjects();
+        p5.selectedBottomTab = "test-tab";
+
+        p5.abstractCreateMT();
+
+        p5.states.forEach((state) => (state.input.visible = false));
+
+        p5.currentLink = null;
+        p5.lastSelectedState = null;
+        p5.selectedObject = null;
+        p5.setLeftToolbarButton(`menu-selectObject-${id}`);
+      };
+
+      p5.showErrors = () => {
+        let simulationBottomButtons = p5.selectAll(`.simulation-bottom-buttons-${id}`);
+        let input = p5.select(`#simulation-input-${id}`);
+        if (!p5.startLink) {
+          p5.select(`#erros-container-${id}`).show();
+          p5.select(`#tape-container-${id}`).hide();
+          simulationBottomButtons.forEach((button) => button.attribute("disabled", "true"));
+          input.attribute("disabled", "true");
+          return;
+        }
+
+        input.removeAttribute("disabled");
+        p5.select(`#erros-container-${id}`).hide();
+      };
+
+      p5.toggleTestTab = () => {
+        let newTestTabClasslist = Array.from(p5.select(`#simulation-nav-test-tab-${id}`).elt.classList);
+        if (newTestTabClasslist.toString() !== p5.testTabClasslist.toString()) {
+          p5.testTabClasslist = newTestTabClasslist;
+          if (newTestTabClasslist.includes("selected-bottom-tab-button")) {
+            p5.openLabTab();
+          } else {
+            p5.closeLabTab();
+          }
+        }
+      };
+
+      p5.toggleMultiTestTab = () => {
+        let newMultiTestTabClasslist = Array.from(p5.select(`#simulation-nav-multitest-tab-${id}`).elt.classList);
+        if (newMultiTestTabClasslist.toString() !== p5.multiTestTabClasslist.toString()) {
+          p5.multiTestTabClasslist = newMultiTestTabClasslist;
+          p5.cleanAllMultiTestInputs();
+          if (newMultiTestTabClasslist.includes("selected-bottom-tab-button")) {
+            p5.selectedBottomTab = "multitest-tab";
+            p5.abstractCreateMT();
+            p5.states.forEach((state) => {
+              state.input.visible = false;
+              state.simulating = false;
+            });
+            p5.links.forEach((link) => (link.transitionBox.selected = false));
+          } else {
+            p5.selectedBottomTab = undefined;
+          }
+        }
+      };
+
+      p5.cleanAllMultiTestInputs = () => {
+        p5.selectAll(`.multitest-input-${id}`).forEach((input) => {
+          input.removeClass("border-lightDanger");
+          input.removeClass("border-lightGreen");
+
+          let inputRandomId = input.attribute("data-randomid");
+          let acceptedIcon = p5.select(`#accepted-testIcon-${inputRandomId}-${id}`);
+          let rejectedIcon = p5.select(`#rejected-testIcon-${inputRandomId}-${id}`);
+
+          if (acceptedIcon) acceptedIcon.hide();
+          if (rejectedIcon) rejectedIcon.hide();
+        });
+      };
+
+      p5.runMultiTest = () => {
+        if (!p5.mtCreated) return;
+        const allTestInputs = p5.selectAll(`.multitest-input-${id}`);
+
+        allTestInputs.forEach((input) => {
+          let value = input.value();
+          if (value === "" || value.length === 0) value = texMap["\\Blank"];
+
+          p5.mtCreated.setComputedWord(input.value());
+
+          const { accepted } = p5.mtCreated.fastForward();
+
+          input.removeClass("border-lightDanger");
+          input.removeClass("border-lightGreen");
+          let inputRandomId = input.attribute("data-randomid");
+          let acceptedIcon = p5.select(`#accepted-testIcon-${inputRandomId}-${id}`);
+          let rejectedIcon = p5.select(`#rejected-testIcon-${inputRandomId}-${id}`);
+
+          if (accepted) {
+            input.addClass("border-lightGreen");
+            acceptedIcon.show();
+            rejectedIcon.hide();
+          } else {
+            input.addClass("border-lightDanger");
+            acceptedIcon.hide();
+            rejectedIcon.show();
+          }
+        });
+      };
+
+      // Set multitest input events
+      p5.setMultiTestInputEvents = () => {
+        p5.selectAll(`.multitest-input-${id}`).forEach((input) => {
+          input.input(() => p5.cleanAllMultiTestInputs());
+
+          // Get the data-randomid attribute
+          let dataRandomId = input.attribute("data-randomid");
+          let deleteButton = p5.select(`#delete-multitest-input-${dataRandomId}-${id}`);
+
+          // Toggling the delete button
+          input.elt.addEventListener("focus", () => {
+            deleteButton.removeClass("hidden");
+            deleteButton.addClass("flex");
+          });
+
+          // Add a blur event listener
+          input.elt.addEventListener("blur", () => {
+            // After a delay, hide the delete button
+            setTimeout(() => {
+              deleteButton.removeClass("flex");
+              deleteButton.addClass("hidden");
+            }, 300);
+          });
+        });
+      };
+
+      p5.rotateScreen = () => {
+        p5.prevDeviceOrientation =
+          p5.windowWidth > p5.windowHeight && (p5.windowWidth < 500 || p5.windowHeight < 500)
+            ? "landscape"
+            : "portrait";
+
+        let leftToolbar = p5.select(`#left-toolbar-${id}`);
+        if (!leftToolbar) return;
+
+        if (p5.prevDeviceOrientation === "landscape") {
+          leftToolbar.removeClass("items-center");
+          leftToolbar.removeClass("flex-col");
+        } else {
+          leftToolbar.addClass("items-center");
+          leftToolbar.addClass("flex-col");
+        }
+      };
+
       // Main functions
       p5.setup = () => {
         // Create canvas
         const playground = p5.select(`#playground-${id}`);
         p5.cnv = p5.createCanvas(playground.width, playground.height);
         p5.cnv.id(`canvas-${id}`);
+        p5.rotateScreen();
         p5.cnv.mousePressed(() => p5.mousePressedInsideCanvas());
         p5.cnv.mouseReleased(() => p5.mouseReleasedInsideCanvas());
         p5.cnv.mouseMoved(() => p5.mouseDraggedInsideCanvas()); // Used because there is no mouseDragged event for cnv
         p5.cnv.doubleClicked(() => p5.doubleClickedInsideCanvas());
         p5.cnv.mouseWheel((event) => p5.mouseWheelInsideCanvas(event));
+        p5.cnv.touchStarted((event) => {
+          if (p5.isFocused) touchStartedInsideCanvas(p5, event);
+        });
+        p5.cnv.touchMoved((event) => {
+          if (p5.isFocused) touchMovedInsideCanvas(p5, event);
+        });
         window.addEventListener("contextmenu", (e) => e.preventDefault());
 
         // Just for testing
-        p5.states.push(new State(p5, p5.getNewStateId(), 150, 200));
-        p5.states.push(new State(p5, p5.getNewStateId(), 450, 200));
-        p5.links.push(
-          new Link(p5, p5.states[0], p5.states[1], [
-            {
-              label: ["☐", " ", "→", " ", "☐", ", ", "E"],
-              width: 54.01171875,
-            },
-            {
-              label: ["☐", " ", "→", " ", "☐", ", ", "D"],
-              width: 54.01171875,
-            },
-          ]),
-        );
+        // createCanvasFromOBJ(p5, test_mt);
+        // End of testing
 
         // Set leftToolbar buttons mousePressed
-        const getAllButtons = p5.selectAll(".toolbar-action-buttons");
+        const getAllButtons = p5.selectAll(`.toolbar-action-buttons-${id}`);
         getAllButtons.forEach((button) => {
           button.mousePressed(() => p5.setLeftToolbarButton(button.elt.id));
         });
+
+        p5.setLeftToolbarButton(`menu-selectObject-${id}`);
 
         // Set functions to menu buttons
         p5.select(`#menu-cleanCanvas-${id}`).mousePressed(() => p5.cleanCanvas());
@@ -133,8 +347,10 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#menu-redo-${id}`).mousePressed(() => redo());
         p5.select(`#menu-zoomIn-${id}`).mousePressed(() => p5.setZoom(0.25));
         p5.select(`#menu-zoomOut-${id}`).mousePressed(() => p5.setZoom(-0.25));
+
+        // Set import and export buttons
         p5.select(`#import-mt-input-${id}`).changed(() =>
-          handleInputFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0]),
+          importJSONFile(p5, p5.select(`#import-mt-input-${id}`).elt.files[0], setImportedInfo),
         );
         p5.select(`#export-mt-png-${id}`).mousePressed(() => exportAsPNG(p5));
         p5.select(`#export-mt-json-${id}`).mousePressed(() => exportAsJSON(p5));
@@ -146,11 +362,66 @@ export const TMSimulator = ({ id }) => {
         p5.select(`#rename-state-${id}`).mousePressed(() => p5.renameState());
         p5.select(`#delete-state-${id}`).mousePressed(() => p5.deleteObject());
 
+        // Set simulation input and buttons
+        p5.select(`#simulation-input-${id}`).input(() => p5.abstractCreateMT());
+        p5.select(`#simulation-fast-reset-${id}`).mousePressed(() => simulationReset(p5));
+        p5.select(`#simulation-step-back-${id}`).mousePressed(() => simulationStepBack(p5));
+        p5.select(`#simulation-step-forward-${id}`).mousePressed(() => simulationStepForward(p5));
+        p5.select(`#simulation-fast-simulation-${id}`).mousePressed(() => simulationFastResult(p5));
+        p5.select(`#erros-container-${id}`).show();
+
+        if (data) createCanvasFromOBJ(p5, data);
+
         // First save on history
         p5.history.push(createJSONExportObj(p5));
+
+        p5.abstractCreateMT();
+        p5.states.forEach((state) => (state.simulating = false));
+
+        // Get the tab
+        p5.testTabClasslist = Array.from(p5.select(`#simulation-nav-test-tab-${id}`).elt.classList);
+        p5.multiTestTabClasslist = Array.from(p5.select(`#simulation-nav-multitest-tab-${id}`).elt.classList);
+        p5.select(`#run-multitest-${id}`).mousePressed(() => p5.runMultiTest());
+
+        p5.setMultiTestInputEvents();
+        p5.multitestNumTests = p5.selectAll(`.multitest-input-${id}`).length;
+
+        // Initializate the ruleSibling for each link
+        p5.links.forEach((link) => {
+          if (link instanceof Link) {
+            link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(link.stateA);
+          } else {
+            link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(link.state);
+          }
+        });
       };
 
       p5.draw = () => {
+        let editModal = p5.select(`#edit-simulator-modal-${id}`);
+
+        if (editModal && editModal.hasClass("editPopoverOpen")) {
+          p5.states.forEach((state) => (state.input.visible = false));
+          p5.links.forEach((link) => (link.transitionBox.selected = false));
+        }
+
+        // Updating the tm_name by doom because I can't access the update "name"
+        p5.tm_name = p5.select(`#simulator-name-${id}`).elt.innerText;
+
+        let simulatorDiv = p5.select(`#simulator-${id}`);
+        p5.isFocused = simulatorDiv.hasClass("shadow-high") || simulatorDiv.hasClass("shadow-question");
+
+        if (!p5.isFocused) return;
+
+        p5.showErrors();
+        p5.toggleTestTab();
+        p5.toggleMultiTestTab();
+
+        if (p5.selectAll(`.multitest-input-${id}`).length !== p5.multitestNumTests) {
+          p5.multitestNumTests = p5.selectAll(`.multitest-input-${id}`).length;
+          p5.setMultiTestInputEvents();
+          p5.cleanAllMultiTestInputs();
+        }
+
         // Set properties
         p5.reCalculateCanvasSize();
         p5.background("#181a1e");
@@ -197,10 +468,47 @@ export const TMSimulator = ({ id }) => {
           p5.states[i].draw();
         }
 
+        // Do not allow to create a link from a final state
+        if (p5.lastSelectedState && p5.lastSelectedState.isFinalState) p5.currentLink = null;
+
+        // Draw the current link
         if (p5.currentLink) p5.currentLink.draw();
 
         // To prevent states from overlapping
         p5.stateRepulse();
+
+        // Change cursor
+        if (
+          (p5.startLink && p5.startLink.hovering) ||
+          p5.states.some((state) => state.hovering) ||
+          p5.links.some((link) => link.hovering) ||
+          p5.links.some((link) => link.transitionBox.ruleContainsPoint(p5.mouseX, p5.mouseY) != -1)
+        )
+          p5.cursor("pointer");
+        else p5.cursor("default");
+      };
+
+      p5.findAllLinkSiblingRules = (originState) => {
+        let rules = [];
+        if (!originState) return rules;
+
+        p5.links.forEach((link) => {
+          if (link instanceof Link) {
+            if (link.stateA.id === originState.id) {
+              link.transitionBox.rules.forEach((rule) => {
+                rules.push(rule);
+              });
+            }
+          } else {
+            if (link.state.id === originState.id) {
+              link.transitionBox.rules.forEach((rule) => {
+                rules.push(rule);
+              });
+            }
+          }
+        });
+
+        return rules;
       };
 
       p5.createLink = () => {
@@ -263,12 +571,12 @@ export const TMSimulator = ({ id }) => {
         }
       };
 
-      p5.setInitialState = (index = null, props = null) => {
+      p5.setInitialState = (stateID = null, props = null) => {
         let linkSize = 80 * p5.canvasScale;
 
-        if (index === null) {
+        if (stateID === null) {
           if (!p5.selectedObject) return;
-          if ((!p5.selectedObject.object) instanceof State) return;
+          if (!(p5.selectedObject.object instanceof State)) return;
 
           const selectedState = p5.selectedObject.object;
           let start = {
@@ -281,32 +589,39 @@ export const TMSimulator = ({ id }) => {
           // Unset the start state for all states
           p5.states.forEach((state) => {
             state.isStartState = false;
+            state.selected = false;
           });
 
           // Set the selected state as the start state
           selectedState.isStartState = true;
+          createHistory(p5);
         } else {
-          let start = { x: p5.states[index].x - linkSize, y: p5.states[index].y };
+          const state = p5.states.find((state) => state.id === stateID);
+          if (state) {
+            let start = { x: state.x - linkSize, y: state.y };
 
-          // Modify the starting position if props are provided
-          if (props) {
-            start = {
-              x: p5.states[index].x + props.deltaX,
-              y: p5.states[index].y + props.deltaY,
-            };
+            // Modify the starting position if props are provided
+            if (props) {
+              start = {
+                x: state.x + props.deltaX,
+                y: state.y + props.deltaY,
+              };
+            }
+
+            // Create a new StartLink for the specified state
+            p5.startLink = new StartLink(p5, state, start);
+            p5.startLink.selected = true;
+
+            // Unset the start state for all states
+            p5.states.forEach((state) => {
+              state.isStartState = false;
+              state.selected = false;
+            });
+
+            // Set the specified state as the start state
+            state.isStartState = true;
+            createHistory(p5);
           }
-
-          // Create a new StartLink for the specified state
-          p5.startLink = new StartLink(p5, p5.states[index], start);
-          p5.startLink.selected = true;
-
-          // Unset the start state for all states
-          p5.states.forEach((state) => {
-            state.isStartState = false;
-          });
-
-          // Set the specified state as the start state
-          p5.states[index].isStartState = true;
         }
 
         // Hide the context menu
@@ -319,6 +634,8 @@ export const TMSimulator = ({ id }) => {
 
         const selectedState = p5.selectedObject.object;
         selectedState.isFinalState = !selectedState.isFinalState;
+
+        createHistory(p5);
 
         // Hide the context menu
         if (p5.stateContextMenu) p5.stateContextMenu.hide();
@@ -378,6 +695,7 @@ export const TMSimulator = ({ id }) => {
       p5.createState = (x = p5.mouseX, y = p5.mouseX) => {
         // Check if mouse is over a link transition box
         if (p5.links.some((link) => link.transitionBox.containsPoint(x, y))) return;
+        if (p5.links.some((link) => link.transitionBox.ruleContainsPoint(x, y) != -1)) return;
 
         // Create new state
         let stateID = p5.getNewStateId();
@@ -486,6 +804,7 @@ export const TMSimulator = ({ id }) => {
                   )
                 ) {
                   p5.links.push(new Link(p5, from, to));
+                  p5.links[p5.links.length - 1].transitionBox.siblingRules = p5.findAllLinkSiblingRules(from);
                   p5.links[p5.links.length - 1].transitionBox.selected = true;
 
                   // Extra: if already exists a link to -> from, turn links curved
@@ -509,8 +828,8 @@ export const TMSimulator = ({ id }) => {
                     (link) => link instanceof Link && link.stateA.id === from.id && link.stateB.id === to.id,
                   );
                   if (link) {
+                    link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(from);
                     link.transitionBox.selected = true;
-                    console.log("Link already exists");
                   }
                 }
               } else {
@@ -535,11 +854,12 @@ export const TMSimulator = ({ id }) => {
           // Check if already exists a link to itself
           if (!p5.links.some((link) => link instanceof SelfLink && link.state.id === p5.lastSelectedState.id)) {
             p5.links.push(new SelfLink(p5, p5.currentLink.state, true));
+            p5.links[p5.links.length - 1].transitionBox.siblingRules = p5.findAllLinkSiblingRules(p5.currentLink.state);
             p5.links[p5.links.length - 1].transitionBox.selected = true;
           } else {
             let link = p5.links.find((link) => link instanceof SelfLink && link.state.id === p5.lastSelectedState.id);
             if (link) {
-              console.log("SelfLink already exists");
+              link.transitionBox.siblingRules = p5.findAllLinkSiblingRules(p5.lastSelectedState);
               link.transitionBox.selected = true;
             }
           }
@@ -557,14 +877,6 @@ export const TMSimulator = ({ id }) => {
         p5.states.forEach((state) => {
           state.mouseReleased();
         });
-
-        return false;
-      };
-
-      p5.mouseDraggedInsideCanvas = () => {
-        if (!p5.mouseIsPressed || p5.mouseButton !== p5.LEFT) return false;
-
-        if (p5.keyIsDown(p5.SHIFT) || p5.selectedLeftToolbarButton === "addLink") p5.createLink();
 
         return false;
       };
@@ -588,7 +900,7 @@ export const TMSimulator = ({ id }) => {
       };
 
       p5.mousePressedInsideCanvas = () => {
-        if (!focused) return false;
+        if (!p5.isFocused) return false;
         if (p5.stateContextMenu) p5.stateContextMenu.hide();
         if (p5.checkAndCloseAllStateInputVisible()) createHistory(p5);
 
@@ -617,9 +929,13 @@ export const TMSimulator = ({ id }) => {
             p5.deleteObject();
 
             p5.links.forEach((link) => {
-              link.transitionBox.mousePressed();
+              link.transitionBox.deleteRule();
             });
           }
+
+          p5.links.forEach((link) => {
+            link.transitionBox.mousePressed();
+          });
 
           if (p5.selectedLeftToolbarButton === "selectObject" && p5.selectedObject) {
             p5.selectedObject.object.mousePressed();
@@ -631,11 +947,30 @@ export const TMSimulator = ({ id }) => {
         return false;
       };
 
+      p5.isMouseOutsideCanvas = () => {
+        return p5.mouseX < 0 || p5.mouseY < 0 || p5.mouseX > p5.width || p5.mouseY > p5.height;
+      };
+
+      // MousePressed
+      p5.mousePressed = (event) => {
+        p5.closeBottomDrawer(event);
+      };
+
+      // MouseDragged
+      p5.mouseDraggedInsideCanvas = () => {
+        if (!p5.mouseIsPressed || p5.mouseButton !== p5.LEFT) return false;
+
+        if (p5.keyIsDown(p5.SHIFT) || p5.selectedLeftToolbarButton === "addLink") p5.createLink();
+
+        return false;
+      };
+
+      // MouseReleased and TouchEnded
       p5.mouseReleased = () => {
         p5.canvasOffset.x = 0;
         p5.canvasOffset.y = 0;
 
-        if (!focused) return false;
+        if (p5.startLink) p5.startLink.mouseReleased();
 
         p5.states.forEach((state) => {
           state.mouseReleased();
@@ -644,6 +979,37 @@ export const TMSimulator = ({ id }) => {
         p5.links.forEach((link) => {
           link.mouseReleased();
         });
+
+        if (!p5.isFocused) return true;
+        // Outside canvas
+        if (p5.isMouseOutsideCanvas()) {
+          p5.currentLink = null;
+          return true;
+        }
+      };
+
+      p5.touchEnded = () => {
+        p5.canvasOffset.x = 0;
+        p5.canvasOffset.y = 0;
+
+        if (p5.startLink) p5.startLink.mouseReleased();
+
+        p5.states.forEach((state) => {
+          state.mouseReleased();
+        });
+
+        p5.links.forEach((link) => {
+          link.mouseReleased();
+        });
+
+        if (!p5.isFocused) return true;
+        // Outside canvas
+        if (p5.isMouseOutsideCanvas()) {
+          p5.currentLink = null;
+          return true;
+        }
+
+        touchEndedInsideCanvas(p5);
       };
 
       p5.doubleClickedInsideCanvas = () => {
@@ -659,18 +1025,9 @@ export const TMSimulator = ({ id }) => {
         )
           return;
 
-        if (p5.selectedLeftToolbarButton === "selectObject") {
-          if (!hoveredObject) {
-            console.log("Double clicked on canvas");
-            p5.unSelectAllObjects();
-            p5.checkAndCloseAllStateInputVisible();
-            p5.createState(p5.mouseX, p5.mouseY);
-          } else {
-            if (hoveredObject.object instanceof State) {
-              console.log("Double clicked on state");
-
-              p5.openStateContextMenu();
-            }
+        if (p5.selectedLeftToolbarButton === "selectObject" && hoveredObject) {
+          if (hoveredObject.object instanceof State) {
+            p5.openStateContextMenu();
           }
         }
 
@@ -688,6 +1045,9 @@ export const TMSimulator = ({ id }) => {
         if (newIndex !== p5.currentHistoryIndex) {
           p5.currentHistoryIndex = newIndex;
           createCanvasFromOBJ(p5, p5.history[newIndex]);
+          p5.setDataFunction((prev) =>
+            prev.map((item) => (item.id === p5.canvasID ? { ...item, data: p5.history[newIndex] } : item)),
+          );
         }
       };
 
@@ -697,12 +1057,15 @@ export const TMSimulator = ({ id }) => {
         if (newIndex !== p5.currentHistoryIndex) {
           p5.currentHistoryIndex = newIndex;
           createCanvasFromOBJ(p5, p5.history[newIndex]);
+          p5.setDataFunction((prev) =>
+            prev.map((item) => (item.id === p5.canvasID ? { ...item, data: p5.history[newIndex] } : item)),
+          );
         }
       };
 
       // Keyboard functions
       p5.keyPressed = () => {
-        if (!focused) return false;
+        if (!p5.isFocused) return true;
 
         if (p5.keyCode === p5.DELETE) p5.deleteObject();
 
@@ -722,7 +1085,7 @@ export const TMSimulator = ({ id }) => {
       };
 
       p5.keyReleased = () => {
-        if (!focused) return false;
+        if (!p5.isFocused) return true;
 
         if (p5.keyCode === p5.SHIFT && p5.selectedLeftToolbarButton !== "addLink") {
           p5.currentLink = null;
@@ -732,7 +1095,7 @@ export const TMSimulator = ({ id }) => {
         }
       };
     },
-    [id, focused],
+    [id],
   );
 
   return <ReactP5Wrapper sketch={sketch} />;

@@ -5,39 +5,7 @@ const SimulatorContext = createContext(null);
 const generateRandomId = () => Math.random().toString(36).substr(2, 9);
 
 const SimulatorProvider = ({ children }) => {
-  const [simulatorInfo, setSimulatorInfo] = useState([
-    {
-      id: generateRandomId(),
-      name: "Custom MT 01",
-      open: true,
-      fullScreen: false,
-      focused: true,
-      showLeftToolbar: true,
-      showTooltips: false,
-      data: undefined,
-    },
-    // {
-    //   id: generateRandomId(),
-    //   name: "Custom MT 02",
-    //   open: false,
-    //   fullScreen: false,
-    //   focused: false,
-    //   showLeftToolbar: true,
-    //   showTooltips: true,
-    //   data: undefined,
-    // },
-
-    // {
-    //   id: generateRandomId(),
-    //   name: "Custom MT 03",
-    //   open: false,
-    //   fullScreen: false,
-    //   focused: false,
-    //   showLeftToolbar: true,
-    //   showTooltips: true,
-    //   data: undefined,
-    // },
-  ]);
+  const [simulatorInfo, setSimulatorInfo] = useState([]);
 
   const getOne = (id) => simulatorInfo.find((item) => item.id === id);
 
@@ -48,16 +16,31 @@ const SimulatorProvider = ({ children }) => {
     if (simulator.focused === focused) return;
 
     setSimulatorInfo((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, focused: focused } : { ...item, focused: false })),
+      prev.map((item) =>
+        item.id === id ? { ...item, open: focused, focused: focused } : { ...item, open: false, focused: false },
+      ),
     );
   };
 
-  // useEffect(() => {
-  //   console.log(simulatorInfo);
-  // }, [simulatorInfo]);
+  const setBottomDrawerOpen = (id, value) => {
+    setSimulatorInfo((prev) => prev.map((item) => (item.id === id ? { ...item, bottomDrawerOpen: value } : item)));
+  };
+
+  useEffect(() => {
+    const data = localStorage.getItem("simulatorInfo");
+    if (data) {
+      setSimulatorInfo(JSON.parse(data));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("simulatorInfo", JSON.stringify(simulatorInfo));
+  }, [simulatorInfo]);
 
   return (
-    <SimulatorContext.Provider value={{ simulatorInfo, setSimulatorInfo, getOne, handleFocus }}>
+    <SimulatorContext.Provider
+      value={{ simulatorInfo, setSimulatorInfo, getOne, handleFocus, generateRandomId, setBottomDrawerOpen }}
+    >
       {children}
     </SimulatorContext.Provider>
   );

@@ -2,7 +2,7 @@
   "name": "turing-station",
   "homepage": "https://dev-david-alves.github.io/turing-station",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.5.0",
   "type": "module",
   "author": "David Alves",
   "scripts": {
@@ -10,13 +10,18 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "host": "vite --host",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@p5-wrapper/react": "^4.4.2",
+    "@radix-ui/react-alert-dialog": "^1.1.1",
     "@radix-ui/react-checkbox": "^1.1.1",
+    "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-popover": "^1.1.1",
+    "@radix-ui/react-radio-group": "^1.2.0",
+    "@radix-ui/react-select": "^2.1.1",
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tooltip": "^1.1.2",
     "class-variance-authority": "^0.7.0",
@@ -24,6 +29,10 @@
     "p5": "^1.10.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-resizable-panels": "^2.1.2",
+    "react-router": "^6.26.2",
+    "react-router-dom": "^6.26.2",
+    "react-toastify": "^10.0.5",
     "tailwind-merge": "^2.5.2",
     "zod": "^3.23.8"
   },
@@ -44,6 +53,7 @@
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",
     "tailwindcss": "^3.4.10",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-pwa": "^0.20.5"
   }
 }

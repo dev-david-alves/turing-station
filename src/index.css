@@ -4,12 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts */
-@font-face {
-  font-family: "cmunbi";
-  src: url("../fonts/cmunbi.ttf") format("truetype");
-}
-
 /* Variables */
 :root {
   --shadow-low: rgba(23, 98, 163, 0.4);
@@ -17,7 +11,9 @@
 
   --primary: #1762a3;
   --primary-hover: #11528c;
+  --secondary-blue: #6c9bcf;
   --danger: #e10000;
+  --light-danger: #ff4d4d;
   --success: #1b9c85;
   --warning: #f7d060;
   --main: #ffffff;
@@ -27,9 +23,11 @@
   --dark-variant: #677483;
   --background: #f6f6f9;
   --dark-green: #009121;
+  --light-green: #6cfe6c;
   --white: #ffffff;
   --disabled-button: #4b4b4b;
   --darken-blue: #36404e;
+  --purple-medium: #8b008b;
 }
 
 .dark-mode-variables {
@@ -101,4 +99,56 @@ input::-webkit-autocomplete-item:hover {
 .selected-button {
   background-color: var(--primary);
   color: var(--white);
+}
+
+.selected-bottom-tab-button {
+  @apply h-8 w-8 border-primary bg-primary transition-all;
+}
+
+/* First child */
+.selected-bottom-tab-button > .icon {
+  @apply h-5 w-5;
+}
+
+.tape-state {
+  @apply mx-2 flex h-10 max-h-10 min-h-10 w-10 min-w-10 max-w-10 items-center justify-center truncate rounded-full border-2 border-white text-center font-semibold text-white;
+}
+
+/* Tape */
+.tape-container-class {
+  @apply opacity-100 transition-opacity delay-500 duration-1000 ease-out;
+}
+
+.tape-container-class.hide {
+  @apply opacity-0;
+}
+
+/* Scroll */
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #181a1e;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #4c5960;
+  border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #3c474c;
+}
+
+/* autofill chrome box */
+:-webkit-autofill {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: white !important;
 }

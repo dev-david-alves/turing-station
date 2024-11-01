@@ -54,12 +54,12 @@ export default class State {
     }
 
     if (!this.selected) return;
+    if (this.p5.selectedLeftToolbarButton !== "selectObject") return;
+    if (!this.containsPoint(this.p5.mouseX, this.p5.mouseY)) return;
 
-    if (this.p5.selectedLeftToolbarButton === "selectObject") {
-      this.dragging = true;
-      this.offsetX = this.x - this.p5.mouseX;
-      this.offsetY = this.y - this.p5.mouseY;
-    }
+    this.dragging = true;
+    this.offsetX = this.x - this.p5.mouseX;
+    this.offsetY = this.y - this.p5.mouseY;
   }
 
   mouseReleased() {
@@ -89,7 +89,7 @@ export default class State {
       this.y = this.p5.mouseY + this.offsetY;
     }
 
-    this.input.x = this.x - this.input.width / 2;
+    this.input.x = this.x;
     this.input.y = this.y - (this.radius + this.input.height + 5 * this.p5.canvasScale);
 
     if (this.input.visible && document.activeElement !== this.input.input.elt) {
@@ -112,10 +112,15 @@ export default class State {
     this.p5.strokeWeight(2 * this.p5.canvasScale);
     this.p5.fill("#1762A3");
     this.p5.stroke("#ffffff");
+
+    if (this.hovering) this.p5.fill("#156cb9");
     if (this.selected) this.p5.fill("#11528C");
-    if (this.simulating) {
+
+    if (this.simulating !== "none") {
       this.p5.strokeWeight(4 * this.p5.canvasScale);
-      this.p5.fill("purple");
+      if (this.simulating === "accepted") this.p5.fill("#6cfe6c");
+      if (this.simulating === "rejected") this.p5.fill("#ff0000");
+      if (this.simulating === "simulating") this.p5.fill("#8B008B");
     }
 
     this.p5.ellipseMode(this.p5.CENTER);
