@@ -57,28 +57,34 @@ function SideNavigation({ isOpen, setIsOpen }) {
         )}
 
         <ul className="w-full">
-          {links.map((link) => (
-            <li
-              key={link.name}
-              className={cn(
-                "flex items-center gap-3.5 transition-all duration-300",
-                location.pathname === link.to && "bg-background",
-                location.pathname !== link.to && "hover:bg-darkenBlue",
-              )}
-            >
-              {location.pathname === link.to && <div className="h-6 min-h-6 w-1.5 min-w-1.5 bg-secondaryBlue"></div>}
-              <Link
-                to={link.to}
+          {links.map((link) => {
+            let locQuestionMark = link.to.indexOf("?");
+            let sub = link.to.substring(0, locQuestionMark === -1 ? link.to.length : locQuestionMark);
+            let areEqual = location.pathname === sub;
+
+            return (
+              <li
+                key={link.name}
                 className={cn(
-                  "text-md flex h-16 w-full items-center gap-2 text-nowrap pl-5 text-white",
-                  location.pathname === link.to && "pl-0 text-secondaryBlue",
+                  "flex items-center gap-3.5 transition-all duration-300",
+                  areEqual && "bg-background",
+                  !areEqual && "hover:bg-darkenBlue",
                 )}
               >
-                <Icon icon={link.icon} className="min-w-fit text-xl" />
-                {isOpen && link.name}
-              </Link>
-            </li>
-          ))}
+                {areEqual && <div className="h-6 min-h-6 w-1.5 min-w-1.5 bg-secondaryBlue"></div>}
+                <Link
+                  to={link.to}
+                  className={cn(
+                    "text-md flex h-16 w-full items-center gap-2 text-nowrap pl-5 text-white",
+                    areEqual && "pl-0 text-secondaryBlue",
+                  )}
+                >
+                  <Icon icon={link.icon} className="min-w-fit text-xl" />
+                  {isOpen && link.name}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
       <div className="flex w-full items-center justify-center">
