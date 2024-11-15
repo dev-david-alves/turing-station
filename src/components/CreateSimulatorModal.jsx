@@ -23,7 +23,7 @@ import { SuccessToast } from "./Toast";
 const CreateSimulatorModalSchema = z.object({
   name: z
     .string()
-    .min(3, "Nome do simulador deve ter no mínimo 3 caracteres")
+    .min(1, "Nome do simulador deve ter no mínimo 1 caractere")
     .max(50, "Nome do simulador deve ter no máximo 50 caracteres"),
   variant: z.enum(["tm", "ndtm", "mttm"]),
   numTapes: z

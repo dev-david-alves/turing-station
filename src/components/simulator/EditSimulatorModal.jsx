@@ -53,8 +53,8 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
 
     if (newName === name) return;
 
-    if (newName.length < 3) {
-      setRenameErrors(["Nome do simulador deve ter no mínimo 3 caracteres"]);
+    if (newName.length < 1) {
+      setRenameErrors(["Nome do simulador deve ter no mínimo 1 caractere"]);
       return;
     }
 
