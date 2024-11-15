@@ -427,12 +427,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
         p5.background("#181a1e");
 
         // Move canvas
-        if (
-          p5.mouseIsPressed &&
-          ((p5.keyIsDown(p5.CONTROL) && p5.mouseButton === p5.LEFT) ||
-            p5.mouseButton === p5.CENTER ||
-            p5.selectedLeftToolbarButton === "moveCanvas")
-        ) {
+        if (p5.mouseIsPressed && (p5.mouseButton === p5.CENTER || p5.selectedLeftToolbarButton === "moveCanvas")) {
           p5.moveCanvas();
         }
 
@@ -512,11 +507,9 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       };
 
       p5.createLink = () => {
-        if (
-          (p5.selectedLeftToolbarButton !== "selectObject" && p5.selectedLeftToolbarButton !== "addLink") ||
-          p5.links.some((link) => link.transitionBox.selected)
-        )
-          return;
+        if (p5.selectedLeftToolbarButton !== "addLink" || p5.links.some((link) => link.transitionBox.selected)) return;
+        if (p5.links.some((link) => link.dragging)) return;
+        if (p5.startLink && p5.startLink.dragging) return;
 
         let hoveredObject = p5.getFirstSelectedObject(p5.mouseX, p5.mouseY, false);
 
@@ -778,6 +771,8 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       };
 
       p5.moveCanvas = (x = p5.mouseX, y = p5.mouseY) => {
+        if (p5.currentLink) return;
+
         p5.canvasOffset.x = (p5.canvasOffset.x - (x - p5.pmouseX)) / p5.moveCanvasVelocity;
         p5.canvasOffset.y = (p5.canvasOffset.y - (y - p5.pmouseY)) / p5.moveCanvasVelocity;
       };
@@ -933,7 +928,10 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
             });
           }
 
+          if (p5.startLink) p5.startLink.mousePressed();
+
           p5.links.forEach((link) => {
+            link.mousePressed();
             link.transitionBox.mousePressed();
           });
 
@@ -960,7 +958,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       p5.mouseDraggedInsideCanvas = () => {
         if (!p5.mouseIsPressed || p5.mouseButton !== p5.LEFT) return false;
 
-        if (p5.keyIsDown(p5.SHIFT) || p5.selectedLeftToolbarButton === "addLink") p5.createLink();
+        if (p5.selectedLeftToolbarButton === "addLink") p5.createLink();
 
         return false;
       };
@@ -1087,9 +1085,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       p5.keyReleased = () => {
         if (!p5.isFocused) return true;
 
-        if (p5.keyCode === p5.SHIFT && p5.selectedLeftToolbarButton !== "addLink") {
-          p5.currentLink = null;
-        } else if (p5.keyCode === p5.CONTROL) {
+        if (p5.keyCode === p5.CONTROL) {
           p5.canvasOffset.x = 0;
           p5.canvasOffset.y = 0;
         }

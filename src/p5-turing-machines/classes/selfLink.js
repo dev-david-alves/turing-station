@@ -69,10 +69,8 @@ export default class SelfLink {
   }
 
   mousePressed() {
-    if (this.p5.selectedLeftToolbarButton === "addLink") return;
-
     if (!this.selected) return;
-    if (this.p5.selectedLeftToolbarButton !== "selectObject") return;
+    if (this.p5.selectedLeftToolbarButton !== "selectObject" && this.p5.selectedLeftToolbarButton !== "addLink") return;
     if (!this.containsPoint(this.p5.mouseX, this.p5.mouseY)) return;
 
     this.dragging = true;
