@@ -13,10 +13,11 @@ const buttonVariants = cva(
           "rounded-none flex h-10 w-14 items-center justify-center border-none bg-none text-white transition-colors duration-200 hover:bg-primaryHover",
         popoverMenu:
           "rounded-none gap-2 flex px-4 items-center w-full justify-start border-none bg-none text-white transition-colors duration-200 hover:bg-background",
-        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90",
+        default: "bg-primary text-primary-foreground shadow hover:bg-primary/90 hover:brightness-90 transition-all",
         destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline: "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        darkGreen: "bg-darkGreen text-darkGreen-foreground shadow-sm hover:bg-darkGreen/80",
+        darkGreen:
+          "bg-darkGreen text-darkGreen-foreground shadow-sm hover:bg-darkGreen/80 hover:brightness-90 transition-all",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },

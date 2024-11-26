@@ -68,7 +68,7 @@ function SimulatorsContainer() {
             <DialogFilter />
           </div>
 
-          <div className="relative flex items-center gap-4">
+          <div className="relative flex items-start gap-2">
             <Popover open={isMainMenuOpen} onOpenChange={setIsMainMenuOpen}>
               <PopoverTrigger asChild>
                 <button
