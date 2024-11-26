@@ -16,6 +16,7 @@ function SimulatorsContainer() {
   const { simulatorInfo } = useSimulator();
   const [searchParams] = useSearchParams();
   const [finalData, setFinalData] = useState([]);
+  const [isMainMenuOpen, setIsMainMenuOpen] = useState(false);
 
   useEffect(() => {
     const filterBy = searchParams.get("filterBy") || "all";
@@ -68,7 +69,7 @@ function SimulatorsContainer() {
           </div>
 
           <div className="relative flex items-center gap-4">
-            <Popover>
+            <Popover open={isMainMenuOpen} onOpenChange={setIsMainMenuOpen}>
               <PopoverTrigger asChild>
                 <button
                   className={cn(
@@ -80,7 +81,7 @@ function SimulatorsContainer() {
                 </button>
               </PopoverTrigger>
               <PopoverContent>
-                <MainMenu />
+                <MainMenu setIsMainMenuOpen={setIsMainMenuOpen} />
               </PopoverContent>
             </Popover>
 

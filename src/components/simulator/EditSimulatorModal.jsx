@@ -89,11 +89,11 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
   //   );
   // };
 
-  const handleToggleTooltips = () => {
-    setSimulatorInfo((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, showTooltips: !item.showTooltips } : item)),
-    );
-  };
+  // const handleToggleTooltips = () => {
+  //   setSimulatorInfo((prev) =>
+  //     prev.map((item) => (item.id === id ? { ...item, showTooltips: !item.showTooltips } : item)),
+  //   );
+  // };
 
   const handleDeleteSimulator = () => {
     setSimulatorInfo((prev) => prev.filter((item) => item.id !== id));
@@ -174,7 +174,7 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
         )}
       </div>
 
-      <hr className="border-darkenBlue border-opacity-10" />
+      {/* <hr className="border-darkenBlue border-opacity-10" /> */}
 
       {/* <div className="mx-4 flex w-full items-center gap-2">
         <Checkbox id="hide-toolbar" checked={showLeftToolbar} onClick={handleToggleLeftToolbar} />
@@ -183,12 +183,12 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
         </label>
       </div> */}
 
-      <div className="mx-4 flex w-full items-center gap-2">
+      {/* <div className="mx-4 flex w-full items-center gap-2">
         <Checkbox id="disable-tooltips" checked={showTooltips} onClick={handleToggleTooltips} />
         <label htmlFor="disable-tooltips" className="cursor-pointer text-sm font-medium">
           Mostrar dicas
         </label>
-      </div>
+      </div> */}
 
       <hr className={cn("border-darkenBlue border-opacity-10", whichProvider !== "simulator" && "hidden")} />
 

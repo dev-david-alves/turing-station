@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { useSimulator } from "../../providers/simulator";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, buttonVariants } from "../Button";
@@ -15,9 +16,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../AlertDialog";
+import { Checkbox } from "../Checkbox";
 
-function MainMenu() {
+function MainMenu({ setIsMainMenuOpen }) {
   const { simulatorInfo, setSimulatorInfo, generateRandomId } = useSimulator();
+  const [showTooltips, setShowTooltips] = useState(true);
+
+  const importAllRef = useRef(null);
 
   const exportMultipleMTs = () => {
     let dmts = simulatorInfo.map((simulator) => simulator.data);
@@ -32,6 +37,11 @@ function MainMenu() {
     URL.revokeObjectURL(url);
 
     SuccessToast("Arquivo das MTs salvo com sucesso!")();
+    setIsMainMenuOpen(false);
+  };
+
+  const handleClickInputFile = () => {
+    importAllRef.current.click();
   };
 
   const handleImportFile = (e) => {
@@ -75,6 +85,7 @@ function MainMenu() {
 
       setSimulatorInfo(auxData);
       SuccessToast("Importação realizada com sucesso!")();
+      setIsMainMenuOpen(false);
       // }
     };
 
@@ -84,7 +95,16 @@ function MainMenu() {
   const handleDeleteAllSimulators = () => {
     setSimulatorInfo([]);
     SuccessToast("Todos os simuladores deletados com sucesso!")();
+    setIsMainMenuOpen(false);
   };
+
+  const handleToggleTooltips = () => {
+    setSimulatorInfo((prev) => prev.map((item) => ({ ...item, showTooltips: !item.showTooltips })));
+  };
+
+  useEffect(() => {
+    setShowTooltips(simulatorInfo[0]?.showTooltips);
+  }, [simulatorInfo]);
 
   return (
     <div className="dark-mode-variables flex w-full max-w-80 flex-col justify-center gap-2 rounded-md bg-main p-4 px-0 text-white shadow-4xl">
@@ -92,13 +112,43 @@ function MainMenu() {
 
       <hr className="border-darkenBlue border-opacity-10" />
 
-      <label
-        htmlFor="import-all"
-        className={cn(buttonVariants({ variant: "popoverMenu", size: "sm" }), "cursor-pointer justify-start")}
-      >
-        <Icon icon="bxs:file-import" className="icon h-4 w-4" /> Importar múltiplas MTs (JSON)
-      </label>
-      <input type="file" id="import-all" className="hidden" onChange={handleImportFile} />
+      <div className="mx-4 flex w-full items-center gap-2">
+        <Checkbox id="disable-all-tooltips" checked={showTooltips} onClick={handleToggleTooltips} />
+        <label htmlFor="disable-all-tooltips" className="cursor-pointer text-sm font-medium">
+          Mostrar dicas
+        </label>
+      </div>
+
+      <hr className="border-darkenBlue border-opacity-10" />
+
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button
+            variant="popoverMenu"
+            size="sm"
+            className={cn(buttonVariants({ variant: "popoverMenu", size: "sm" }), "cursor-pointer justify-start")}
+          >
+            <Icon icon="mdi:trash" className="icon h-4 w-4" />
+            Importar múltiplas MTs (JSON)
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="dark-mode-variables text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ao importar múltiplas MTs, todos os simuladores atuais serão substituídos. Deseja continuar?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-danger" onClick={handleClickInputFile}>
+              Continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <input ref={importAllRef} type="file" id="import-all" className="hidden" onChange={handleImportFile} />
 
       <hr className="border-darkenBlue border-opacity-10" />
 
