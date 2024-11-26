@@ -7,6 +7,10 @@ import CreateSimulatorModal from "../CreateSimulatorModal";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import DialogFilter from "../filters/dialogFilter";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { buttonVariants } from "../Button";
+import { Popover, PopoverContent, PopoverTrigger } from "../Popover";
+import MainMenu from "./MainMenu";
 
 function SimulatorsContainer() {
   const { simulatorInfo } = useSimulator();
@@ -62,7 +66,26 @@ function SimulatorsContainer() {
             </h1>
             <DialogFilter />
           </div>
-          <CreateSimulatorModal />
+
+          <div className="relative flex items-center gap-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button
+                  className={cn(
+                    buttonVariants("simulatorMenu"),
+                    "border-none bg-zinc-700 bg-none p-2 text-white hover:bg-zinc-600",
+                  )}
+                >
+                  <Icon icon="tabler:dots" className="icon h-6 w-6" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <MainMenu />
+              </PopoverContent>
+            </Popover>
+
+            <CreateSimulatorModal />
+          </div>
         </div>
       </div>
 
