@@ -119,7 +119,7 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
   };
 
   return (
-    <div className="flex w-full max-w-80 flex-col justify-center gap-2 rounded-md bg-main p-4 px-0 text-white shadow-4xl">
+    <div className="flex w-64 max-w-80 flex-col justify-center gap-2 rounded-md bg-main p-4 px-0 text-white shadow-4xl">
       <p className="text-center">Informações do simulador</p>
       <div className={cn("flex w-full flex-col gap-2 px-4", whichProvider !== "simulator" && "hidden")}>
         <label htmlFor="rename" className="text-sm font-medium">
@@ -200,7 +200,7 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
           whichProvider !== "simulator" && "hidden",
         )}
       >
-        <Icon icon="bxs:file-import" className="icon h-4 w-4" /> Importar MT
+        <Icon icon="bxs:file-import" className="icon h-4 w-4" /> Importar (JSON)
       </label>
       <input type="file" id={`import-mt-input-${id}`} className="hidden" />
 
@@ -208,10 +208,10 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
 
       <div className="flex w-full flex-col gap-0">
         <Button variant="popoverMenu" size="sm" className="text-sm" id={`export-mt-png-${id}`}>
-          <Icon icon="material-symbols-light:image" className="icon h-4 w-4" /> Exportar como imagem PNG
+          <Icon icon="material-symbols-light:image" className="icon h-4 w-4" /> Exportar (PNG)
         </Button>
         <Button variant="popoverMenu" size="sm" className="text-sm" id={`export-mt-json-${id}`}>
-          <Icon icon="carbon:machine-learning" className="icon h-4 w-4" /> Exportar arquivo Turing Station
+          <Icon icon="carbon:machine-learning" className="icon h-4 w-4" /> Exportar (JSON)
         </Button>
       </div>
 

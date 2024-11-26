@@ -121,42 +121,44 @@ function TestTab({ id, className }) {
 
   return (
     <div id={`test-tab-${id}`} className={cn("w-full px-4", className)}>
-      <div className="flex w-full max-w-full flex-col gap-1 sm:flex-row sm:items-center">
-        <p className="font-semibold text-white">Entrada</p>
-        <Input
-          type="text"
-          placeholder="0101..."
-          id={`simulation-input-${id}`}
-          className="flex-grow"
-          value={inputValue}
-          onChange={handleInputChange}
-        />
-        <div className="flex items-center justify-center gap-1">
-          {simulationButtons.map((button, index) => (
-            <button
-              key={index}
-              id={`simulation-${button.id}-${id}`}
-              className={`flex h-10 w-10 max-w-10 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton simulation-bottom-buttons-${id}`}
-              disabled={true}
-            >
-              <Icon icon={button.icon} className="icon h-5 w-5" />
-            </button>
-          ))}
+      <div className="flex w-full flex-col-reverse md:flex-col">
+        <div className="flex w-full max-w-full flex-col gap-1 sm:flex-row sm:items-center">
+          <p className="font-semibold text-white">Entrada</p>
+          <Input
+            type="text"
+            placeholder="0101..."
+            id={`simulation-input-${id}`}
+            className="flex-grow"
+            value={inputValue}
+            onChange={handleInputChange}
+          />
+          <div className="flex items-center justify-center gap-1">
+            {simulationButtons.map((button, index) => (
+              <button
+                key={index}
+                id={`simulation-${button.id}-${id}`}
+                className={`flex h-10 w-10 max-w-10 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton simulation-bottom-buttons-${id}`}
+                disabled={true}
+              >
+                <Icon icon={button.icon} className="icon h-5 w-5" />
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      <div id={`erros-container-${id}`} className="mt-2 flex w-full flex-col items-center justify-center gap-2">
-        <div className="flex w-full items-center justify-center rounded-md bg-danger py-1">
-          <p id={`start-link-error-${id}`} className="font-semibold text-white">
-            Defina um estado inicial!
-          </p>
+        <div id={`erros-container-${id}`} className="mt-2 flex w-full flex-col items-center justify-center gap-2">
+          <div className="flex w-full items-center justify-center rounded-md bg-danger py-1">
+            <p id={`start-link-error-${id}`} className="font-semibold text-white">
+              Defina um estado inicial!
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div
-        id={`tape-container-${id}`}
-        className="mt-2 flex min-h-full w-full flex-col items-center justify-center gap-2 overflow-y-auto overflow-x-hidden rounded-md"
-      ></div>
+        <div
+          id={`tape-container-${id}`}
+          className="mt-2 flex min-h-full w-full flex-col items-center justify-center gap-2 overflow-y-auto overflow-x-hidden rounded-md"
+        ></div>
+      </div>
     </div>
   );
 }
