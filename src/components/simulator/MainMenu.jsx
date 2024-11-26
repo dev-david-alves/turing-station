@@ -3,8 +3,9 @@ import { useSimulator } from "../../providers/simulator";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import { Button, buttonVariants } from "../Button";
 import { SuccessToast, ErrorToast } from "../Toast";
+import { checkFileFormatArray } from "../../schemas/mtSchema";
+import { Checkbox } from "../Checkbox";
 import { cn } from "../../utils/cn";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +17,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../AlertDialog";
-import { Checkbox } from "../Checkbox";
 
 function MainMenu({ setIsMainMenuOpen }) {
   const { simulatorInfo, setSimulatorInfo, generateRandomId } = useSimulator();
@@ -47,46 +47,46 @@ function MainMenu({ setIsMainMenuOpen }) {
   const handleImportFile = (e) => {
     const file = e.target.files[0];
     if (!file) {
-      ErrorToast("Erro: nenhum arquivo selecionado!");
-      return;
+      ErrorToast("Erro: nenhum arquivo selecionado!")();
+      return { success: false, message: "Erro: nenhum arquivo selecionado!" };
     }
 
     if (file.type !== "application/json") {
-      ErrorToast("Erro: arquivo não é um JSON!");
+      ErrorToast("Erro: arquivo não é um JSON!")();
       return { success: false, message: "Erro: arquivo não é um JSON!" };
     }
 
     let reader = new FileReader();
     reader.onload = (event) => {
       let result = JSON.parse(event.target.result);
-      // const parsed = checkFileFormat(result); // Use the schema to check the file format
+      const parsed = checkFileFormatArray(result); // Use the schema to check the file format
 
-      // if (!parsed.success) {
-      //   ErrorToast("Erro: arquivo não está no formato correto!");
-      // } else {
-      let auxData = [];
-      result.forEach((data) => {
-        auxData.push({
-          id: generateRandomId(),
-          createdAt: new Date(),
-          lastModified: new Date(),
-          name: data.name,
-          open: false,
-          fullScreen: false,
-          focused: false,
-          showLeftToolbar: true,
-          showTooltips: true,
-          tm_variant: data.variant,
-          tm_num_tapes: data.variant !== "mttm" ? 1 : data.numTapes,
-          stayOption: data.stayOption,
-          data: data,
+      if (!parsed.success) {
+        ErrorToast("Erro: arquivo não está no formato correto!")();
+      } else {
+        let auxData = [];
+        result.forEach((data) => {
+          auxData.push({
+            id: generateRandomId(),
+            createdAt: new Date(),
+            lastModified: new Date(),
+            name: data.name,
+            open: false,
+            fullScreen: false,
+            focused: false,
+            showLeftToolbar: true,
+            showTooltips: true,
+            tm_variant: data.variant,
+            tm_num_tapes: data.variant !== "mttm" ? 1 : data.numTapes,
+            stayOption: data.stayOption,
+            data: data,
+          });
         });
-      });
 
-      setSimulatorInfo(auxData);
-      SuccessToast("Importação realizada com sucesso!")();
-      setIsMainMenuOpen(false);
-      // }
+        setSimulatorInfo(auxData);
+        SuccessToast("Importação realizada com sucesso!")();
+        setIsMainMenuOpen(false);
+      }
     };
 
     reader.readAsText(file);

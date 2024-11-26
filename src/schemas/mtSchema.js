@@ -58,6 +58,9 @@ const mtSchema = z.object({
   initialStateLink: z.nullable(initialStateLinkSchema),
 });
 
+// Define the schema for multiple dmt
+const mtArraySchema = z.array(mtSchema);
+
 // Test the object against the schema
 export const checkFileFormat = (dmt) => {
   const parsed = mtSchema.safeParse(dmt);
@@ -75,6 +78,28 @@ export const checkFileFormat = (dmt) => {
     });
   }
 
-  if (parsed.error) console.log(parsed.error);
+  // if (parsed.error) console.log(parsed.error);
+  return parsed;
+};
+
+export const checkFileFormatArray = (dmtArray) => {
+  const parsed = mtArraySchema.safeParse(dmtArray);
+
+  if (parsed.success) {
+    dmtArray.forEach((dmt) => {
+      dmt.links.forEach((link) => {
+        link.rules.forEach((rule) => {
+          if (rule.label.length !== dmt.numTapes * 3) {
+            parsed.success = false;
+            parsed.error = {
+              message: `Número de fitas na mt (${dmt.name}) incompatível com o número de regras!`,
+            };
+          }
+        });
+      });
+    });
+  }
+
+  // if (parsed.error) console.log(parsed.error);
   return parsed;
 };
