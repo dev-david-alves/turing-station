@@ -29,10 +29,11 @@ const howToUseTheSimulator = [
 ];
 
 const shortcuts = {
-  "Ctrl + botão esquerdo do mouse": "Mover canvas",
-  "Dois cliques/toques em um estado": "Abrir menu de ações (Estado inicial, Final, Renomear, Deletar)",
-  "Delete (Quando um elemento está selecionado)": "Deletar elemento",
-  "Shift + botão esquerdo do mouse (Menu selectionar ativo)": "Criar transição/Estado inicial",
+  // "Ctrl + botão esquerdo do mouse": "Mover canvas",
+  // "Shift + botão esquerdo do mouse (Menu selectionar ativo)": "Criar transição/Estado inicial",
+  "Dois cliques/toques ou botão direito do mouse em um estado":
+    "Abrir menu de ações (Estado inicial, Estado final, Renomear, Deletar)",
+  "Tecla 'DELETE' (quando um elemento está selecionado)": "Deletar elemento",
   "Roda do mouse (rodando)": "Aproximar/Afastar (Zoom)",
   "Roda do mouse (clicando)": "Mover canvas",
   "Ctrl + Z": "Desfazer",
