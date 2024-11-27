@@ -69,23 +69,23 @@ function SimulatorsContainer() {
           </div>
 
           <div className="relative flex items-start gap-2">
+            <CreateSimulatorModal />
+
             <Popover open={isMainMenuOpen} onOpenChange={setIsMainMenuOpen}>
               <PopoverTrigger asChild>
                 <button
                   className={cn(
                     buttonVariants("simulatorMenu"),
-                    "border-none bg-zinc-700 bg-none p-2 text-white hover:bg-zinc-600",
+                    "border-none bg-zinc-700 p-2 text-white hover:bg-zinc-600",
                   )}
                 >
-                  <Icon icon="tabler:dots" className="icon h-6 w-6" />
+                  <Icon icon="humbleicons:dots-vertical" className="icon h-6 w-6" />
                 </button>
               </PopoverTrigger>
-              <PopoverContent>
+              <PopoverContent className="mr-5 sm:mr-8">
                 <MainMenu setIsMainMenuOpen={setIsMainMenuOpen} />
               </PopoverContent>
             </Popover>
-
-            <CreateSimulatorModal />
           </div>
         </div>
       </div>
