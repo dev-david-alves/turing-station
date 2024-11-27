@@ -8,7 +8,11 @@ export const compareJSONObjects = (obj1, obj2) => {
 
 export const createJSONExportObj = (p5) => {
   let dmt = {
-    name: p5.tm_name,
+    name: p5.tm_name
+      .replace("(Determinística)", "")
+      .replace("(Não determinística)", "")
+      .replace("(Multifitas)", "")
+      .trim(),
     canvasScale: p5.canvasScale,
     variant: p5.tm_variant,
     numTapes: p5.tm_num_tapes,
