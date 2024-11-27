@@ -13,6 +13,7 @@ import { exportAsJSON, exportAsPNG, importJSONFile } from "./utils/importAndExpo
 import {
   simulationReset,
   simulationStepBack,
+  simulationAutomate,
   simulationStepForward,
   simulationFastResult,
   createMT,
@@ -61,6 +62,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       p5.multitestNumTests = -1;
       p5.setDataFunction = setSimulatorInfo;
       p5.prevDeviceOrientation = p5.deviceOrientation;
+      p5.autoSimulationInterval = null;
 
       // History
       p5.history = [];
@@ -159,6 +161,9 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
           state.simulating = false;
           state.input.visible = false;
         });
+
+        clearInterval(p5.autoSimulationInterval);
+        p5.autoSimulationInterval = null;
       };
 
       p5.openLabTab = () => {
@@ -173,6 +178,9 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
         p5.lastSelectedState = null;
         p5.selectedObject = null;
         p5.setLeftToolbarButton(`menu-selectObject-${id}`);
+
+        clearInterval(p5.autoSimulationInterval);
+        p5.autoSimulationInterval = null;
       };
 
       p5.showErrors = () => {
@@ -366,6 +374,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
         p5.select(`#simulation-input-${id}`).input(() => p5.abstractCreateMT());
         p5.select(`#simulation-fast-reset-${id}`).mousePressed(() => simulationReset(p5));
         p5.select(`#simulation-step-back-${id}`).mousePressed(() => simulationStepBack(p5));
+        p5.select(`#simulation-automate-${id}`).mousePressed(() => simulationAutomate(p5));
         p5.select(`#simulation-step-forward-${id}`).mousePressed(() => simulationStepForward(p5));
         p5.select(`#simulation-fast-simulation-${id}`).mousePressed(() => simulationFastResult(p5));
         p5.select(`#erros-container-${id}`).show();
@@ -397,6 +406,19 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       };
 
       p5.draw = () => {
+        // Auto simulation button icons
+        let autoButtonPlay = p5.select(`#simulation-play-icon-${id}`);
+        let autoButtonPause = p5.select(`#simulation-pause-icon-${id}`);
+
+        if (p5.autoSimulationInterval) {
+          autoButtonPlay.hide();
+          autoButtonPause.show();
+        } else {
+          autoButtonPlay.show();
+          autoButtonPause.hide();
+        }
+
+        // Edit modal
         let editModal = p5.select(`#edit-simulator-modal-${id}`);
 
         if (editModal && editModal.hasClass("editPopoverOpen")) {

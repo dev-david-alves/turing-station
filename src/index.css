@@ -152,3 +152,24 @@ input::-webkit-autocomplete-item:hover {
   -webkit-background-clip: text;
   -webkit-text-fill-color: white !important;
 }
+
+/* Icons */
+.flowbite--play-solid {
+  display: inline-block;
+  width: 256px;
+  height: 256px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' fill-rule='evenodd' d='M8.6 5.2A1 1 0 0 0 7 6v12a1 1 0 0 0 1.6.8l8-6a1 1 0 0 0 0-1.6z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  transform: scale(0.7);
+}
+
+.flowbite--pause-solid {
+  display: inline-block;
+  width: 256px;
+  height: 256px;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' fill-rule='evenodd' d='M8 5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm7 0a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  transform: scale(0.7);
+}

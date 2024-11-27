@@ -56,6 +56,7 @@ export class MTNDTM {
     initialState = null,
     finalStates = new set(),
     numTapes = 1,
+    p5 = null,
   ) {
     this.Q = Q; // Set of states
     this.sigma = sigma; // Input alphabet
@@ -71,6 +72,12 @@ export class MTNDTM {
     // Extras
     this.maxInterections = 1000;
     this.history = [];
+    this.p5 = p5;
+
+    if (this.p5) {
+      clearInterval(this.p5.autoSimulationInterval);
+      this.p5.autoSimulationInterval = null;
+    }
   }
 
   symbolMatch = (word) => {
@@ -112,6 +119,11 @@ export class MTNDTM {
     let tapeContent = word.length === 0 ? [BLANK] : [...word.split("")];
     this.branchs = [this.createDefaultBranchs(this.initialState, tapeContent)];
     this.history = [];
+
+    if (this.p5) {
+      clearInterval(this.p5.autoSimulationInterval);
+      this.p5.autoSimulationInterval = null;
+    }
   }
 
   isSubset(subset, superset) {

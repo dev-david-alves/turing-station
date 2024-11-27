@@ -58,7 +58,7 @@ export const createMT = (p5) => {
     });
   });
 
-  const mt = new MTNDTM(q, sigma, gamma, delta, startState, finalStates, p5.tm_num_tapes);
+  const mt = new MTNDTM(q, sigma, gamma, delta, startState, finalStates, p5.tm_num_tapes, p5);
 
   let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
   mt.setComputedWord(inputValue);
@@ -82,6 +82,37 @@ export const simulationStepBack = (p5) => {
   p5.mtCreated.stepBack();
 
   updateTape(p5);
+  updateUIWhenSimulating(p5, false, false, true);
+};
+
+export const simulationAutomate = (p5) => {
+  if (!p5.mtCreated) {
+    const { success, mt } = createMT(p5);
+    if (!success) return;
+
+    p5.mtCreated = mt;
+
+    let inputValue = p5.select(`#simulation-input-${p5.canvasID}`).value();
+    p5.mtCreated.setComputedWord(inputValue);
+  }
+
+  if (p5.autoSimulationInterval === null) {
+    p5.autoSimulationInterval = setInterval(() => {
+      const { accepted, end } = p5.mtCreated.stepForward();
+
+      if (end) {
+        clearInterval(p5.autoSimulationInterval);
+        p5.autoSimulationInterval = null;
+      }
+
+      updateTape(p5);
+      updateUIWhenSimulating(p5, accepted, end, true);
+    }, 1000);
+  } else {
+    clearInterval(p5.autoSimulationInterval);
+    p5.autoSimulationInterval = null;
+  }
+
   updateUIWhenSimulating(p5, false, false, true);
 };
 
@@ -250,18 +281,21 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
   // Enable/Disable simulation buttons
   let fastReset = p5.select(`#simulation-fast-reset-${p5.canvasID}`);
   let stepBack = p5.select(`#simulation-step-back-${p5.canvasID}`);
+  let automate = p5.select(`#simulation-automate-${p5.canvasID}`);
   let stepForward = p5.select(`#simulation-step-forward-${p5.canvasID}`);
   let fastSimulation = p5.select(`#simulation-fast-simulation-${p5.canvasID}`);
 
-  if (!fastReset || !stepBack || !stepForward || !fastSimulation) return;
+  if (!fastReset || !stepBack || !automate || !stepForward || !fastSimulation) return;
 
   fastReset.attribute("disabled", true);
   stepBack.attribute("disabled", true);
+  automate.attribute("disabled", true);
   stepForward.attribute("disabled", true);
   fastSimulation.attribute("disabled", true);
+
   if (!p5.mtCreated) return;
 
-  if (p5.mtCreated.history.length > 0) {
+  if (p5.mtCreated.history.length > 0 && !p5.autoSimulationInterval) {
     fastReset.removeAttribute("disabled");
     stepBack.removeAttribute("disabled");
   }
@@ -300,8 +334,13 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
       }
     } else {
       tapeStates[index].addClass("bg-purpleMedium");
-      stepForward.removeAttribute("disabled");
-      fastSimulation.removeAttribute("disabled");
+
+      automate.removeAttribute("disabled");
+
+      if (!p5.autoSimulationInterval) {
+        stepForward.removeAttribute("disabled");
+        fastSimulation.removeAttribute("disabled");
+      }
     }
   });
 };

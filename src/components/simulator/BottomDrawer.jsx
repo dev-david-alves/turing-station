@@ -26,18 +26,27 @@ const simulationButtons = [
   {
     id: "fast-reset",
     icon: "ant-design:fast-backward-outlined",
+    iconSpan: false,
   },
   {
     id: "step-back",
     icon: "ri:skip-back-fill",
+    iconSpan: false,
+  },
+  {
+    id: "automate",
+    icon: "anything", // Don't need icon here
+    iconSpan: true,
   },
   {
     id: "step-forward",
     icon: "ri:skip-forward-fill",
+    iconSpan: false,
   },
   {
     id: "fast-simulation",
     icon: "ant-design:fast-forward-outlined",
+    iconSpan: false,
   },
 ];
 
@@ -140,7 +149,17 @@ function TestTab({ id, className }) {
                 className={`flex h-10 w-10 max-w-10 items-center justify-center rounded-[5px] bg-primary text-white outline-none transition-colors duration-200 hover:bg-primaryHover disabled:cursor-not-allowed disabled:bg-disabledButton simulation-bottom-buttons-${id}`}
                 disabled={true}
               >
-                <Icon icon={button.icon} className="icon h-5 w-5" />
+                {button.iconSpan ? (
+                  <>
+                    <span id={`simulation-play-icon-${id}`} className="flowbite--play-solid icon h-5 w-5"></span>
+                    <span
+                      id={`simulation-pause-icon-${id}`}
+                      className="flowbite--pause-solid icon hidden h-5 w-5"
+                    ></span>
+                  </>
+                ) : (
+                  <Icon icon={button.icon} className="icon h-5 w-5" />
+                )}
               </button>
             ))}
           </div>
