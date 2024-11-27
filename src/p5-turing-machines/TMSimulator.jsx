@@ -63,6 +63,9 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       p5.setDataFunction = setSimulatorInfo;
       p5.prevDeviceOrientation = p5.deviceOrientation;
       p5.autoSimulationInterval = null;
+      p5.dotsOffset = { x: 0, y: 0 };
+      p5.minZoom = 0.5;
+      p5.maxZoom = 4.0;
 
       // History
       p5.history = [];
@@ -123,10 +126,10 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       };
 
       p5.setZoom = (scale) => {
-        if (p5.canvasScale + scale < 0.5) {
-          p5.canvasScale = 0.5;
-        } else if (p5.canvasScale + scale > 2.0) {
-          p5.canvasScale = 2.0;
+        if (p5.canvasScale + scale < p5.minZoom) {
+          p5.canvasScale = p5.minZoom;
+        } else if (p5.canvasScale + scale > p5.maxZoom) {
+          p5.canvasScale = p5.maxZoom;
         } else {
           p5.canvasScale = p5.canvasScale + scale;
         }

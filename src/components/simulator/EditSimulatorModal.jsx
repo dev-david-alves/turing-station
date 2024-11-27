@@ -95,6 +95,26 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
   //   );
   // };
 
+  const handleCleanCanvas = () => {
+    let auxData = simulator.data;
+    auxData.states = [];
+    auxData.links = [];
+    auxData.initialStateLink = null;
+
+    setSimulatorInfo((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              data: auxData,
+            }
+          : item,
+      ),
+    );
+
+    SuccessToast("Canvas limpo com sucesso!")();
+  };
+
   const handleDeleteSimulator = () => {
     setSimulatorInfo((prev) => prev.filter((item) => item.id !== id));
     SuccessToast("Simulador deletado com sucesso!")();
@@ -225,6 +245,31 @@ function EditSimulatorModal({ id, whichProvider = "simulator" }) {
       >
         <Icon icon="bx:duplicate" className="icon h-4 w-4" /> Duplicar simulador
       </Button>
+
+      {/* <hr className="border-darkenBlue border-opacity-10" />
+
+      <AlertDialog>
+        <AlertDialogTrigger asChild>
+          <Button variant="popoverMenu" size="sm" className="text-sm text-danger hover:bg-danger hover:text-white">
+            <Icon icon="material-symbols:remove-selection" className="icon h-4 w-4" />
+            Limpar canvas
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent className="dark-mode-variables text-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta ação não pode ser desfeita. Todo o conteúdo do canvas será deletado.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction className="bg-danger" onClick={handleCleanCanvas}>
+              Continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog> */}
 
       <hr className={cn("border-darkenBlue border-opacity-10", whichProvider !== "simulator" && "hidden")} />
 
