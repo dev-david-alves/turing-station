@@ -20,6 +20,7 @@ export const createJSONExportObj = (p5) => {
     states: [],
     links: [],
     initialStateLink: null,
+    instance: new Date().toISOString() + ":" + Math.random().toString(36).substring(2, 9),
   };
 
   p5.states.forEach((state) => {
