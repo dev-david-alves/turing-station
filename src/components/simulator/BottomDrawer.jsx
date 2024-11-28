@@ -56,7 +56,7 @@ function MultiTestTab({ id, className }) {
   const [inputValues, setInputValues] = useState({});
 
   return (
-    <div id={`multitest-tab-${id}`} className={cn("w-full", className)}>
+    <div id={`multitest-tab-${id}`} className={cn("w-full pb-4", className)}>
       <div className="w-full bg-background px-4 py-1">
         <p className="font-semibold text-white">Multiteste</p>
       </div>
@@ -129,10 +129,10 @@ function TestTab({ id, className }) {
   };
 
   return (
-    <div id={`test-tab-${id}`} className={cn("w-full px-4", className)}>
+    <div id={`test-tab-${id}`} className={cn("w-full px-4 pb-4", className)}>
       <div
         id={`tape-container-${id}`}
-        className="mt-2 flex min-h-full w-full flex-col items-center justify-center gap-2 overflow-y-auto overflow-x-hidden rounded-md"
+        className="flex min-h-full w-full flex-col items-center justify-center gap-2 overflow-y-auto overflow-x-hidden rounded-md"
       ></div>
 
       <div className="flex w-full max-w-full flex-col gap-1 sm:flex-row sm:items-center">
@@ -155,8 +155,14 @@ function TestTab({ id, className }) {
             >
               {button.iconSpan ? (
                 <>
-                  <span id={`simulation-play-icon-${id}`} className="flowbite--play-solid icon h-5 w-5"></span>
-                  <span id={`simulation-pause-icon-${id}`} className="flowbite--pause-solid icon hidden h-5 w-5"></span>
+                  <span
+                    id={`simulation-play-icon-${id}`}
+                    className="flowbite--play-solid icon h-10 max-h-10 w-10 max-w-10"
+                  ></span>
+                  <span
+                    id={`simulation-pause-icon-${id}`}
+                    className="flowbite--pause-solid icon hidden h-10 max-h-10 w-10 max-w-10"
+                  ></span>
                 </>
               ) : (
                 <Icon icon={button.icon} className="icon h-5 w-5" />
