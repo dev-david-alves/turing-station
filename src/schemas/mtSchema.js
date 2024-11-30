@@ -48,6 +48,7 @@ const mtSchema = z.object({
   variant: z.union([z.literal("tm"), z.literal("ndtm"), z.literal("mttm")]),
   numTapes: z.number().positive(),
   stayOption: z.boolean(),
+  leftTapeSideInfinite: z.boolean(),
   states: z.array(stateSchema),
   links: z.array(
     z.union([

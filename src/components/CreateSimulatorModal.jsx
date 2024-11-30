@@ -54,6 +54,7 @@ function CreateSimulatorModal() {
   const [useExample, setUseExample] = useState(false);
   const [name, setName] = useState("");
   const [stayOption, setStayOption] = useState(false);
+  const [leftTapeSideInfinite, setLeftTapeSideInfinite] = useState(false);
   const [variant, setVariant] = useState("tm");
   const [numTapes, setNumTapes] = useState(2);
   const [erros, setErros] = useState([]);
@@ -70,9 +71,11 @@ function CreateSimulatorModal() {
 
     if (example === "import-from-device") {
       setUseImportExample(true);
+      setName("");
     } else {
       setName(examples[example].name);
       setStayOption(examples[example].stayOption);
+      setLeftTapeSideInfinite(examples[example].leftTapeSideInfinite);
       setVariant(examples[example].variant);
       setNumTapes((prev) => (examples[example].variant === "mttm" ? examples[example].numTapes : prev));
 
@@ -82,7 +85,18 @@ function CreateSimulatorModal() {
 
   useEffect(() => {
     setImportedFile(null);
+
+    setName("");
+    setStayOption(false);
+    setLeftTapeSideInfinite(false);
+    setVariant("tm");
+    setNumTapes(2);
+    setErros([]);
   }, [useExample]);
+
+  useEffect(() => {
+    setErros([]);
+  }, [name, variant, numTapes]);
 
   const handleImportFile = (e) => {
     const file = e.target.files[0];
@@ -108,6 +122,7 @@ function CreateSimulatorModal() {
         setErros([]);
         setName(parsed.data.name);
         setStayOption(parsed.data.stayOption);
+        setLeftTapeSideInfinite(parsed.data.leftTapeSideInfinite);
         setVariant(parsed.data.variant);
         setNumTapes((prev) => (parsed.data.variant === "mttm" ? parsed.data.numTapes : prev));
       }
@@ -152,6 +167,7 @@ function CreateSimulatorModal() {
           tm_variant: variant,
           tm_num_tapes: variant !== "mttm" ? 1 : numTapes,
           stayOption: stayOption,
+          leftTapeSideInfinite: leftTapeSideInfinite,
           data: importedFile,
         },
       ]);
@@ -159,6 +175,7 @@ function CreateSimulatorModal() {
       setErros([]);
       setName("");
       setStayOption(false);
+      setLeftTapeSideInfinite(false);
       setVariant("tm");
       setNumTapes(2);
 
@@ -253,35 +270,42 @@ function CreateSimulatorModal() {
             )}
           </div>
 
-          <div className="mb-2 flex flex-col justify-center gap-2 border-b border-gray-700 pb-2">
+          <div className="mb-2 flex flex-col justify-center gap-2">
             <label htmlFor="name" className="text-md font-semibold text-white">
-              Name
+              Nome
             </label>
             <Input id="name" placeholder="Nomear simulador" maxLength="50" value={name} onChange={handleChange} />
           </div>
 
-          <div className="mb-2 flex items-center gap-2 border-b border-gray-700 pb-2">
-            <Checkbox
-              id="stay-option"
-              className="text-white"
-              checked={stayOption}
-              onClick={() => setStayOption(!stayOption)}
-            />
-            <label htmlFor="stay-option" className="text-white">
-              Opção de permanecer parado na fita
-            </label>
-          </div>
-
           {!useExample && (
             <>
-              <div
-                className={cn(
-                  "flex w-full flex-col gap-2 border-b border-gray-700 pb-2",
-                  variant === "mttm" && "border-b-0",
-                )}
-              >
+              <div className="mb-2 flex items-center gap-2 border-t border-gray-700 py-2">
+                <Checkbox
+                  id="stay-option"
+                  className="text-white"
+                  checked={stayOption}
+                  onClick={() => setStayOption(!stayOption)}
+                />
+                <label htmlFor="stay-option" className="text-white">
+                  Opção de permanecer parado na fita
+                </label>
+              </div>
+
+              <div className="mb-2 flex items-center gap-2 border-b border-gray-700 pb-2">
+                <Checkbox
+                  id="left-tape-side-infinite"
+                  className="text-white"
+                  checked={leftTapeSideInfinite}
+                  onClick={() => setLeftTapeSideInfinite(!leftTapeSideInfinite)}
+                />
+                <label htmlFor="left-tape-side-infinite" className="text-white">
+                  Fita infinita à esquerda
+                </label>
+              </div>
+
+              <div className="flex w-full flex-col gap-2 pb-2">
                 <label htmlFor="variant-type" className="text-md font-semibold text-white">
-                  Escolher variante (Determinística por padrão)
+                  Escolher variante
                 </label>
                 <Select onValueChange={(value) => setVariant(value)} defaultValue="tm">
                   <SelectTrigger className="w-full">
@@ -298,7 +322,7 @@ function CreateSimulatorModal() {
               </div>
 
               {variant === "mttm" && (
-                <div className="mb-2 flex items-center justify-center gap-2 border-b border-gray-700 pb-2">
+                <div className="mb-2 flex items-center justify-center gap-2">
                   <label htmlFor="numTapes" className="min-w-fit text-sm font-semibold text-white">
                     N° de fitas
                   </label>
@@ -330,7 +354,7 @@ function CreateSimulatorModal() {
           )}
 
           {erros.length > 0 && (
-            <div className="flex flex-col gap-2 text-red-500">
+            <div className="flex flex-col gap-2 border-t border-gray-700 text-red-500">
               {erros.map((erro, index) => (
                 <span key={index}>{erro.message}</span>
               ))}

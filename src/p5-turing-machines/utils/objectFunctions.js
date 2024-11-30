@@ -17,6 +17,7 @@ export const createJSONExportObj = (p5) => {
     variant: p5.tm_variant,
     numTapes: p5.tm_num_tapes,
     stayOption: p5.stayOption,
+    leftTapeSideInfinite: p5.leftTapeSideInfinite,
     states: [],
     links: [],
     initialStateLink: null,
@@ -72,6 +73,7 @@ export const createCanvasFromOBJ = (p5, obj) => {
   p5.tm_variant = obj.variant;
   p5.tm_num_tapes = obj.numTapes;
   p5.stayOption = obj.stayOption;
+  p5.leftTapeSideInfinite = obj.leftTapeSideInfinite;
   p5.states = [];
   p5.links = [];
   p5.startLink = null;

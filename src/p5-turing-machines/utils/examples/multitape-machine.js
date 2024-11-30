@@ -4,6 +4,7 @@ export const multitapeExample01 = {
   variant: "mttm",
   numTapes: 3,
   stayOption: true,
+  leftTapeSideInfinite: false,
   states: [
     {
       id: 0,

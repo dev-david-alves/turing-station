@@ -30,7 +30,7 @@ import { useQuestionSimulator } from "../providers/question";
 
 export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
   const { getOne, setSimulatorInfo } = whichProvider === "simulator" ? useSimulator() : useQuestionSimulator();
-  const { name, tm_variant, tm_num_tapes, stayOption, data } = getOne(id);
+  const { name, tm_variant, tm_num_tapes, stayOption, leftTapeSideInfinite, data } = getOne(id);
 
   const setImportedInfo = ({ newName, newVariant, newNumTapes }) => {
     setSimulatorInfo((prev) =>
@@ -59,6 +59,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       p5.tm_num_tapes = tm_num_tapes;
       p5.tm_name = name;
       p5.stayOption = stayOption;
+      p5.leftTapeSideInfinite = leftTapeSideInfinite;
       p5.multitestNumTests = -1;
       p5.setDataFunction = setSimulatorInfo;
       p5.prevDeviceOrientation = p5.deviceOrientation;

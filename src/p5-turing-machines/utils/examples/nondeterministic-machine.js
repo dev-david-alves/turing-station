@@ -3,7 +3,8 @@ export const nonDeterministicExample01 = {
   canvasScale: 1.25,
   variant: "ndtm",
   numTapes: 1,
-  stayOption: true,
+  stayOption: false,
+  leftTapeSideInfinite: false,
   states: [
     {
       id: 1,

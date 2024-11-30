@@ -6,9 +6,10 @@ export const RIGHT = 1;
 export const STAY = 0;
 
 class Tape {
-  constructor(tape) {
+  constructor(tape, p5) {
     this.content = tape;
     this.head = 0;
+    this.p5 = p5;
   }
 
   setHead(index) {
@@ -37,11 +38,20 @@ class Tape {
 
   move(direction) {
     this.head += direction;
-    if (this.head < 0) {
-      this.content.unshift(BLANK);
-      this.head = 0;
-    } else if (this.head >= this.content.length) {
-      this.content.push(BLANK);
+
+    if (this.p5.leftTapeSideInfinite) {
+      if (this.head < 0) {
+        this.content.unshift(BLANK);
+        this.head = 0;
+      } else if (this.head >= this.content.length) {
+        this.content.push(BLANK);
+      }
+    } else {
+      if (this.head < 0) {
+        this.head = 0;
+      } else if (this.head >= this.content.length) {
+        this.content.push(BLANK);
+      }
     }
   }
 }
@@ -105,10 +115,14 @@ export class MTNDTM {
 
   createDefaultBranchs(state, firstTapeContent) {
     let tapes = [];
-    tapes.push(new Tape([...firstTapeContent]));
+    tapes.push(new Tape([...firstTapeContent], this.p5));
     for (let i = 0; i < this.numTapes - 1; i++) {
-      // tapes.push(new Tape([BLANK]));
-      tapes.push(new Tape(Array.from({ length: firstTapeContent.length }, () => BLANK)));
+      tapes.push(
+        new Tape(
+          Array.from({ length: firstTapeContent.length }, () => BLANK),
+          this.p5,
+        ),
+      );
     }
 
     return [state, tapes, false];
@@ -186,7 +200,7 @@ export class MTNDTM {
         const newTapes = [];
 
         delta.actions.forEach((tapeDelta, tapeIndex) => {
-          let newTape = new Tape([...tapesObj[tapeIndex].getTape()]);
+          let newTape = new Tape([...tapesObj[tapeIndex].getTape()], this.p5);
           newTape.setHead(tapesObj[tapeIndex].getHead());
 
           newTape.setSymbol(tapeDelta.write);
