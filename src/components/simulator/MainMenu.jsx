@@ -128,7 +128,7 @@ function MainMenu({ setIsMainMenuOpen }) {
             size="sm"
             className={cn(buttonVariants({ variant: "popoverMenu", size: "sm" }), "cursor-pointer justify-start")}
           >
-            <Icon icon="mdi:trash" className="icon h-4 w-4" />
+            <Icon icon="bxs:file-import" className="icon h-4 w-4" />
             Importar múltiplas MTs (JSON)
           </Button>
         </AlertDialogTrigger>
