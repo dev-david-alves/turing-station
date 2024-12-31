@@ -39,7 +39,7 @@ class Tape {
   move(direction) {
     this.head += direction;
 
-    if (this.p5.leftTapeSideInfinite) {
+    if (this.leftTapeSideInfinite) {
       if (this.head < 0) {
         this.content.unshift(BLANK);
         this.head = 0;
@@ -83,10 +83,12 @@ export class MTNDTM {
     this.maxInterections = 1000;
     this.history = [];
     this.p5 = p5;
+    this.leftTapeSideInfinite = true;
 
     if (this.p5) {
       clearInterval(this.p5.autoSimulationInterval);
       this.p5.autoSimulationInterval = null;
+      this.leftTapeSideInfinite = this.p5.leftTapeSideInfinite;
     }
   }
 
