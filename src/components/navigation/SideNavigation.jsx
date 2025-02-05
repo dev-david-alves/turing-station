@@ -4,7 +4,7 @@ import { cn } from "../../utils/cn";
 
 const links = [
   {
-    name: "Simulador",
+    name: "Meus simuladores",
     to: "/?filterBy=all&sortBy=name&direction=asc",
     icon: "ph:graph-bold",
   },

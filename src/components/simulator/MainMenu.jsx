@@ -59,6 +59,8 @@ function MainMenu({ setIsMainMenuOpen }) {
     let reader = new FileReader();
     reader.onload = (event) => {
       let result = JSON.parse(event.target.result);
+
+      result = result?.length > 0 ? result : [result];
       const parsed = checkFileFormatArray(result); // Use the schema to check the file format
 
       if (!parsed.success) {
