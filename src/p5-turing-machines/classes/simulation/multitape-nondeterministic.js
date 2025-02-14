@@ -218,13 +218,13 @@ export class MTNDTM {
     this.branchs = auxBranchs;
 
     if (this.checkRejection()) {
-      return { accepted: false, end: true };
+      return { accepted: false, end: true, maxInterectionsReached: false };
     }
     if (this.checkAcceptance()) {
-      return { accepted: true, end: true };
+      return { accepted: true, end: true, maxInterectionsReached: false };
     }
 
-    return { accepted: false, end: false };
+    return { accepted: false, end: false, maxInterectionsReached: false };
   }
 
   fastForward() {
@@ -232,12 +232,12 @@ export class MTNDTM {
 
     while (itr < this.maxInterections) {
       const { accepted, end } = this.stepForward();
-      if (end) return { accepted, end };
+      if (end) return { accepted, end, maxInterectionsReached: false };
 
       itr++;
     }
 
-    return { accepted: false, end: true };
+    return { accepted: false, end: false, maxInterectionsReached: true };
   }
 }
 

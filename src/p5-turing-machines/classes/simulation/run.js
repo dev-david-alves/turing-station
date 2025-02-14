@@ -74,7 +74,7 @@ export const simulationReset = (p5) => {
   if (!p5.mtCreated) return;
   p5.mtCreated = null;
   updateTape(p5);
-  updateUIWhenSimulating(p5, false, false, true);
+  updateUIWhenSimulating(p5, false, false, false, true);
 };
 
 export const simulationStepBack = (p5) => {
@@ -82,7 +82,7 @@ export const simulationStepBack = (p5) => {
   p5.mtCreated.stepBack();
 
   updateTape(p5);
-  updateUIWhenSimulating(p5, false, false, true);
+  updateUIWhenSimulating(p5, false, false, false, true);
 };
 
 export const simulationAutomate = (p5) => {
@@ -97,23 +97,27 @@ export const simulationAutomate = (p5) => {
   }
 
   if (p5.autoSimulationInterval === null) {
+    let itr = 0;
     p5.autoSimulationInterval = setInterval(() => {
-      const { accepted, end } = p5.mtCreated.stepForward();
-
-      if (end) {
+      const { accepted, end, maxInterectionsReached } = p5.mtCreated.stepForward();
+      
+      if (end || maxInterectionsReached || itr >= p5.mtCreated.maxInterections) {
         clearInterval(p5.autoSimulationInterval);
         p5.autoSimulationInterval = null;
       }
-
+      
       updateTape(p5);
-      updateUIWhenSimulating(p5, accepted, end, true);
+      if(itr >= p5.mtCreated.maxInterections) updateUIWhenSimulating(p5, accepted, end, true, true);
+      else updateUIWhenSimulating(p5, accepted, end, maxInterectionsReached, true);
+      
+      itr++;
     }, 1000);
   } else {
     clearInterval(p5.autoSimulationInterval);
     p5.autoSimulationInterval = null;
   }
 
-  updateUIWhenSimulating(p5, false, false, true);
+  updateUIWhenSimulating(p5, false, false, false, true);
 };
 
 export const simulationStepForward = (p5) => {
@@ -127,10 +131,10 @@ export const simulationStepForward = (p5) => {
     p5.mtCreated.setComputedWord(inputValue);
   }
 
-  const { accepted, end } = p5.mtCreated.stepForward();
+  const { accepted, end, maxInterectionsReached } = p5.mtCreated.stepForward();
 
   updateTape(p5);
-  updateUIWhenSimulating(p5, accepted, end, true);
+  updateUIWhenSimulating(p5, accepted, end, maxInterectionsReached, true);
 };
 
 export const simulationFastResult = (p5) => {
@@ -142,10 +146,10 @@ export const simulationFastResult = (p5) => {
   let inputWord = p5.select(`#simulation-input-${p5.canvasID}`).value();
   p5.mtCreated.setComputedWord(inputWord);
 
-  const { accepted, end } = p5.mtCreated.fastForward();
+  const { accepted, end, maxInterectionsReached } = p5.mtCreated.fastForward();
 
   updateTape(p5);
-  updateUIWhenSimulating(p5, accepted, end, true);
+  updateUIWhenSimulating(p5, accepted, end, maxInterectionsReached, true);
 };
 
 const convertStateLabelToHtml = (allSubstrings) => {
@@ -259,7 +263,7 @@ export const updateTape = (p5) => {
   }
 };
 
-export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => {
+export const updateUIWhenSimulating = (p5, accepted, end, maxInterectionsReached = false, labOpened = false) => {
   if (!p5.mtCreated) return;
   if (!labOpened) return;
 
@@ -309,10 +313,13 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
     tapeStates[index].removeClass("bg-purpleMedium");
     tapeStates[index].removeClass("bg-danger");
     tapeStates[index].removeClass("bg-lightGreen");
+    tapeStates[index].removeClass("bg-orange"); // When maxInteractionsReached
+    
     tapeWrapper.removeClass("bg-lightGreen");
     tapeWrapper.removeClass("bg-danger");
+    tapeWrapper.removeClass("bg-orange");
 
-    if (tapeWrapper.hasClass(`branchRejection-true`)) {
+    if (tapeWrapper.hasClass("branchRejection-true")) {
       tapeWrapper.addClass("bg-danger");
       tapeStates[index].addClass("bg-danger");
 
@@ -333,13 +340,18 @@ export const updateUIWhenSimulating = (p5, accepted, end, labOpened = false) => 
         tapeStates[index].addClass("bg-danger");
       }
     } else {
-      tapeStates[index].addClass("bg-purpleMedium");
+      if(!maxInterectionsReached) {
+        tapeStates[index].addClass("bg-purpleMedium");
 
-      automate.removeAttribute("disabled");
+        automate.removeAttribute("disabled");
 
-      if (!p5.autoSimulationInterval) {
-        stepForward.removeAttribute("disabled");
-        fastSimulation.removeAttribute("disabled");
+        if (!p5.autoSimulationInterval) {
+          stepForward.removeAttribute("disabled");
+          fastSimulation.removeAttribute("disabled");
+        }
+      } else {
+        tapeWrapper.addClass("bg-orange");
+        tapeStates[index].addClass("bg-orange");
       }
     }
   });

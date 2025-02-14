@@ -143,7 +143,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
           let input = p5.select(`#simulation-input-${id}`).value();
           p5.mtCreated.setComputedWord(input);
           updateTape(p5);
-          updateUIWhenSimulating(p5, false, false, true);
+          updateUIWhenSimulating(p5, false, false, false, true);
         }
       };
 
@@ -159,7 +159,7 @@ export const TMSimulator = ({ id, whichProvider = "simulator" }) => {
       p5.closeLabTab = () => {
         p5.selectedBottomTab = undefined;
 
-        updateUIWhenSimulating(p5, false, false, false);
+        updateUIWhenSimulating(p5, false, false, false, false);
 
         p5.states.forEach((state) => {
           state.simulating = false;
